@@ -6,14 +6,14 @@ qreg = QuantumRegister(5)
 creg = ClassicalRegister(5) 
 qc = QuantumCircuit(qreg, creg) 
 
-qc.h(4)
-qc.measure(qreg[1], creg[1])
-with qc.if_test((creg[1], 1)) as else_1: 
-	qc.x(0)
+qc.cz(1, 4)
+qc.measure(qreg[2], creg[2])
+with qc.if_test((creg[2], 0)) as else_1: 
+	qc.rz(0.39269908169872414, 3)
 with else_1: 
-	qc.rz(0.39269908169872414, 1)
+	qc.tdg(0)
 
-qc.x(4)
+qc.p(0.39269908169872414, 0)
 import matplotlib as plt 
 qc.draw("mpl") 
 plt.pyplot.show() 
