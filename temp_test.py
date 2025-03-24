@@ -1,19 +1,22 @@
-from qiskit import QuantumCircuit, QuantumRegister, ClassicalRegister 
-from qiskit.circuit import Parameter, ParameterVector 
-from math import pi 
+from qiskit import QuantumCircuit, QuantumRegister, ClassicalRegister, Aer, transpile, execute
+from qiskit.circuit import Parameter, ParameterVector
+from math import pi
 
-qreg = QuantumRegister(5) 
-creg = ClassicalRegister(5) 
-qc = QuantumCircuit(qreg, creg) 
+qreg = QuantumRegister(5)
+creg = ClassicalRegister(5)
+qc = QuantumCircuit(qreg, creg)
 
-qc.cz(1, 4)
-qc.measure(qreg[2], creg[2])
-with qc.if_test((creg[2], 0)) as else_1: 
-	qc.rz(0.39269908169872414, 3)
-with else_1: 
-	qc.tdg(0)
+qc.h(0)
+qc.measure(qreg[0], creg[0])
+with qc.if_test((creg[0], 0)) as else_1:
+	qc.x(1)
+with else_1:
+	qc.x(2)
 
-qc.p(0.39269908169872414, 0)
-import matplotlib as plt 
-qc.draw("mpl") 
-plt.pyplot.show() 
+qc.x(3)
+qc.measure(qreg, creg)
+simulator = Aer.get_backend("aer_simulator")
+compiled_circuit = transpile(qc, simulator)
+job = execute(compiled_circuit, simulator, shots=1024)
+result = job.result().get_counts()
+print("results:", result)
