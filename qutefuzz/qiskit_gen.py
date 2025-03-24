@@ -16,7 +16,6 @@ class QiskitGenerator:
         self.measure_index = random.sample(range(self.qnum), self.measure_qubit_num)
         self.filename = "temp_test.py"
         self.combine()
-        self.run()
 
     def combine(self):
         self.code += self.write_import()
