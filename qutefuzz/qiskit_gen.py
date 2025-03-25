@@ -40,7 +40,8 @@ class QiskitGenerator:
 
     def write_import(self):
         code_line = ""
-        code_line += "from qiskit import QuantumCircuit, QuantumRegister, ClassicalRegister, Aer, transpile, execute \n"
+        code_line += "from qiskit import QuantumCircuit, QuantumRegister, ClassicalRegister, transpile \n"
+        code_line += "from qiskit_aer import Aer \n"
         code_line += "from qiskit.circuit import Parameter, ParameterVector \n"
         # code_line += "from helpers.qiskit_helpers import compare_statevectors, run_on_simulator, run_routing_simulation, run_pass_on_simulator \n"
         # code_line += "from pathlib import Path \n"
@@ -78,7 +79,7 @@ class QiskitGenerator:
             code_line += f"{self.qc}.measure({self.qreg}, {self.creg}) \n"
             code_line += f"simulator = Aer.get_backend(\"aer_simulator\") \n"
             code_line += f"compiled_circuit = transpile({self.qc}, simulator) \n"
-            code_line += f"job = execute(compiled_circuit, simulator, shots=1024) \n"
+            code_line += f"job = simulator.run(compiled_circuit, shots=1024) \n"
             code_line += f"result = job.result().get_counts() \n"
             code_line += f"print(\"results:\", result)"
             code_line += "\n"
