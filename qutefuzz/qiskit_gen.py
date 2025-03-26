@@ -4,15 +4,35 @@ from qiskit_gates_generator import gate_generator
 import subprocess
 import sys
 import numpy as np
+from qiskit.circuit.library import XGate
+from qiskit.transpiler.passes import *
+from qiskit.transpiler import PassManager, generate_preset_pass_manager
+
+opt_passes = {  "Optimize1qGates": Optimize1qGates(), "Optimize1qGatesDecomposition":Optimize1qGatesDecomposition(),
+                "Collect1qRuns": Collect1qRuns(), "Collect2qBlocks": Collect2qBlocks(),
+                "CollectMultiQBlocks":CollectMultiQBlocks(),"CollectLinearFunctions":CollectLinearFunctions(),
+                "CollectCliffords":CollectCliffords(),"ConsolidateBlocks":ConsolidateBlocks(),
+                "CXCancellation":CXCancellation(),"InverseCancellation":InverseCancellation([XGate()]),
+                "CommutationAnalysis":CommutationAnalysis(),"CommutativeCancellation":CommutativeCancellation(),
+                "CommutativeInverseCancellation":CommutativeInverseCancellation(),
+                "Optimize1qGatesSimpleCommutation":Optimize1qGatesSimpleCommutation(),
+                "RemoveDiagonalGatesBeforeMeasure":RemoveDiagonalGatesBeforeMeasure(),
+                "RemoveResetInZeroState":RemoveResetInZeroState(),"RemoveFinalReset":RemoveFinalReset(),
+                "HoareOptimizer":HoareOptimizer(),"TemplateOptimization":TemplateOptimization(),
+                "ResetAfterMeasureSimplification":ResetAfterMeasureSimplification(), #"EchoRZXWeylDecomposition":EchoRZXWeylDecomposition(),
+                "OptimizeCliffords":OptimizeCliffords(),"ElidePermutations":ElidePermutations(),
+                "NormalizeRXAngle":NormalizeRXAngle(),"OptimizeAnnotated":OptimizeAnnotated()
+            }
 
 class QiskitGenerator:
-    def __init__(self, qubit_num, measure_num = 1, gate_num_upper = 5, measure_times = 1024, transplie = None, backend = "aer"):
+    def __init__(self, qubit_num, measure_num = 1, gate_num_upper = 5, measure_times = 1024, transplie = None, backend = "aer", use_pass = None):
         self.qnum = qubit_num
         self.code = ""
         self.qreg = "qreg"
         self.creg = "creg"
         self.qc = "qc"
         self.transpile = transplie
+        self.use_pass = use_pass
         self.backend = backend
         self.measure_times = measure_times
         self.measure_qubit_num = measure_num
@@ -28,6 +48,13 @@ class QiskitGenerator:
         elif self.backend == "GenericBackendV2":
             # 这个模拟器好像并不支持if_test语句
             code_line += f"simulator = GenericBackendV2(num_qubits={self.qnum}, seed=1234, noise_info=False) \n"
+        return code_line
+
+    def pass_option(self):
+        code_line = "\n"
+        if self.use_pass:
+            code_line += f"p = PassManager({self.use_pass}()) \n"
+            code_line += f"{self.qc} = p.run({self.qc}) \n"
         return code_line
 
     def transpile_option(self):
@@ -85,6 +112,10 @@ class QiskitGenerator:
         code_line += "from qiskit.providers.fake_provider import GenericBackendV2 \n"
         code_line += "from qiskit.providers.fake_provider import GenericBackendV2 \n"
         code_line += "from qiskit.circuit import Parameter, ParameterVector \n"
+        code_line += "from qiskit.circuit.library import XGate \n"
+        code_line += "from qiskit.transpiler.passes import * \n"
+        code_line += "import z3 \n"
+        code_line += "from qiskit.transpiler import PassManager, generate_preset_pass_manager \n"
         # code_line += "from helpers.qiskit_helpers import compare_statevectors, run_on_simulator, run_routing_simulation, run_pass_on_simulator \n"
         # code_line += "from pathlib import Path \n"
         code_line += "from math import pi \n"
@@ -120,6 +151,7 @@ class QiskitGenerator:
         elif show_type == "simulator":
             code_line += f"{self.qc}.measure({self.qreg}, {self.creg}) \n"
             code_line += self.simulator_option()
+            code_line += self.pass_option()
             code_line += self.transpile_option()
             code_line += f"job = simulator.run(compiled_circuit, shots={self.measure_times}) \n"
             code_line += f"result = job.result().get_counts() \n"
