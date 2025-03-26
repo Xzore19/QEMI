@@ -3,19 +3,59 @@ import random
 from qiskit_gates_generator import gate_generator
 import subprocess
 import sys
+import numpy as np
 
 class QiskitGenerator:
-    def __init__(self, qubit_num, measure_num = 1, gate_num_upper = 5):
+    def __init__(self, qubit_num, measure_num = 1, gate_num_upper = 5, measure_times = 1024, transplie = None, backend = "aer"):
         self.qnum = qubit_num
         self.code = ""
         self.qreg = "qreg"
         self.creg = "creg"
         self.qc = "qc"
+        self.transpile = transplie
+        self.backend = backend
+        self.measure_times = measure_times
         self.measure_qubit_num = measure_num
         self.gate_num_upper = gate_num_upper
         self.measure_index = random.sample(range(self.qnum), self.measure_qubit_num)
         self.filename = "temp_test.py"
         self.combine()
+
+    def simulator_option(self):
+        code_line = "\n"
+        if self.backend == "aer":
+            code_line += f"simulator = Aer.get_backend(\"aer_simulator\") \n"
+        elif self.backend == "GenericBackendV2":
+            # 这个模拟器好像并不支持if_test语句
+            code_line += f"simulator = GenericBackendV2(num_qubits={self.qnum}, seed=1234, noise_info=False) \n"
+        return code_line
+
+    def transpile_option(self):
+        optimization_level = [0, 1, 2, 3]
+        routing_method = ['none', 'stochastic', 'sabre']
+        layout_method = ["trivial", "dense", "noise_adaptive"]
+        scheduling_method = ["asap", "alap"]
+        basis_gates = []
+
+        code_line = "\n"
+
+        if self.transpile:
+            optimization_level = self.transpile["optimization_level"]
+            routing_method = self.transpile["routing_method"]
+            layout_method = self.transpile["layout_method"]
+            scheduling_method = self.transpile["scheduling_method"]
+            approximation_degree = self.transpile["approximation_degree"]
+
+        else:
+            optimization_level = random.choice(optimization_level)
+            routing_method = random.choice(routing_method)
+            layout_method = random.choice(layout_method)
+            scheduling_method = random.choice(scheduling_method)
+            approximation_degree = random.choice(np.linspace(0, 1, num=100000))
+
+        code_line += f"compiled_circuit = transpile({self.qc}, backend = simulator, optimization_level = {optimization_level}, routing_method = \"{routing_method}\", layout_method = \"{layout_method}\", approximation_degree = {approximation_degree} ) \n"
+        return code_line
+
 
     def combine(self):
         self.code += self.write_import()
@@ -42,6 +82,8 @@ class QiskitGenerator:
         code_line = ""
         code_line += "from qiskit import QuantumCircuit, QuantumRegister, ClassicalRegister, transpile \n"
         code_line += "from qiskit_aer import Aer \n"
+        code_line += "from qiskit.providers.fake_provider import GenericBackendV2 \n"
+        code_line += "from qiskit.providers.fake_provider import GenericBackendV2 \n"
         code_line += "from qiskit.circuit import Parameter, ParameterVector \n"
         # code_line += "from helpers.qiskit_helpers import compare_statevectors, run_on_simulator, run_routing_simulation, run_pass_on_simulator \n"
         # code_line += "from pathlib import Path \n"
@@ -69,7 +111,7 @@ class QiskitGenerator:
         return gate_code
 
     def final_part(self, show_type):
-        code_line = ""
+        code_line = "\n"
         if show_type == "draw":
             circuit_draw = "mpl"
             code_line += "import matplotlib as plt \n"
@@ -77,9 +119,9 @@ class QiskitGenerator:
             code_line += "plt.pyplot.show() \n"
         elif show_type == "simulator":
             code_line += f"{self.qc}.measure({self.qreg}, {self.creg}) \n"
-            code_line += f"simulator = Aer.get_backend(\"aer_simulator\") \n"
-            code_line += f"compiled_circuit = transpile({self.qc}, simulator) \n"
-            code_line += f"job = simulator.run(compiled_circuit, shots=1024) \n"
+            code_line += self.simulator_option()
+            code_line += self.transpile_option()
+            code_line += f"job = simulator.run(compiled_circuit, shots={self.measure_times}) \n"
             code_line += f"result = job.result().get_counts() \n"
             code_line += f"print(\"results:\", result)"
             code_line += "\n"
