@@ -7,6 +7,7 @@ import numpy as np
 from qiskit.circuit.library import XGate
 from qiskit.transpiler.passes import *
 from qiskit.transpiler import PassManager, generate_preset_pass_manager
+from qutefuzz.dead_code_fuzzer import DeadCodeFuzzer
 
 opt_passes = {  "Optimize1qGates": Optimize1qGates(), "Optimize1qGatesDecomposition":Optimize1qGatesDecomposition(),
                 "Collect1qRuns": Collect1qRuns(), "Collect2qBlocks": Collect2qBlocks(),
@@ -28,18 +29,45 @@ class QiskitGenerator:
     def __init__(self, qubit_num, measure_num = 1, gate_num_upper = 5, measure_times = 1024, transplie = None, backend = "aer", use_pass = None):
         self.qnum = qubit_num
         self.code = ""
+        self.fuzzing_code = ""
         self.qreg = "qreg"
         self.creg = "creg"
         self.qc = "qc"
-        self.transpile = transplie
-        self.use_pass = use_pass
+        self.gate_list = []
+        self.code_structure = "odi"
         self.backend = backend
         self.measure_times = measure_times
         self.measure_qubit_num = measure_num
         self.gate_num_upper = gate_num_upper
         self.measure_index = random.sample(range(self.qnum), self.measure_qubit_num)
-        self.filename = "temp_test.py"
+        self.result = random.choice(range(pow(2, len(self.measure_index))))
+        self.transpile = {}
+        self.use_pass = None
+
+
+        if self.code_structure == "odi":
+            self.gate_list.append(self.gate_generation(0))
+            self.gate_list.append(self.gate_generation(1))
+            self.gate_list.append(self.gate_generation(1))
+            self.gate_list.append(self.gate_generation(0))
+
+        if transplie:
+            self.transpile = transplie
+        else:
+            self.transpile_choice()
+
+        if use_pass:
+            self.use_pass = use_pass
+        else:
+            self.pass_choice()
+
+
+        self.filename = "fuzzing/temp_test.py"
+        self.fuzzing_filename = "fuzzing/fuzzing_test.py"
+
+
         self.combine()
+        self.fuzzing_combine()
 
     def simulator_option(self):
         code_line = "\n"
@@ -50,35 +78,37 @@ class QiskitGenerator:
             code_line += f"simulator = GenericBackendV2(num_qubits={self.qnum}, seed=1234, noise_info=False) \n"
         return code_line
 
+    def pass_choice(self):
+        pass_list = opt_passes.keys()
+        self.use_pass = random.choice(list(pass_list))
+
     def pass_option(self):
         code_line = "\n"
-        if self.use_pass:
-            code_line += f"p = PassManager({self.use_pass}()) \n"
-            code_line += f"{self.qc} = p.run({self.qc}) \n"
+        code_line += f"p = PassManager({self.use_pass}()) \n"
+        code_line += f"{self.qc} = p.run({self.qc}) \n"
         return code_line
 
-    def transpile_option(self):
+    def transpile_choice(self):
         optimization_level = [0, 1, 2, 3]
         routing_method = ['none', 'stochastic', 'sabre']
         layout_method = ["trivial", "dense", "noise_adaptive"]
         scheduling_method = ["asap", "alap"]
         basis_gates = []
 
+        self.transpile["optimization_level"] = random.choice(optimization_level)
+        self.transpile["routing_method"] = random.choice(routing_method)
+        self.transpile["layout_method"] = random.choice(layout_method)
+        self.transpile["scheduling_method"] = random.choice(scheduling_method)
+        self.transpile["approximation_degree"] = random.choice(np.linspace(0, 1, num=100000))
+
+    def transpile_option(self):
         code_line = "\n"
 
-        if self.transpile:
-            optimization_level = self.transpile["optimization_level"]
-            routing_method = self.transpile["routing_method"]
-            layout_method = self.transpile["layout_method"]
-            scheduling_method = self.transpile["scheduling_method"]
-            approximation_degree = self.transpile["approximation_degree"]
-
-        else:
-            optimization_level = random.choice(optimization_level)
-            routing_method = random.choice(routing_method)
-            layout_method = random.choice(layout_method)
-            scheduling_method = random.choice(scheduling_method)
-            approximation_degree = random.choice(np.linspace(0, 1, num=100000))
+        optimization_level = self.transpile["optimization_level"]
+        routing_method = self.transpile["routing_method"]
+        layout_method = self.transpile["layout_method"]
+        scheduling_method = self.transpile["scheduling_method"]
+        approximation_degree = self.transpile["approximation_degree"]
 
         code_line += f"compiled_circuit = transpile({self.qc}, backend = simulator, optimization_level = {optimization_level}, routing_method = \"{routing_method}\", layout_method = \"{layout_method}\", approximation_degree = {approximation_degree} ) \n"
         return code_line
@@ -87,20 +117,29 @@ class QiskitGenerator:
     def combine(self):
         self.code += self.write_import()
         self.code += self.basic_set()
-        self.code += self.gate_generation(0)
+        self.code += self.gate_list[0]
         self.code += self.only_dynamic_if()
-        self.code += self.gate_generation(0)
+        self.code += self.gate_list[3]
         self.code += self.final_part(show_type="simulator")
 
+    def fuzzing_combine(self):
+        self.fuzzing_code += self.write_import()
+        self.fuzzing_code += self.basic_set()
+        self.fuzzing_code += self.gate_list[0]
+        self.fuzzing_code += DeadCodeFuzzer().classical_dead()
+        self.fuzzing_code += self.only_dynamic_if()
+        self.fuzzing_code += self.gate_list[3]
+        self.fuzzing_code += self.final_part(show_type="simulator")
+
+
     def only_dynamic_if(self):
-        result = random.choice(range(pow(2, len(self.measure_index))))
         code_line = ""
         for i in self.measure_index:
             code_line += f"{self.qc}.measure({self.qreg}[{i}], {self.creg}[{i}])\n"
-        code_line += f"with {self.qc}.if_test(({self.creg}{self.measure_index}, {result})) as else_1: \n"
-        code_line += self.gate_generation(1)
+        code_line += f"with {self.qc}.if_test(({self.creg}{self.measure_index}, {self.result})) as else_1: \n"
+        code_line += self.gate_list[1]
         code_line += f"with else_1: \n"
-        code_line += self.gate_generation(1)
+        code_line += self.gate_list[2]
         code_line += "\n"
         return code_line
 
@@ -165,9 +204,15 @@ class QiskitGenerator:
 
         subprocess.run([sys.executable, self.filename])
 
+        with open(self.fuzzing_filename, "w") as file:
+            file.write(self.code)
+
+        subprocess.run([sys.executable, self.fuzzing_filename])
+
 
     def check_code(self):
         print(self.code)
+        print(self.fuzzing_code)
 
 if __name__ == "__main__":
     a = QiskitGenerator(5,1)
