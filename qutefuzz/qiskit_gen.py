@@ -205,7 +205,7 @@ class QiskitGenerator:
         subprocess.run([sys.executable, self.filename])
 
         with open(self.fuzzing_filename, "w") as file:
-            file.write(self.code)
+            file.write(self.fuzzing_code)
 
         subprocess.run([sys.executable, self.fuzzing_filename])
 
