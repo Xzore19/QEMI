@@ -5,6 +5,7 @@ qreg = QuantumRegister(5)  # 4 输入 + 1 辅助
 creg = ClassicalRegister(4)
 qc = QuantumCircuit(qreg, creg)
 
+<<<<<<< HEAD
 qc.x(qreg[4])  # 将辅助比特初始化为 |1⟩
 qc.h(qreg)  # 所有量子比特 Hadamard
 qc.cx(qreg[3], qreg[4])  # 非恒定函数：控制比特 3
@@ -14,6 +15,9 @@ qc.measure(qreg[0], creg[0])
 qc.measure(qreg[1], creg[1])
 qc.measure(qreg[2], creg[2])
 qc.measure(qreg[3], creg[3])
+=======
+qc.cx(3, 4)  # 非恒定函数：f(x) XOR 控制比特 3
+>>>>>>> cdd90927ac0dc3e9c38784d6eaf8771abd288ed3
 
 # 执行模拟器并获取测量结果
 backend = Aer.get_backend('aer_simulator')
