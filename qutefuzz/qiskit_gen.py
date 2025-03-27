@@ -223,7 +223,7 @@ class QiskitGenerator:
         # print("fuzzing_result:", fuzzing_result.stdout)
         # print(fuzzing_result.stderr == "")
 
-        if truth_result.stderr != "" or fuzzing_result.stderr != "":
+        if truth_result.stderr != fuzzing_result.stderr:
             print("Found crash!!!")
             directory = "fuzzing/buggy_program/crash"
 

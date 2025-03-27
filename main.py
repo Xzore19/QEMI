@@ -40,13 +40,13 @@ pass_option = ["Optimize1qGates", "Optimize1qGatesDecomposition", "Collect1qRuns
                "CommutationAnalysis", "CommutativeCancellation", "CommutativeInverseCancellation",
                "Optimize1qGatesSimpleCommutation", "RemoveDiagonalGatesBeforeMeasure", "RemoveResetInZeroState",
                "RemoveFinalReset", "HoareOptimizer", "TemplateOptimization", "ResetAfterMeasureSimplification",
-               "OptimizeCliffords", "ElidePermutations", "NormalizeRXAngle", "OptimizeAnnotated"]
+               "OptimizeCliffords", "ElidePermutations", "OptimizeAnnotated"]
 
 
 if __name__ == "__main__":
     tran_list = generate_transpile()
     for tran in tran_list:
         for pas in pass_option:
-            for i in tqdm(range(1), desc="Processing"):
-                a = QiskitGenerator(qubit_num = 3, measure_num = 1, gate_num_upper = 5, measure_times = 100, transplie = tran, backend="aer", use_pass= pas)
+            for i in tqdm(range(10), desc="Processing"):
+                a = QiskitGenerator(qubit_num = 5, measure_num = 1, gate_num_upper = 10, measure_times = 10000, transplie = tran, backend="aer", use_pass= pas)
                 a.run()

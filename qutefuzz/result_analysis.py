@@ -4,6 +4,7 @@ def probability_checker(truth, fuzzing, shot, qnum):
     for i in check_list:
         counter += abs(truth.get(i, 0) - fuzzing.get(i, 0))/2
     if counter/shot > 0.3:
+        print("error:", counter/shot)
         return False
     else:
         return True
