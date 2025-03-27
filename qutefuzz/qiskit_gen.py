@@ -1,4 +1,5 @@
 from string import Template
+import os
 import random
 from qiskit_gates_generator import gate_generator
 import subprocess
@@ -8,6 +9,7 @@ from qiskit.circuit.library import XGate
 from qiskit.transpiler.passes import *
 from qiskit.transpiler import PassManager, generate_preset_pass_manager
 from qutefuzz.dead_code_fuzzer import DeadCodeFuzzer
+from qutefuzz.result_analysis import probability_checker
 
 opt_passes = {  "Optimize1qGates": Optimize1qGates(), "Optimize1qGatesDecomposition":Optimize1qGatesDecomposition(),
                 "Collect1qRuns": Collect1qRuns(), "Collect2qBlocks": Collect2qBlocks(),
@@ -84,7 +86,12 @@ class QiskitGenerator:
 
     def pass_option(self):
         code_line = "\n"
-        code_line += f"p = PassManager({self.use_pass}()) \n"
+        if isinstance(self.use_pass, list):
+            code_line += "p = PassManager() \n"
+            for i in self.use_pass:
+                code_line += f"p.append({i}()) \n"
+        elif isinstance(self.use_pass, str):
+            code_line += f"p = PassManager({self.use_pass}()) \n"
         code_line += f"{self.qc} = p.run({self.qc}) \n"
         return code_line
 
@@ -99,7 +106,8 @@ class QiskitGenerator:
         self.transpile["routing_method"] = random.choice(routing_method)
         self.transpile["layout_method"] = random.choice(layout_method)
         self.transpile["scheduling_method"] = random.choice(scheduling_method)
-        self.transpile["approximation_degree"] = random.choice(np.linspace(0, 1, num=100000))
+        # self.transpile["approximation_degree"] = random.choice(np.linspace(0, 1, num=100000))
+        self.transpile["approximation_degree"] = 1
 
     def transpile_option(self):
         code_line = "\n"
@@ -110,6 +118,7 @@ class QiskitGenerator:
         scheduling_method = self.transpile["scheduling_method"]
         approximation_degree = self.transpile["approximation_degree"]
 
+        # 使用的参数是 optimizatio_level, routing_method, layout_method, approximation_degree
         code_line += f"compiled_circuit = transpile({self.qc}, backend = simulator, optimization_level = {optimization_level}, routing_method = \"{routing_method}\", layout_method = \"{layout_method}\", approximation_degree = {approximation_degree} ) \n"
         return code_line
 
@@ -194,7 +203,7 @@ class QiskitGenerator:
             code_line += self.transpile_option()
             code_line += f"job = simulator.run(compiled_circuit, shots={self.measure_times}) \n"
             code_line += f"result = job.result().get_counts() \n"
-            code_line += f"print(\"results:\", result)"
+            code_line += f"print(result)"
             code_line += "\n"
         return code_line
 
@@ -202,12 +211,59 @@ class QiskitGenerator:
         with open(self.filename, "w") as file:
             file.write(self.code)
 
-        subprocess.run([sys.executable, self.filename])
+        truth_result = subprocess.run([sys.executable, self.filename], capture_output=True, text=True)
 
         with open(self.fuzzing_filename, "w") as file:
             file.write(self.fuzzing_code)
 
-        subprocess.run([sys.executable, self.fuzzing_filename])
+        fuzzing_result = subprocess.run([sys.executable, self.fuzzing_filename], capture_output=True, text=True)
+
+        # print("truth_result:", truth_result.stdout)
+        # print(truth_result.stderr == "")
+        # print("fuzzing_result:", fuzzing_result.stdout)
+        # print(fuzzing_result.stderr == "")
+
+        if truth_result.stderr != "" or fuzzing_result.stderr != "":
+            print("Found crash!!!")
+            directory = "fuzzing/buggy_program/crash"
+
+            files = sorted(f for f in os.listdir(directory) if os.path.isfile(os.path.join(directory, f)))
+
+            if files:
+                pre, post = files[-1][:-3].split("_")
+                truth_file = directory + f"/truth_{str(int(post)+1)}.py"
+                fuzzing_file = directory + f"/fuzzing_{str(int(post) + 1)}.py"
+            else:
+                truth_file = directory + "/truth_0.py"
+                fuzzing_file = directory + "/fuzzing_0.py"
+
+            with open(truth_file, "w") as file:
+                file.write(self.code)
+
+            with open(fuzzing_file, "w") as file_f:
+                file_f.write(self.fuzzing_code)
+
+        elif not probability_checker(eval(truth_result.stdout), eval(fuzzing_result.stdout), shot=self.measure_times, qnum=self.qnum):
+            print("Found wrong!!!")
+            directory = "fuzzing/buggy_program/probability"
+
+            files = sorted(f for f in os.listdir(directory) if os.path.isfile(os.path.join(directory, f)))
+
+            if files:
+                pre, post = files[-1][:-3].split("_")
+                truth_file = directory + f"/truth_{str(int(post) + 1)}.py"
+                fuzzing_file = directory + f"/fuzzing_{str(int(post) + 1)}.py"
+            else:
+                truth_file = directory + "/truth_0.py"
+                fuzzing_file = directory + "/fuzzing_0.py"
+
+            with open(truth_file, "w") as file:
+                file.write(self.code)
+
+            with open(fuzzing_file, "w") as file_f:
+                file_f.write(self.fuzzing_code)
+
+
 
 
     def check_code(self):
