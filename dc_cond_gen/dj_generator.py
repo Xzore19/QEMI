@@ -1,68 +1,71 @@
 import random
 
-def generate_nonconstant_oracle_code(num_qubits, cir_name="qc"):
-    """
-    生成非恒定函数的 Deutsch-Jozsa Oracle 代码（字符串列表）
-    输出格式为多行字符串，例如：
-        qc.cx(0, 4)
-        qc.cx(2, 4)
-    """
+def generate_nonconstant_oracle_code(num_qubits, cir_name="qc", qreg_name="qreg"):
     aux = num_qubits
-    code_lines = []
-
     num_ctrls = random.randint(1, num_qubits)
     ctrl_qubits = random.sample(range(num_qubits), num_ctrls)
+    lines = []
     for ctrl in ctrl_qubits:
-        code_lines.append(f"{cir_name}.cx({ctrl}, {aux})  # 非恒定函数：f(x) XOR 控制比特 {ctrl}")
+        lines.append(f"{cir_name}.cx({qreg_name}[{ctrl}], {qreg_name}[{aux}])  # 非恒定函数：控制比特 {ctrl}")
+    return lines
 
-    return code_lines
 
-
-def generate_dj_nonconstant_code(num_qubits=4, circuit_name="qc"):
-    """
-    生成完整的 Deutsch-Jozsa 算法（非恒定函数版本）Python 源码（字符串形式）
-    """
+def generate_dj_alg_code(num_qubits=4, cir_name="qc", qreg_name="qreg", creg_name="creg"):
     aux = num_qubits
-    header = [
-        "from qiskit import QuantumCircuit, transpile",
-        "from qiskit_aer import Aer",
-        "",
-        f"{circuit_name} = QuantumCircuit({num_qubits+1}, {num_qubits})  # {num_qubits} 输入比特 + 1 辅助比特",
-        f"{circuit_name}.x({aux})  # 将辅助比特初始化为 |1⟩",
-        f"{circuit_name}.h(range({num_qubits+1}))  # 所有比特做 Hadamard"
+    lines = [
+        f"{cir_name}.x({qreg_name}[{aux}])  # 将辅助比特初始化为 |1⟩",
+        f"{cir_name}.h({qreg_name})  # 所有量子比特 Hadamard",
     ]
 
-    # 插入 Oracle（调用独立函数）
-    oracle_code = generate_nonconstant_oracle_code(num_qubits, cir_name=circuit_name)
+    lines += generate_nonconstant_oracle_code(num_qubits, cir_name, qreg_name)
 
-    # 下面这一块不用管，走的一个标准的执行代码的流程而已
-    tail = [
-        f"{circuit_name}.h(range({num_qubits}))  # 再次 Hadamard（输入比特）",
-        f"{circuit_name}.measure(range({num_qubits}), range({num_qubits}))",
+    lines.append(
+        f"{cir_name}.h([{', '.join(f'{qreg_name}[{i}]' for i in range(num_qubits))}])  # 输入比特再次 Hadamard"
+    )
+
+    for i in range(num_qubits):
+        lines.append(f"{cir_name}.measure({qreg_name}[{i}], {creg_name}[{i}])")
+
+    return lines
+
+
+def generate_dj_nonconstant_code(num_qubits=4, cir_name="qc", qreg_name="qreg", creg_name="creg"):
+    header = [
+        "from qiskit import QuantumCircuit, QuantumRegister, ClassicalRegister, transpile",
+        "from qiskit_aer import Aer",
         "",
-        "# 编译并运行",
+        f"{qreg_name} = QuantumRegister({num_qubits + 1})  # {num_qubits} 输入 + 1 辅助",
+        f"{creg_name} = ClassicalRegister({num_qubits})",
+        f"{cir_name} = QuantumCircuit({qreg_name}, {creg_name})",
+        ""
+    ]
+
+    body = generate_dj_alg_code(num_qubits, cir_name, qreg_name, creg_name)
+
+    footer = [
+        "",
+        "# 执行模拟器并获取测量结果",
         "backend = Aer.get_backend('aer_simulator')",
-        f"compiled = transpile({circuit_name}, backend)",
+        f"compiled = transpile({cir_name}, backend)",
         f"job = backend.run(compiled, shots=1024)",
-        "result = job.result().get_counts()",
-        "print('Deutsch-Jozsa 测量结果:', result)",
+        "dj_result = job.result().get_counts()",
         "",
-        "# 判定是否为非恒定函数",
-        f"if list(result.keys()) == ['{'0'*num_qubits}']:",
+        "print('Deutsch-Jozsa 测量结果:', dj_result)",
+        f"if list(dj_result.keys()) == ['{'0'*num_qubits}']:",
         "    print('❌ 错误：被识别为恒定函数')",
         "else:",
         "    print('✅ 正确：该函数是非恒定函数')"
     ]
 
-    code = "\n".join(header + [""] + oracle_code + [""] + tail)
-    return code
+    return "\n".join(header + body + footer)
+
+
+def write_dj_code_to_file(filename="dj_test.py", num_qubits=4):
+    code = generate_dj_nonconstant_code(num_qubits)
+    with open(filename, "w", encoding="utf-8") as f:
+        f.write(code)
+    print(f"✅ 已生成代码文件：{filename}")
 
 
 if __name__ == "__main__":
-    filename = "dj_test.py"
-    code = generate_dj_nonconstant_code(num_qubits=4)
-
-    with open(filename, "w", encoding="utf-8") as f:
-        f.write(code)
-
-    print(f"✅ 已生成非恒定 Deutsch-Jozsa 算法脚本：{filename}")
+    write_dj_code_to_file("dj_test.py", num_qubits=4)
