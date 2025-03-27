@@ -1,24 +1,40 @@
-from qiskit import QuantumCircuit, transpile
+from qiskit import QuantumCircuit, QuantumRegister, ClassicalRegister, transpile
 from qiskit_aer import Aer
 
-qc = QuantumCircuit(5, 4)  # 4 输入比特 + 1 辅助比特
-qc.x(4)  # 将辅助比特初始化为 |1⟩
-qc.h(range(5))  # 所有比特做 Hadamard
+dj_qreg = QuantumRegister(9)  # 8 输入 + 1 辅助
+dj_creg = ClassicalRegister(8)
+qc = QuantumCircuit(dj_qreg, dj_creg)
 
-qc.cx(3, 4)  # 非恒定函数：f(x) XOR 控制比特 3
+qc.x(dj_qreg[8])  # 将辅助比特初始化为 |1⟩
+qc.h(dj_qreg)  # 所有量子比特 Hadamard
+qc.cx(dj_qreg[1], dj_qreg[7])  # 非恒定函数：控制比特 1
+qc.cx(dj_qreg[4], dj_qreg[7])  # 非恒定函数：控制比特 4
+qc.rz(2.4786, dj_qreg[5])
+qc.iswap(dj_qreg[6], dj_qreg[5])
+qc.rz(0.1438, dj_qreg[5])
+qc.rz(1.9601, dj_qreg[4])
+qc.h(dj_qreg[6])
+qc.ccx(dj_qreg[1], dj_qreg[6], dj_qreg[4])
+qc.h([dj_qreg[0], dj_qreg[1], dj_qreg[2], dj_qreg[3], dj_qreg[4], dj_qreg[5], dj_qreg[6], dj_qreg[7]])  # 输入比特再次 Hadamard
+qc.measure(dj_qreg[0], dj_creg[0])
+qc.measure(dj_qreg[1], dj_creg[1])
+qc.measure(dj_qreg[2], dj_creg[2])
+qc.measure(dj_qreg[3], dj_creg[3])
+qc.measure(dj_qreg[4], dj_creg[4])
+qc.measure(dj_qreg[5], dj_creg[5])
+qc.measure(dj_qreg[6], dj_creg[6])
+qc.measure(dj_qreg[7], dj_creg[7])
 
-qc.h(range(4))  # 再次 Hadamard（输入比特）
-qc.measure(range(4), range(4))
-
-# 编译并运行
+# 执行模拟器并获取测量结果
 backend = Aer.get_backend('aer_simulator')
 compiled = transpile(qc, backend)
 job = backend.run(compiled, shots=1024)
-result = job.result().get_counts()
-print('Deutsch-Jozsa 测量结果:', result)
+dj_result = job.result().get_counts()
 
-# 判定是否为非恒定函数
-if list(result.keys()) == ['0000']:
-    print('❌ 错误：被识别为恒定函数')
+# 提取前 4 位作为 Deutsch-Jozsa 判定依据
+dj_only_result = {k[:4]: v for k, v in dj_result.items()}
+print('Deutsch-Jozsa 结果 (前4位):', dj_only_result)
+if list(dj_only_result.keys()) == ['0000']:
+    print('❌ 被识别为恒定函数')
 else:
-    print('✅ 正确：该函数是非恒定函数')
+    print('✅ 被识别为非恒定函数')
