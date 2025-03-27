@@ -105,7 +105,7 @@ class QiskitGenerator:
         self.transpile["optimization_level"] = random.choice(optimization_level)
         self.transpile["routing_method"] = random.choice(routing_method)
         self.transpile["layout_method"] = random.choice(layout_method)
-        self.transpile["scheduling_method"] = random.choice(scheduling_method)
+        # self.transpile["scheduling_method"] = random.choice(scheduling_method)
         # self.transpile["approximation_degree"] = random.choice(np.linspace(0, 1, num=100000))
         self.transpile["approximation_degree"] = 1
 
@@ -115,7 +115,7 @@ class QiskitGenerator:
         optimization_level = self.transpile["optimization_level"]
         routing_method = self.transpile["routing_method"]
         layout_method = self.transpile["layout_method"]
-        scheduling_method = self.transpile["scheduling_method"]
+        # scheduling_method = self.transpile["scheduling_method"]
         approximation_degree = self.transpile["approximation_degree"]
 
         # 使用的参数是 optimizatio_level, routing_method, layout_method, approximation_degree

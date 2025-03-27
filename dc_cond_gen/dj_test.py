@@ -6,9 +6,6 @@ qc.x(4)  # 将辅助比特初始化为 |1⟩
 qc.h(range(5))  # 所有比特做 Hadamard
 
 qc.cx(3, 4)  # 非恒定函数：f(x) XOR 控制比特 3
-qc.cx(1, 4)  # 非恒定函数：f(x) XOR 控制比特 1
-qc.cx(2, 4)  # 非恒定函数：f(x) XOR 控制比特 2
-qc.cx(0, 4)  # 非恒定函数：f(x) XOR 控制比特 0
 
 qc.h(range(4))  # 再次 Hadamard（输入比特）
 qc.measure(range(4), range(4))

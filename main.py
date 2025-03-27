@@ -1,14 +1,31 @@
 from qutefuzz.qiskit_gen import QiskitGenerator
 from tqdm import tqdm
 
-transpile_detail = {
+optimization_level = [1, 2, 3]
+routing_method = ['none', 'stochastic', 'sabre']
+layout_method = ["trivial", "dense", "noise_adaptive"]
+
+transpile_detail_0 = {
     "optimization_level": 1,
-    "routing_method": "basic",
+    "routing_method": "none",
     "layout_method": "trivial",
-    "scheduling_method": "asap",
     "approximation_degree": 1,
-    "basis_gates": None
 }
+
+def generate_transpile():
+    transpile_list = []
+    transpile_detail = {"approximation_degree": 1}
+    for opt in optimization_level:
+        transpile_detail["optimization_level"] = opt
+        for rou in routing_method:
+            transpile_detail["routing_method"] = rou
+            for lay in layout_method:
+                transpile_detail["layout_method"] = lay
+                transpile_list.append(transpile_detail)
+    return transpile_list
+
+
+
 
 # pass_option = ["Optimize1qGates", "Optimize1qGatesDecomposition", "Collect1qRuns",
 #                "Collect2qBlocks", "CollectMultiQBlocks", "CollectLinearFunctions",
@@ -27,6 +44,9 @@ pass_option = ["Optimize1qGates", "Optimize1qGatesDecomposition", "Collect1qRuns
 
 
 if __name__ == "__main__":
-    for i in tqdm(range(1), desc="Processing"):
-        a = QiskitGenerator(qubit_num = 3, measure_num = 1, gate_num_upper = 5, measure_times = 2000, transplie = None, backend="aer", use_pass= pass_option)
-        a.run()
+    tran_list = generate_transpile()
+    for tran in tran_list:
+        for pas in pass_option:
+            for i in tqdm(range(1), desc="Processing"):
+                a = QiskitGenerator(qubit_num = 3, measure_num = 1, gate_num_upper = 5, measure_times = 100, transplie = tran, backend="aer", use_pass= pas)
+                a.run()
