@@ -7,19 +7,14 @@ qc = QuantumCircuit(dj_qreg, dj_creg)
 
 qc.x(dj_qreg[8])  # 将辅助比特初始化为 |1⟩
 qc.h(dj_qreg)  # 所有量子比特 Hadamard
-qc.cx(dj_qreg[5], dj_qreg[7])  # 非恒定函数：控制比特 5
+qc.cx(dj_qreg[1], dj_qreg[7])  # 非恒定函数：控制比特 1
 qc.cx(dj_qreg[4], dj_qreg[7])  # 非恒定函数：控制比特 4
-qc.cx(dj_qreg[2], dj_qreg[7])  # 非恒定函数：控制比特 2
-qc.cx(dj_qreg[6], dj_qreg[7])  # 非恒定函数：控制比特 6
-qc.cx(dj_qreg[3], dj_qreg[7])  # 非恒定函数：控制比特 3
-qc.ccx(dj_qreg[6], dj_qreg[2], dj_qreg[5])
-qc.ccx(dj_qreg[0], dj_qreg[2], dj_qreg[5])
-qc.cx(dj_qreg[6], dj_qreg[5])
-qc.ccx(dj_qreg[2], dj_qreg[5], dj_qreg[6])
-qc.rz(0.2728, dj_qreg[4])
-qc.rz(1.2355, dj_qreg[6])
-qc.crx(0.6357, dj_qreg[1], dj_qreg[3])
-qc.iswap(dj_qreg[5], dj_qreg[4])
+qc.rz(2.4786, dj_qreg[5])
+qc.iswap(dj_qreg[6], dj_qreg[5])
+qc.rz(0.1438, dj_qreg[5])
+qc.rz(1.9601, dj_qreg[4])
+qc.h(dj_qreg[6])
+qc.ccx(dj_qreg[1], dj_qreg[6], dj_qreg[4])
 qc.h([dj_qreg[0], dj_qreg[1], dj_qreg[2], dj_qreg[3], dj_qreg[4], dj_qreg[5], dj_qreg[6], dj_qreg[7]])  # 输入比特再次 Hadamard
 qc.measure(dj_qreg[0], dj_creg[0])
 qc.measure(dj_qreg[1], dj_creg[1])

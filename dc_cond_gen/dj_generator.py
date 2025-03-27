@@ -21,43 +21,64 @@ def generate_enhanced_oracle_code(
     qreg_name="dj_qreg",
     dj_qubit_indices=None,
     enhanced_qubit_indices=None,
+    aux_index=None,
     num_extra_gates=6
 ):
+    """
+    生成增强 Oracle 操作：
+    - 控制位：允许任意 qubit
+    - 目标位：必须排除 DJ 比特和辅助位
+    """
     if dj_qubit_indices is None:
         dj_qubit_indices = list(range(4))
+    if aux_index is None:
+        aux_index = num_qubits - 1
     if enhanced_qubit_indices is None:
-        enhanced_qubit_indices = list(range(4, num_qubits))
+        enhanced_qubit_indices = list(set(range(num_qubits)) - set(dj_qubit_indices) - {aux_index})
 
-    available_controls = list(range(num_qubits))
-    target_qubits = enhanced_qubit_indices
+    if not enhanced_qubit_indices:
+        return ["# ⚠️ 无可用目标 qubit，跳过增强 oracle"]
+
+    available_controls = list(set(range(num_qubits)) - {aux_index})
+    valid_targets = enhanced_qubit_indices
 
     gate_templates = []
 
     for _ in range(num_extra_gates):
         gate_type = random.choice(["cx", "ccx", "crx", "crz", "rz", "iswap", "h"])
+
         if gate_type == "cx":
-            pair = random.sample(range(num_qubits), 2)
-            gate_templates.append(f"{cir_name}.cx({qreg_name}[{pair[0]}], {qreg_name}[{pair[1]}])")
+            ctrl, tgt = random.sample(available_controls, 2)
+            if tgt in valid_targets:
+                gate_templates.append(f"{cir_name}.cx({qreg_name}[{ctrl}], {qreg_name}[{tgt}])")
+
         elif gate_type == "ccx":
-            triplet = random.sample(range(num_qubits), 3)
-            gate_templates.append(f"{cir_name}.ccx({qreg_name}[{triplet[0]}], {qreg_name}[{triplet[1]}], {qreg_name}[{triplet[2]}])")
+            c1, c2, tgt = random.sample(available_controls, 3)
+            if tgt in valid_targets:
+                gate_templates.append(f"{cir_name}.ccx({qreg_name}[{c1}], {qreg_name}[{c2}], {qreg_name}[{tgt}])")
+
         elif gate_type == "crx":
-            ctrl, tgt = random.sample(range(num_qubits), 2)
             theta = round(random.uniform(0.1, pi), 4)
-            gate_templates.append(f"{cir_name}.crx({theta}, {qreg_name}[{ctrl}], {qreg_name}[{tgt}])")
+            ctrl, tgt = random.sample(available_controls, 2)
+            if tgt in valid_targets:
+                gate_templates.append(f"{cir_name}.crx({theta}, {qreg_name}[{ctrl}], {qreg_name}[{tgt}])")
+
         elif gate_type == "crz":
-            ctrl, tgt = random.sample(range(num_qubits), 2)
             theta = round(random.uniform(0.1, pi), 4)
-            gate_templates.append(f"{cir_name}.crz({theta}, {qreg_name}[{ctrl}], {qreg_name}[{tgt}])")
+            ctrl, tgt = random.sample(available_controls, 2)
+            if tgt in valid_targets:
+                gate_templates.append(f"{cir_name}.crz({theta}, {qreg_name}[{ctrl}], {qreg_name}[{tgt}])")
+
         elif gate_type == "rz":
-            tgt = random.choice(target_qubits)
-            theta = round(random.uniform(0.1, pi), 4)
-            gate_templates.append(f"{cir_name}.rz({theta}, {qreg_name}[{tgt}])")
+            tgt = random.choice(valid_targets)
+            gate_templates.append(f"{cir_name}.rz({round(random.uniform(0.1, pi), 4)}, {qreg_name}[{tgt}])")
+
         elif gate_type == "iswap":
-            q1, q2 = random.sample(target_qubits, 2)
+            q1, q2 = random.sample(valid_targets, 2)
             gate_templates.append(f"{cir_name}.iswap({qreg_name}[{q1}], {qreg_name}[{q2}])")
+
         elif gate_type == "h":
-            tgt = random.choice(target_qubits)
+            tgt = random.choice(valid_targets)
             gate_templates.append(f"{cir_name}.h({qreg_name}[{tgt}])")
 
     return gate_templates
