@@ -242,6 +242,8 @@ class QiskitGenerator:
 
             with open(fuzzing_file, "w") as file_f:
                 file_f.write(self.fuzzing_code)
+        elif (truth_result.stderr != "" and fuzzing_result.stderr != ""):
+            pass
 
         elif not probability_checker(eval(truth_result.stdout), eval(fuzzing_result.stdout), shot=self.measure_times, qnum=self.qnum):
             print("Found wrong!!!")
