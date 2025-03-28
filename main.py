@@ -14,6 +14,7 @@ transpile_detail_0 = {
 }
 
 def generate_transpile():
+    # 对于transpile函数的几个基本参数的遍历
     transpile_list = []
     transpile_detail = {"approximation_degree": 1}
     for opt in optimization_level:
@@ -36,13 +37,14 @@ def generate_transpile():
 #                "RemoveFinalReset", "HoareOptimizer", "TemplateOptimization", "ResetAfterMeasureSimplification",
 #                "OptimizeCliffords", "ElidePermutations", "NormalizeRXAngle", "OptimizeAnnotated"]
 pass_option = ["Optimize1qGates", "Optimize1qGatesDecomposition", "Collect1qRuns",
-               "Collect2qBlocks", "CollectMultiQBlocks", "CollectLinearFunctions",
+               "Collect2qBlocks", "CollectMultiQBlocks",
                "CollectCliffords", "ConsolidateBlocks", "CXCancellation",
                "CommutationAnalysis", "CommutativeCancellation", "CommutativeInverseCancellation",
                "Optimize1qGatesSimpleCommutation", "RemoveDiagonalGatesBeforeMeasure", "RemoveResetInZeroState",
                "RemoveFinalReset", "HoareOptimizer", "TemplateOptimization", "ResetAfterMeasureSimplification",
                "OptimizeCliffords", "ElidePermutations", "OptimizeAnnotated"]
 
+# pass_option = ["CollectLinearFunctions"]
 
 if __name__ == "__main__":
     tran_list = generate_transpile()
@@ -50,7 +52,7 @@ if __name__ == "__main__":
     for tran in tran_list:
         for pas in pass_option:
             for i in tqdm(range(100), desc="Processing"):
-                a = QiskitGenerator(qubit_num = 5, measure_num = 1, gate_num_upper = 50, measure_times = 10000, transplie = tran, backend="aer", use_pass= pas)
+                a = QiskitGenerator(qubit_num = 5, measure_num = 1, gate_num_upper = 10, measure_times = 10000, transplie = tran, backend="aer", use_pass= pas)
                 a.run()
 
                 # 释放内存，防止因为循环的内存崩溃报错

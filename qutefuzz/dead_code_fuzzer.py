@@ -1,4 +1,5 @@
 class DeadCodeFuzzer():
+    # 用于生成明确的dead code
     def __init__(self):
         pass
 

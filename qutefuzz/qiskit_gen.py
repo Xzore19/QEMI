@@ -72,6 +72,7 @@ class QiskitGenerator:
         self.fuzzing_combine()
 
     def simulator_option(self):
+        # 指定使用的模拟器，默认使用的aer
         code_line = "\n"
         if self.backend == "aer":
             code_line += f"simulator = Aer.get_backend(\"aer_simulator\") \n"
@@ -81,10 +82,13 @@ class QiskitGenerator:
         return code_line
 
     def pass_choice(self):
+        # 对于pass优化未指定的情况下，随机从opt_passes中选择优化方法
         pass_list = opt_passes.keys()
         self.use_pass = random.choice(list(pass_list))
 
     def pass_option(self):
+        # 对于指定的pass优化方法，在程序中添加对应的代码
+        # 使用pass优化方法的执行，使用PassManager
         code_line = "\n"
         if isinstance(self.use_pass, list):
             code_line += "p = PassManager() \n"
@@ -96,6 +100,7 @@ class QiskitGenerator:
         return code_line
 
     def transpile_choice(self):
+        # 对于未指定transpile函数中的参数时，随机指定以下的参数
         optimization_level = [0, 1, 2, 3]
         routing_method = ['none', 'stochastic', 'sabre']
         layout_method = ["trivial", "dense", "noise_adaptive"]
@@ -110,6 +115,7 @@ class QiskitGenerator:
         self.transpile["approximation_degree"] = 1
 
     def transpile_option(self):
+        # 对于指定的transpile函数的参数，在qiskit程序中添加对应的参数
         code_line = "\n"
 
         optimization_level = self.transpile["optimization_level"]
@@ -124,24 +130,42 @@ class QiskitGenerator:
 
 
     def combine(self):
+        # 未fuzzing的程序生成
+
+        # 添加基本的import函数
         self.code += self.write_import()
+
+        # 添加基本的QuantumCircuit， QuantumRegister， ClassicalRegister的声明语句
         self.code += self.basic_set()
+
+        # 添加声明后的第一组量子门操作
         self.code += self.gate_list[0]
+
+        # 添加最基本的dynamic circuit的逻辑语句
         self.code += self.only_dynamic_if()
+
+        # 添加if_test语句结束后的量子门操作
         self.code += self.gate_list[3]
+
+        # 添加实现优化和模拟器调用的代码
         self.code += self.final_part(show_type="simulator")
 
     def fuzzing_combine(self):
         self.fuzzing_code += self.write_import()
         self.fuzzing_code += self.basic_set()
         self.fuzzing_code += self.gate_list[0]
+
+        # 在if_test语句前添加dead code进行fuzzing
         self.fuzzing_code += DeadCodeFuzzer().classical_dead()
+
         self.fuzzing_code += self.only_dynamic_if()
         self.fuzzing_code += self.gate_list[3]
         self.fuzzing_code += self.final_part(show_type="simulator")
 
 
     def only_dynamic_if(self):
+        # 最基本的dynamic circuit
+        # 只使用if_test执行的单次控制流嵌套
         code_line = ""
         for i in self.measure_index:
             code_line += f"{self.qc}.measure({self.qreg}[{i}], {self.creg}[{i}])\n"
@@ -154,6 +178,7 @@ class QiskitGenerator:
 
 
     def write_import(self):
+        # 最基本的import语句
         code_line = ""
         code_line += "from qiskit import QuantumCircuit, QuantumRegister, ClassicalRegister, transpile \n"
         code_line += "from qiskit_aer import Aer \n"
@@ -171,6 +196,7 @@ class QiskitGenerator:
         return code_line
 
     def basic_set(self):
+        # 声明QuantumCircuit， QuantumRegister， ClassicalRegister语句
         code_line = ""
         code_line += f"{self.qreg} = QuantumRegister({self.qnum}) \n"
         code_line += f"{self.creg} = ClassicalRegister({self.qnum}) \n"
@@ -184,12 +210,15 @@ class QiskitGenerator:
 
 
     def gate_generation(self, indent):
+        # 随机量子门操作的构建
         gate_code = ""
         for i in range(self.gate_num_upper):
             gate_code += "\t"* indent + gate_generator(qubits_num=self.qnum, cir_name=self.qc) + "\n"
         return gate_code
 
     def final_part(self, show_type):
+        # QuantumCircuit构建后的实验结果
+        # 提供生成matplotlib生成电路图，和模拟器调用执行的代码
         code_line = "\n"
         if show_type == "draw":
             circuit_draw = "mpl"
@@ -208,10 +237,13 @@ class QiskitGenerator:
         return code_line
 
     def run(self):
+        # 运行原始ground truth程序，和经过dead code fuzzing的程序
         with open(self.filename, "w") as file:
             file.write(self.code)
 
         truth_result = subprocess.run([sys.executable, self.filename], capture_output=True, text=True)
+        # truth_result = subprocess.Popen([sys.executable, self.filename], stdout=subprocess.PIPE, stderr=subprocess.PIPE,
+        #                                 text=True)
 
         with open(self.fuzzing_filename, "w") as file:
             file.write(self.fuzzing_code)
@@ -269,6 +301,7 @@ class QiskitGenerator:
 
 
     def check_code(self):
+        # 检查truth代码和fuzzing代码
         print(self.code)
         print(self.fuzzing_code)
 
