@@ -1,6 +1,6 @@
 import random
 from math import pi
-from qiskit import QuantumCircuit, ClassicalRegister, QuantumRegister, transpile
+from qiskit import QuantumCircuit, ClassicalRegister
 
 ################################################################################
 # 平衡函数 Oracle 构造方法（默认随机选择 dot_product 或 majority）
@@ -9,7 +9,7 @@ def generate_balanced_oracle_code(num_qubits, cir_name="qc", qreg_name="dj_qreg"
         raise ValueError("dj_qubit_indices and aux_index must be provided")
 
     if method is None:
-        method = random.choice(["dot_product", "majority"])
+        method = random.choice(["dot_product"])
 
     lines = [f"# === Oracle 主体部分（平衡函数：{method}） ==="]
 
@@ -40,6 +40,22 @@ def generate_enhanced_oracle_code(
     if dj_qubit_indices is None or aux_index is None:
         raise ValueError("dj_qubit_indices and aux_index must be provided")
 
+    # 可用的特殊角度值（float 极值、数学常数等）
+    special_angles = [
+        0.0,
+        3.141592653589793, -3.141592653589793,      # pi, -pi
+        1.5707963267948966, -1.5707963267948966,     # pi/2, -pi/2
+        1.0, -1.0,
+        1.4142135623730951, -1.4142135623730951,     # sqrt(2)
+        1.7976931348623157e+308,                    # float max
+        -1.7976931348623157e+308,
+        2.2250738585072014e-308,                    # float min positive
+        -2.2250738585072014e-308
+    ]
+
+    def get_special_theta():
+        return random.choice(special_angles)
+
     safe_indices = list(set(range(num_qubits)) - set(dj_qubit_indices) - {aux_index})
     if not safe_indices or len(safe_indices) < 2:
         return ["# ⚠️ 无可用增强 qubit，跳过增强 oracle"]
@@ -52,11 +68,11 @@ def generate_enhanced_oracle_code(
             ctrl, tgt = random.sample(safe_indices, 2)
             lines.append(f"{cir_name}.cx({qreg_name}[{ctrl}], {qreg_name}[{tgt}])")
         elif gate == "crx":
-            theta = round(random.uniform(0.1, pi), 4)
+            theta = get_special_theta()
             ctrl, tgt = random.sample(safe_indices, 2)
             lines.append(f"{cir_name}.crx({theta}, {qreg_name}[{ctrl}], {qreg_name}[{tgt}])")
         elif gate == "crz":
-            theta = round(random.uniform(0.1, pi), 4)
+            theta = get_special_theta()
             ctrl, tgt = random.sample(safe_indices, 2)
             lines.append(f"{cir_name}.crz({theta}, {qreg_name}[{ctrl}], {qreg_name}[{tgt}])")
         elif gate == "iswap":
@@ -64,7 +80,7 @@ def generate_enhanced_oracle_code(
             lines.append(f"{cir_name}.iswap({qreg_name}[{q1}], {qreg_name}[{q2}])")
         elif gate == "rz":
             tgt = random.choice(safe_indices)
-            theta = round(random.uniform(0.1, pi), 4)
+            theta = get_special_theta()
             lines.append(f"{cir_name}.rz({theta}, {qreg_name}[{tgt}])")
         elif gate == "h":
             tgt = random.choice(safe_indices)

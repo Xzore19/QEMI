@@ -8,15 +8,15 @@ qc = QuantumCircuit(dj_qreg, dj_creg)
 qc.x(dj_qreg[8])
 qc.h([dj_qreg[0], dj_qreg[1], dj_qreg[2], dj_qreg[3], dj_qreg[4], dj_qreg[5], dj_qreg[6], dj_qreg[7], dj_qreg[8]])
 # === Oracle 主体部分（平衡函数：dot_product） ===
-qc.cx(dj_qreg[2], dj_qreg[8])  # 平衡函数：x[2] ⊕ ...
+qc.cx(dj_qreg[1], dj_qreg[8])  # 平衡函数：x[1] ⊕ ...
 # === Oracle 增强部分（不影响 DJ 区） ===
+qc.crz(0.0, dj_qreg[4], dj_qreg[7])
+qc.h(dj_qreg[4])
 qc.iswap(dj_qreg[6], dj_qreg[4])
-qc.crz(1.3888, dj_qreg[5], dj_qreg[7])
-qc.iswap(dj_qreg[5], dj_qreg[6])
-qc.h(dj_qreg[7])
-qc.h(dj_qreg[5])
-qc.rz(2.6028, dj_qreg[5])
-qc.rz(1.2263, dj_qreg[6])
+qc.rz(-1.7976931348623157e+308, dj_qreg[6])
+qc.cx(dj_qreg[4], dj_qreg[7])
+qc.rz(0.0, dj_qreg[5])
+qc.crx(-2.2250738585072014e-308, dj_qreg[6], dj_qreg[7])
 qc.h(dj_qreg[7])
 qc.h([dj_qreg[0], dj_qreg[1], dj_qreg[2], dj_qreg[3]])
 qc.measure(dj_qreg[0], dj_creg[0])
