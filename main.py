@@ -1,5 +1,6 @@
 from qutefuzz.qiskit_gen import QiskitGenerator
 from tqdm import tqdm
+import gc
 
 optimization_level = [1, 2, 3]
 routing_method = ['none', 'stochastic', 'sabre']
@@ -47,6 +48,10 @@ if __name__ == "__main__":
     tran_list = generate_transpile()
     for tran in tran_list:
         for pas in pass_option:
-            for i in tqdm(range(10), desc="Processing"):
-                a = QiskitGenerator(qubit_num = 5, measure_num = 1, gate_num_upper = 10, measure_times = 10000, transplie = tran, backend="aer", use_pass= pas)
+            for i in tqdm(range(100), desc="Processing"):
+                a = QiskitGenerator(qubit_num = 5, measure_num = 1, gate_num_upper = 50, measure_times = 10000, transplie = tran, backend="aer", use_pass= pas)
                 a.run()
+
+                # 释放内存，防止因为循环的内存崩溃报错
+                del a
+                gc.collect()
