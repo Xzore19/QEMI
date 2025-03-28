@@ -3,7 +3,9 @@ from qiskit_aer import Aer
 from dj_generator import generate_dj_subcircuit  # ✅ 你的模块文件名
 
 def test_generate_dj_subcircuit(num_qubits=8, dj_bits=4, method=None):
+    ##################看这行！！！！####################
     sub_circuit, creg = generate_dj_subcircuit(num_qubits=num_qubits, dj_bits=dj_bits, method=method)
+    ##################就这行！！！！####################
 
     backend = Aer.get_backend("aer_simulator")
     compiled = transpile(sub_circuit, backend)
