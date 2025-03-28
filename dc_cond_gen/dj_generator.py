@@ -1,20 +1,32 @@
 import random
 from math import pi
+from qiskit import QuantumCircuit, ClassicalRegister, QuantumRegister, transpile
 
 ################################################################################
-# 这里是oracle的生成代码
-def generate_nonconstant_oracle_code(num_qubits, cir_name="qc", qreg_name="dj_qreg", dj_qubit_indices=None, aux_index=None):
+# 平衡函数 Oracle 构造方法（默认随机选择 dot_product 或 majority）
+def generate_balanced_oracle_code(num_qubits, cir_name="qc", qreg_name="dj_qreg", dj_qubit_indices=None, aux_index=None, method=None):
     if dj_qubit_indices is None or aux_index is None:
         raise ValueError("dj_qubit_indices and aux_index must be provided")
 
-    num_ctrls = random.randint(1, len(dj_qubit_indices))
-    ctrl_qubits = random.sample(dj_qubit_indices, num_ctrls)
-    lines = ["# === Oracle 主体部分 ==="]
-    for ctrl in ctrl_qubits:
-        lines.append(f"{cir_name}.cx({qreg_name}[{ctrl}], {qreg_name}[{aux_index}])  # 非恒定函数：控制比特 {ctrl}")
-    return lines
-################################################################################
+    if method is None:
+        method = random.choice(["dot_product", "majority"])
 
+    lines = [f"# === Oracle 主体部分（平衡函数：{method}） ==="]
+
+    if method == "dot_product":
+        active_bits = random.sample(dj_qubit_indices, k=random.randint(1, len(dj_qubit_indices)))
+        for idx in active_bits:
+            lines.append(f"{cir_name}.cx({qreg_name}[{idx}], {qreg_name}[{aux_index}])  # 平衡函数：x[{idx}] ⊕ ...")
+    elif method == "majority":
+        subset = random.sample(dj_qubit_indices, k=3)
+        lines.append(f"{cir_name}.ccx({qreg_name}[{subset[0]}], {qreg_name}[{subset[1]}], {qreg_name}[{aux_index}])  # 平衡函数（majority 控制）")
+        lines.append(f"{cir_name}.cx({qreg_name}[{subset[2]}], {qreg_name}[{aux_index}])")
+    else:
+        raise ValueError("Unsupported balanced oracle method")
+
+    return lines
+
+################################################################################
 # 增强逻辑 Oracle 生成器（严格隔离 DJ 区）
 def generate_enhanced_oracle_code(
     num_qubits,
@@ -28,7 +40,6 @@ def generate_enhanced_oracle_code(
     if dj_qubit_indices is None or aux_index is None:
         raise ValueError("dj_qubit_indices and aux_index must be provided")
 
-    # 只允许非 DJ 区参与增强逻辑（控制和目标）
     safe_indices = list(set(range(num_qubits)) - set(dj_qubit_indices) - {aux_index})
     if not safe_indices or len(safe_indices) < 2:
         return ["# ⚠️ 无可用增强 qubit，跳过增强 oracle"]
@@ -61,22 +72,23 @@ def generate_enhanced_oracle_code(
 
     return lines
 
-# 用于构建整合后的 oracle
+################################################################################
+# 组合 Oracle
 
-def generate_combined_oracle(num_qubits, cir_name="qc", qreg_name="dj_qreg", dj_qubit_indices=None, aux_index=None):
+def generate_combined_oracle(num_qubits, cir_name="qc", qreg_name="dj_qreg", dj_qubit_indices=None, aux_index=None, method=None):
     if dj_qubit_indices is None or aux_index is None:
         raise ValueError("dj_qubit_indices and aux_index must be provided")
 
-    enhanced_indices = list(set(range(num_qubits)) - set(dj_qubit_indices))
-
-    oracle = generate_nonconstant_oracle_code(
+    oracle = generate_balanced_oracle_code(
         num_qubits=num_qubits,
         cir_name=cir_name,
         qreg_name=qreg_name,
         dj_qubit_indices=dj_qubit_indices,
-        aux_index=aux_index
+        aux_index=aux_index,
+        method=method
     )
 
+    enhanced_indices = list(set(range(num_qubits)) - set(dj_qubit_indices))
     if enhanced_indices:
         oracle += generate_enhanced_oracle_code(
             num_qubits=num_qubits + 1,
@@ -84,8 +96,7 @@ def generate_combined_oracle(num_qubits, cir_name="qc", qreg_name="dj_qreg", dj_
             qreg_name=qreg_name,
             dj_qubit_indices=dj_qubit_indices,
             enhanced_qubit_indices=enhanced_indices,
-            aux_index=aux_index,
-            num_extra_gates=8
+            aux_index=aux_index
         )
     else:
         oracle.append(f"# ⚠️ 无可用增强目标 qubit（num_qubits={num_qubits}），增强逻辑被跳过")
@@ -93,17 +104,61 @@ def generate_combined_oracle(num_qubits, cir_name="qc", qreg_name="dj_qreg", dj_
     return oracle
 
 ################################################################################
-# 生成+测量的dj算法的代码生成都在这里，把dj_creg丢进去condition就可以控制了
-def generate_dj_alg_code(num_qubits=8, dj_bits=4, cir_name="qc", qreg_name="dj_qreg", creg_name="dj_creg"):
+# 生成 DJ 算法子电路（可复用）
+def generate_dj_subcircuit(num_qubits=8, dj_bits=4, method=None):
+    aux_index = num_qubits
+    total_qubits = num_qubits + 1
+    dj_qubit_indices = list(range(dj_bits))
+
+    qreg = QuantumRegister(total_qubits, name="dj_qreg")
+    creg = ClassicalRegister(dj_bits, name="dj_creg")
+    qc = QuantumCircuit(qreg, creg, name="dj_subcircuit")
+
+    qc.x(qreg[aux_index])  # 将辅助比特初始化为 |1⟩
+    qc.h(qreg)  # 所有量子比特 Hadamard
+
+    oracle_lines = generate_combined_oracle(
+        num_qubits=num_qubits,
+        cir_name="qc",
+        qreg_name="qreg",
+        dj_qubit_indices=dj_qubit_indices,
+        aux_index=aux_index,
+        method=method
+    )
+
+    for line in oracle_lines:
+        if line.startswith("#"):
+            continue
+        exec(line.replace("qc", "qc").replace("dj_qreg", "qreg"))
+
+    qc.h([qreg[i] for i in dj_qubit_indices])  # 再次 Hadamard
+    for i in dj_qubit_indices:
+        qc.measure(qreg[i], creg[i])
+
+    return qc, creg
+
+################################################################################
+# 生成完整 Python 程序代码
+def generate_dj_nonconstant_code(num_qubits=8, dj_bits=4, cir_name="qc", qreg_name="dj_qreg", creg_name="dj_creg"):
     aux_index = num_qubits
     dj_qubit_indices = list(range(dj_bits))
 
-    lines = [
-        f"{cir_name}.x({qreg_name}[{aux_index}])  # 将辅助比特初始化为 |1⟩",
-        f"{cir_name}.h([{', '.join(f'{qreg_name}[{i}]' for i in range(num_qubits + 1))}])  # 所有量子比特 Hadamard",
+    header = [
+        "from qiskit import QuantumCircuit, QuantumRegister, ClassicalRegister, transpile",
+        "from qiskit_aer import Aer",
+        "",
+        f"{qreg_name} = QuantumRegister({num_qubits + 1})",
+        f"{creg_name} = ClassicalRegister({dj_bits})",
+        f"{cir_name} = QuantumCircuit({qreg_name}, {creg_name})",
+        ""
     ]
 
-    lines += generate_combined_oracle(
+    body = [
+        f"{cir_name}.x({qreg_name}[{aux_index}])",
+        f"{cir_name}.h([{', '.join(f'{qreg_name}[{i}]' for i in range(num_qubits + 1))}])"
+    ]
+
+    body += generate_combined_oracle(
         num_qubits=num_qubits,
         cir_name=cir_name,
         qreg_name=qreg_name,
@@ -111,29 +166,8 @@ def generate_dj_alg_code(num_qubits=8, dj_bits=4, cir_name="qc", qreg_name="dj_q
         aux_index=aux_index
     )
 
-    lines.append(
-        f"{cir_name}.h([{', '.join(f'{qreg_name}[{i}]' for i in dj_qubit_indices)}])  # 输入比特再次 Hadamard"
-    )
-
-    for i in dj_qubit_indices:
-        lines.append(f"{cir_name}.measure({qreg_name}[{i}], {creg_name}[{i}])")
-
-    return lines
-
-################################################################################
-# 输出完整的可执行 Python 程序代码
-def generate_dj_nonconstant_code(num_qubits=8, dj_bits=4, cir_name="qc", qreg_name="dj_qreg", creg_name="dj_creg"):
-    header = [
-        "from qiskit import QuantumCircuit, QuantumRegister, ClassicalRegister, transpile",
-        "from qiskit_aer import Aer",
-        "",
-        f"{qreg_name} = QuantumRegister({num_qubits + 1})  # {num_qubits} 输入 + 1 辅助",
-        f"{creg_name} = ClassicalRegister({dj_bits})",
-        f"{cir_name} = QuantumCircuit({qreg_name}, {creg_name})",
-        ""
-    ]
-
-    body = generate_dj_alg_code(num_qubits, dj_bits, cir_name, qreg_name, creg_name)
+    body.append(f"{cir_name}.h([{', '.join(f'{qreg_name}[{i}]' for i in dj_qubit_indices)}])")
+    body += [f"{cir_name}.measure({qreg_name}[{i}], {creg_name}[{i}])" for i in dj_qubit_indices]
 
     footer = [
         "",
@@ -154,13 +188,12 @@ def generate_dj_nonconstant_code(num_qubits=8, dj_bits=4, cir_name="qc", qreg_na
 
     return "\n".join(header + body + footer)
 
-
+################################################################################
 def write_dj_code_to_file(filename="dj_test.py", num_qubits=8, dj_bits=4):
     code = generate_dj_nonconstant_code(num_qubits, dj_bits)
     with open(filename, "w", encoding="utf-8") as f:
         f.write(code)
     print(f"✅ 已生成代码文件：{filename}")
 
-# 要总共几个qubit，dj算法几个qubit（到时候生成的dj_creg会用于分支判断上）
 if __name__ == "__main__":
-    write_dj_code_to_file("dj_test.py", num_qubits=8, dj_bits=2)
+    write_dj_code_to_file("dj_test.py", num_qubits=8, dj_bits=4)
