@@ -180,7 +180,7 @@ def generate_enhanced_oracle_code(
     dj_qubit_indices=None,
     enhanced_qubit_indices=None,
     aux_index=None,
-    num_extra_gates=20
+    num_extra_gates=0
 ):
     if dj_qubit_indices is None or aux_index is None:
         raise ValueError("dj_qubit_indices and aux_index must be provided")
