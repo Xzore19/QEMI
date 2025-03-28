@@ -161,6 +161,6 @@ def write_dj_code_to_file(filename="dj_test.py", num_qubits=8, dj_bits=4):
         f.write(code)
     print(f"✅ 已生成代码文件：{filename}")
 
-
+# 要总共几个qubit，dj算法几个qubit（到时候生成的dj_creg会用于分支判断上）
 if __name__ == "__main__":
     write_dj_code_to_file("dj_test.py", num_qubits=8, dj_bits=2)
