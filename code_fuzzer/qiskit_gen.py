@@ -1,15 +1,18 @@
 from string import Template
 import os
+import ast
 import random
 from qiskit_gates_generator import gate_generator
 import subprocess
 import sys
 import numpy as np
+from qiskit import QuantumCircuit
+import qiskit.qasm3
 from qiskit.circuit.library import XGate
 from qiskit.transpiler.passes import *
 from qiskit.transpiler import PassManager, generate_preset_pass_manager
-from qutefuzz.dead_code_fuzzer import DeadCodeFuzzer
-from qutefuzz.result_analysis import probability_checker
+from code_fuzzer.dead_code_fuzzer import DeadCodeFuzzer
+from code_fuzzer.result_analysis import probability_checker
 
 opt_passes = {  "Optimize1qGates": Optimize1qGates(), "Optimize1qGatesDecomposition":Optimize1qGatesDecomposition(),
                 "Collect1qRuns": Collect1qRuns(), "Collect2qBlocks": Collect2qBlocks(),
@@ -32,6 +35,8 @@ class QiskitGenerator:
         self.qnum = qubit_num
         self.code = ""
         self.fuzzing_code = ""
+        self.code_without_exec = ""
+        self.fuzzing_code_without_exec = ""
         self.qreg = "qreg"
         self.creg = "creg"
         self.qc = "qc"
@@ -134,20 +139,27 @@ class QiskitGenerator:
 
         # 添加基本的import函数
         self.code += self.write_import()
+        self.code_without_exec += self.write_import()
 
         # 添加基本的QuantumCircuit， QuantumRegister， ClassicalRegister的声明语句
         self.code += self.basic_set()
+        self.code_without_exec += self.basic_set()
 
         # 添加声明后的第一组量子门操作
         self.code += self.gate_list[0]
+        self.code_without_exec += self.gate_list[0]
 
         # 添加最基本的dynamic circuit的逻辑语句
         self.code += self.only_dynamic_if()
+        self.code_without_exec += self.only_dynamic_if()
 
         # 添加if_test语句结束后的量子门操作
         self.code += self.gate_list[3]
+        self.code_without_exec += self.gate_list[3]
 
         # 添加实现优化和模拟器调用的代码
+        self.code += f"{self.qc}.measure({self.qreg}, {self.creg}) \n"
+        self.code_without_exec += f"{self.qc}.measure({self.qreg}, {self.creg}) \n"
         self.code += self.final_part(show_type="simulator")
 
     def fuzzing_combine(self):
@@ -160,7 +172,19 @@ class QiskitGenerator:
 
         self.fuzzing_code += self.only_dynamic_if()
         self.fuzzing_code += self.gate_list[3]
+        self.fuzzing_code += f"{self.qc}.measure({self.qreg}, {self.creg}) \n"
         self.fuzzing_code += self.final_part(show_type="simulator")
+
+        self.fuzzing_code_without_exec += self.write_import()
+        self.fuzzing_code_without_exec += self.basic_set()
+        self.fuzzing_code_without_exec += self.gate_list[0]
+
+        # 在if_test语句前添加dead code进行fuzzing
+        self.fuzzing_code_without_exec += DeadCodeFuzzer().classical_dead()
+
+        self.fuzzing_code_without_exec += self.only_dynamic_if()
+        self.fuzzing_code_without_exec += self.gate_list[3]
+        self.fuzzing_code_without_exec += f"{self.qc}.measure({self.qreg}, {self.creg}) \n"
 
 
     def only_dynamic_if(self):
@@ -226,7 +250,6 @@ class QiskitGenerator:
             code_line += f"{self.qc}.draw(\"{circuit_draw}\") \n"
             code_line += "plt.pyplot.show() \n"
         elif show_type == "simulator":
-            code_line += f"{self.qc}.measure({self.qreg}, {self.creg}) \n"
             code_line += self.simulator_option()
             code_line += self.pass_option()
             code_line += self.transpile_option()
@@ -297,13 +320,49 @@ class QiskitGenerator:
             with open(fuzzing_file, "w") as file_f:
                 file_f.write(self.fuzzing_code)
 
+    def extract_qc_from_code(self, qiskit_code):
+        tree = ast.parse(qiskit_code)
+        namespace = {}
+        exec(compile(tree, filename="<ast>", mode="exec"), namespace)
+        for var in namespace.values():
+            if isinstance(var, QuantumCircuit):
+                return var
+        return None
+
+    def qasm_convertor(self):
+        # 解析 Qiskit 代码并获取 QuantumCircuit
+        qc = self.extract_qc_from_code(self.code_without_exec)
+
+        if qc:
+            # 转换为 OpenQASM 3.0
+            qasm_code = qiskit.qasm3.dumps(qc)
+        else:
+            raise Exception("QuantumCircuit Objects not exist")
+
+        qasm_file = "qasm_code/code.qasm3"
+        with open(qasm_file, "w") as file:
+            file.write(qasm_code)
+
+        fuzzing_qc = self.extract_qc_from_code(self.fuzzing_code_without_exec)
+
+        if fuzzing_qc:
+            # 转换为 OpenQASM 3.0
+            fuzzing_qasm_code = qiskit.qasm3.dumps(fuzzing_qc)
+        else:
+            raise Exception("Fuzzing QuantumCircuit Objects not exist")
+
+        fuzzing_qasm_file = "qasm_code/fuzzing_code.qasm3"
+        with open(fuzzing_qasm_file, "w") as fuzzing_file:
+            fuzzing_file.write(fuzzing_qasm_code)
+
+
+
 
 
 
     def check_code(self):
         # 检查truth代码和fuzzing代码
-        print(self.code)
-        print(self.fuzzing_code)
+        print(self.code_without_exec)
 
 if __name__ == "__main__":
     a = QiskitGenerator(5,1)

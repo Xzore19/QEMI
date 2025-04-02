@@ -1,4 +1,6 @@
-from qutefuzz.qiskit_gen import QiskitGenerator
+from code_fuzzer.qiskit_gen import QiskitGenerator
+from code_fuzzer.qasm_execution import QasmExecution
+import qiskit.qasm3
 from tqdm import tqdm
 import gc
 
@@ -47,14 +49,20 @@ pass_option = ["Optimize1qGates", "Optimize1qGatesDecomposition", "Collect1qRuns
 # pass_option = ["CollectLinearFunctions"]
 
 if __name__ == "__main__":
-    tran_list = generate_transpile()
+    # tran_list = generate_transpile()
+    #
+    # for tran in tran_list:
+    #     for pas in pass_option:
+    #         for i in tqdm(range(100), desc="Processing"):
+    #             a = QiskitGenerator(qubit_num = 5, measure_num = 1, gate_num_upper = 10, measure_times = 10000, transplie = tran, backend="aer", use_pass= pas)
+    #             a.run()
+    #
+    #             # 释放内存，防止因为循环的内存崩溃报错
+    #             del a
+    #             gc.collect()
 
-    for tran in tran_list:
-        for pas in pass_option:
-            for i in tqdm(range(100), desc="Processing"):
-                a = QiskitGenerator(qubit_num = 5, measure_num = 1, gate_num_upper = 10, measure_times = 10000, transplie = tran, backend="aer", use_pass= pas)
-                a.run()
+    a = QiskitGenerator(5, 1)
+    a.qasm_convertor()
 
-                # 释放内存，防止因为循环的内存崩溃报错
-                del a
-                gc.collect()
+    q = QasmExecution(file="qasm_code/code.qasm3", simulator="Qiskit")
+    fq = QasmExecution(file="qasm_code/fuzzing_code.qasm3", simulator="Qiskit")
