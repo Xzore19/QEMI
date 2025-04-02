@@ -1,0 +1,10 @@
+{
+  "num_qubits": 5,
+  "target_bitstring": "10101",
+  "target_bitstring_qiskit_order": "10101",
+  "most_common_result": "10101",
+  "n_repeat": 2,
+  "result_histogram": {
+    "10101": 2
+  }
+}

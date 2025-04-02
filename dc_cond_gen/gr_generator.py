@@ -4,9 +4,10 @@ from qiskit import QuantumCircuit, QuantumRegister, ClassicalRegister, transpile
 from qiskit.circuit.library import MCXGate
 from qiskit_aer import Aer
 from collections import Counter
+import json
 
 
-def generate_grover_subcircuit(num_qubits=4, target_bitstring=None):
+def generate_grover_subcircuit(num_qubits=4, target_bitstring=None, save_info_to=None):
     if target_bitstring is None:
         target_bitstring = "".join(random.choice(["0", "1"]) for _ in range(num_qubits))
     target_bitstring_reversed = target_bitstring[::-1]  # Qiskit 小端顺序
@@ -34,7 +35,7 @@ def generate_grover_subcircuit(num_qubits=4, target_bitstring=None):
         # 初始 Hadamard 叠加
         qc.h(qreg)
 
-        # 构建 oracle 子电路
+        # 构建 Oracle 子电路
         oracle = QuantumCircuit(num_qubits, name="Oracle")
         for i in range(num_qubits):
             if target_bitstring_reversed[i] == '0':
@@ -47,7 +48,7 @@ def generate_grover_subcircuit(num_qubits=4, target_bitstring=None):
                 oracle.x(i)
         oracle_gate = oracle.to_gate(label="Oracle")
 
-        # 构建 diffuser 子电路
+        # 构建 Diffuser 子电路
         diffuser = QuantumCircuit(num_qubits, name="Diffuser")
         diffuser.h(range(num_qubits))
         diffuser.x(range(num_qubits))
@@ -77,10 +78,24 @@ def generate_grover_subcircuit(num_qubits=4, target_bitstring=None):
     bit_counter = Counter(bitstring for bitstring, _, _ in results)
     most_common_bitstring = bit_counter.most_common(1)[0][0]
 
-    # 返回匹配这个结果的那一个电路 + 寄存器
+    # 保存测试信息（可选）
+    if save_info_to:
+        import os
+        os.makedirs(os.path.dirname(save_info_to), exist_ok=True)
+        with open(save_info_to, "w", encoding="utf-8") as f:
+            json.dump({
+                "num_qubits": num_qubits,
+                "target_bitstring": target_bitstring,
+                "target_bitstring_qiskit_order": target_bitstring_reversed,
+                "most_common_result": most_common_bitstring,
+                "n_repeat": n_repeat,
+                "result_histogram": dict(bit_counter)
+            }, f, indent=2)
+
+    # 返回匹配这个结果的那一个电路 + 寄存器 + 原始目标态
     for bitstring, qc, creg in results:
         if bitstring == most_common_bitstring:
-            return qc, creg, target_bitstring  # 返回人类可读顺序的目标态
+            return qc, creg, target_bitstring
 
 
 ################################################################################
