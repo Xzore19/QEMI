@@ -1,0 +1,38 @@
+OPENQASM 3.0;
+include "stdgates.inc";
+gate ccz _gate_q_0, _gate_q_1, _gate_q_2 {
+  h _gate_q_2;
+  ccx _gate_q_0, _gate_q_1, _gate_q_2;
+  h _gate_q_2;
+}
+bit[5] c1;
+qubit[5] q1;
+ccx q1[4], q1[2], q1[1];
+cry(pi/2) q1[2], q1[0];
+cz q1[0], q1[1];
+cp(pi/8) q1[1], q1[3];
+x q1[2];
+c1[3] = measure q1[3];
+if (c1[3]) {
+  rz(pi/8) q1[2];
+  rx(pi/4) q1[2];
+  z q1[0];
+  ch q1[2], q1[0];
+  cswap q1[4], q1[3], q1[0];
+} else {
+  crz(pi/2) q1[2], q1[3];
+  ccx q1[3], q1[1], q1[0];
+  rz(pi/8) q1[1];
+  ch q1[3], q1[1];
+  rx(pi/2) q1[0];
+}
+ccx q1[4], q1[2], q1[1];
+ccz q1[4], q1[1], q1[0];
+h q1[2];
+cswap q1[4], q1[3], q1[1];
+ccx q1[4], q1[2], q1[0];
+c1[0] = measure q1[0];
+c1[1] = measure q1[1];
+c1[2] = measure q1[2];
+c1[3] = measure q1[3];
+c1[4] = measure q1[4];

@@ -1,3 +1,4 @@
+from dc_cond_gen.gr_generator import generate_grover_code
 class DeadCodeFuzzer():
     # 用于生成明确的dead code
     def __init__(self):
@@ -11,5 +12,49 @@ class DeadCodeFuzzer():
         code_line += "\tqc.h(0) \n"
         return code_line
 
-    def quantum_dead(self):
-        pass
+    def quantum_dead(self, mode="grover"):
+        code_line = ""
+        if mode == "grover":
+            oracle, code = generate_grover_code(num_qubits=2)
+            qc, qreg, creg = "grdc_qc","grdc_qreg","grdc_creg"
+
+        code_line += code
+        code_line += f"with {qc}.if_test(({creg}, 0b{oracle})) as else_1: \n"
+        code_line += "    pass\n"
+        code_line += f"with else_1: \n"
+        code_line += "    qc.h(0)\n"
+        code_line += "\n"
+        return code_line
+
+    from qiskit import QuantumCircuit
+
+    # def circuit_to_qiskit_code(self, circuit: QuantumCircuit, circuit_name="dc_qc") -> str:
+    #     lines = []
+    #     num_qubits = circuit.num_qubits
+    #     num_clbits = circuit.num_clbits
+    #     lines.append(f"from qiskit import QuantumCircuit\n")
+    #     lines.append(f"{circuit_name} = QuantumCircuit({num_qubits}, {num_clbits})\n")
+    #
+    #     for inst in circuit.data:
+    #         instr = inst.operation
+    #         qargs = inst.qubits
+    #         cargs = inst.clbits
+    #
+    #         # 获取量子比特索引
+    #         q_str = ", ".join(f"{circuit_name}.qubits[{circuit.qubits.index(q)}]" for q in qargs)
+    #         # 获取经典比特索引
+    #         c_str = ", ".join(f"{circuit_name}.clbits[{circuit.clbits.index(c)}]" for c in cargs)
+    #
+    #         # 参数处理
+    #         if instr.params:
+    #             param_str = ", ".join([repr(p) for p in instr.params])
+    #             line = f"{circuit_name}.{instr.name}({param_str}, {q_str})"
+    #         else:
+    #             line = f"{circuit_name}.{instr.name}({q_str})"
+    #
+    #         if cargs:
+    #             line = line[:-1] + ", " + c_str + ")"
+    #
+    #         lines.append(line)
+    #
+    #     return "\n".join(lines)

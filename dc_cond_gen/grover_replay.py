@@ -58,3 +58,5 @@ def replay_grover_case(json_path):
     print("🎯 目标态:", target)
     print("📏 实际测量:", measured)
     print("✅ 命中目标:", measured == target)
+
+# if __name__ == "__main__":

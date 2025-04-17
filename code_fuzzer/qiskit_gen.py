@@ -18,7 +18,7 @@ opt_passes = {  "Optimize1qGates": Optimize1qGates(), "Optimize1qGatesDecomposit
                 "Collect1qRuns": Collect1qRuns(), "Collect2qBlocks": Collect2qBlocks(),
                 "CollectMultiQBlocks":CollectMultiQBlocks(),"CollectLinearFunctions":CollectLinearFunctions(),
                 "CollectCliffords":CollectCliffords(),"ConsolidateBlocks":ConsolidateBlocks(),
-                "CXCancellation":CXCancellation(),"InverseCancellation":InverseCancellation([XGate()]),
+                "InverseCancellation":InverseCancellation([XGate()]),
                 "CommutationAnalysis":CommutationAnalysis(),"CommutativeCancellation":CommutativeCancellation(),
                 "CommutativeInverseCancellation":CommutativeInverseCancellation(),
                 "Optimize1qGatesSimpleCommutation":Optimize1qGatesSimpleCommutation(),
@@ -27,11 +27,11 @@ opt_passes = {  "Optimize1qGates": Optimize1qGates(), "Optimize1qGatesDecomposit
                 "HoareOptimizer":HoareOptimizer(),"TemplateOptimization":TemplateOptimization(),
                 "ResetAfterMeasureSimplification":ResetAfterMeasureSimplification(), #"EchoRZXWeylDecomposition":EchoRZXWeylDecomposition(),
                 "OptimizeCliffords":OptimizeCliffords(),"ElidePermutations":ElidePermutations(),
-                "NormalizeRXAngle":NormalizeRXAngle(),"OptimizeAnnotated":OptimizeAnnotated()
+                "OptimizeAnnotated":OptimizeAnnotated()
             }
 
 class QiskitGenerator:
-    def __init__(self, qubit_num, measure_num = 1, gate_num_upper = 5, measure_times = 1024, transplie = None, backend = "aer", use_pass = None):
+    def __init__(self, qubit_num, measure_num = 1, gate_num_upper = 5, measure_times = 10000, transplie = None, backend = "aer", use_pass = None):
         self.qnum = qubit_num
         self.code = ""
         self.fuzzing_code = ""
@@ -169,6 +169,7 @@ class QiskitGenerator:
 
         # 在if_test语句前添加dead code进行fuzzing
         self.fuzzing_code += DeadCodeFuzzer().classical_dead()
+        self.fuzzing_code += DeadCodeFuzzer().quantum_dead()
 
         self.fuzzing_code += self.only_dynamic_if()
         self.fuzzing_code += self.gate_list[3]
@@ -181,6 +182,7 @@ class QiskitGenerator:
 
         # 在if_test语句前添加dead code进行fuzzing
         self.fuzzing_code_without_exec += DeadCodeFuzzer().classical_dead()
+        self.fuzzing_code_without_exec += DeadCodeFuzzer().quantum_dead()
 
         self.fuzzing_code_without_exec += self.only_dynamic_if()
         self.fuzzing_code_without_exec += self.gate_list[3]
@@ -193,7 +195,7 @@ class QiskitGenerator:
         code_line = ""
         for i in self.measure_index:
             code_line += f"{self.qc}.measure({self.qreg}[{i}], {self.creg}[{i}])\n"
-        code_line += f"with {self.qc}.if_test(({self.creg}{self.measure_index}, {self.result})) as else_1: \n"
+        code_line += f"with {self.qc}.if_test(({self.creg}{self.measure_index}, 0b{self.result})) as else_1: \n"
         code_line += self.gate_list[1]
         code_line += f"with else_1: \n"
         code_line += self.gate_list[2]
@@ -358,11 +360,9 @@ class QiskitGenerator:
 
 
 
-
-
     def check_code(self):
         # 检查truth代码和fuzzing代码
-        print(self.code_without_exec)
+        print(self.fuzzing_code_without_exec)
 
 if __name__ == "__main__":
     a = QiskitGenerator(5,1)
