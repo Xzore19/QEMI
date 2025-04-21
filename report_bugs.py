@@ -3,23 +3,30 @@ from qiskit_aer import Aer
 from qiskit.transpiler.passes import *
 from qiskit.transpiler import PassManager
 
+# 创建主寄存器
 qreg = QuantumRegister(5)
-creg = ClassicalRegister(5)
-qc = QuantumCircuit(qreg, creg)
+creg = ClassicalRegister(5)  # 用于最终输出
+cond_creg = ClassicalRegister(2)  # 专门用于 if_test 条件判断
+qc = QuantumCircuit(qreg, creg, cond_creg)
 
-temp_qreg = QuantumRegister(2)
-temp_creg = ClassicalRegister(2)
-temp_qc = QuantumCircuit(temp_qreg, temp_creg)
-temp_qc.x(0)
-temp_qc.x(1)
-temp_qc.measure(temp_qreg, temp_creg)
+# 初始化两个量子比特为 1
+qc.x(qreg[0])
+qc.x(qreg[1])
 
-with temp_qc.if_test((temp_creg, 0b11)) as else_1:
-    qc.x(0)
-with else_1:
-    qc.h(0)
+# 测量写入 cond_creg（作为判断用）
+qc.measure(qreg[0], cond_creg[0])
+qc.measure(qreg[1], cond_creg[1])
 
-qc.measure(qreg, creg)
+# 根据 cond_creg 是否为 0b11 决定是否对 qreg[2] 施加 H 门
+with qc.if_test((cond_creg, 0b11)):
+    qc.h(qreg[2])
+
+# 最后测量所有 qreg 写入 creg，用于输出
+qc.measure(qreg[0], creg[0])
+qc.measure(qreg[1], creg[1])
+qc.measure(qreg[2], creg[2])
+qc.measure(qreg[3], creg[3])
+qc.measure(qreg[4], creg[4])
 #
 # simulator = Aer.get_backend("aer_simulator")
 #

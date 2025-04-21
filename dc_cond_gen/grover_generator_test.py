@@ -1,22 +1,35 @@
+import os
+from datetime import datetime
 from qiskit import transpile
 from qiskit_aer import Aer
-from gr_generator import generate_grover_subcircuit  # ← 你自己模块路径
-from qiskit import QuantumCircuit, ClassicalRegister
-from datetime import datetime
+from qiskit.qasm3 import dumps  # ✅ QASM3 导出支持
+from collections import Counter
+from gr_generator import generate_grover_subcircuit  # ✅ 你的构建器
 
 def test_generate_grover_subcircuit(num_qubits=4, target_bitstring=None):
-    
+    # === 构造输出路径 ===
     ts = datetime.now().strftime("%Y-%m-%d_%H%M%S")
-    save_path = f"test_runs/{ts}_grover_{num_qubits}q.json"
+    log_dir = "test_runs"
+    os.makedirs(log_dir, exist_ok=True)
     
-    # 获取已构建好的电路（已包含测量），其中电路对应频率最高的输出态
+    json_path = f"{log_dir}/{ts}_grover_{num_qubits}q.json"
+    qasm3_path = f"{log_dir}/{ts}_grover_{num_qubits}q.qasm3"
+
+    # === 构建 Grover 电路并保存 JSON ===
     qc, creg, target = generate_grover_subcircuit(
-        num_qubits=5,
-        save_info_to=save_path
+        num_qubits=num_qubits,
+        target_bitstring=target_bitstring,
+        save_info_to=json_path
     )
 
+    # === 保存 QASM3 ===
+    with open(qasm3_path, "w", encoding="utf-8") as f:
+        f.write(dumps(qc))
+    print(f"📄 已保存 QASM3 文件到: {qasm3_path}")
+
+    # === 显示信息 ===
     print("🎯 目标态应为:", target)
-    print("📦 返回 ClassicalRegister 名称:", creg.name)
+    print("📦 ClassicalRegister 名称:", creg.name)
 
     print("【原始 Grover 电路】")
     print(qc.draw('text'))
@@ -27,10 +40,9 @@ def test_generate_grover_subcircuit(num_qubits=4, target_bitstring=None):
     print("【优化后电路】")
     print(compiled.draw('text'))
 
-    # ⚠️ 此时只再运行 1 次，不需要 1024 次，因为前面已经执行过多次用于统计
+    # === 执行最终验证测量 ===
     job = backend.run(compiled, shots=1)
     result = job.result().get_counts()
-
     measured = list(result.keys())[0]
     print("🔍 实际运行得到的测量结果:", measured)
     print("🎉 是否命中目标态:", measured == target)
