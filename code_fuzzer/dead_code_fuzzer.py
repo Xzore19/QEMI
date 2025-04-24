@@ -1,8 +1,9 @@
 from dc_cond_gen.gr_generator import generate_grover_code
 class DeadCodeFuzzer():
     # 用于生成明确的dead code
-    def __init__(self):
-        pass
+    def __init__(self, qubit_num = 2):
+        self.qubit_num = qubit_num
+
 
     def classical_dead(self):
         # append dead code for classical condition
@@ -13,13 +14,19 @@ class DeadCodeFuzzer():
         return code_line
 
     def quantum_dead(self, mode="grover"):
-        code_line = ""
         if mode == "grover":
-            oracle, code = generate_grover_code(num_qubits=2)
+            oracle, code = generate_grover_code(num_qubits=self.qubit_num)
             qc, qreg, creg = "grdc_qc","grdc_qreg","grdc_creg"
 
-        code_line += code
-        code_line += f"with {qc}.if_test(({creg}, 0b{oracle})) as else_1: \n"
+        return oracle, code, qc
+
+
+    def if_test_dead(self, oracle, qc, qreg, cond_reg, qnum, cnum):
+        code_line = ""
+        for i in range(cnum):
+            code_line += f"{qc}.measure({qreg}[{qnum+i}], {cond_reg}[{i}]) \n"
+
+        code_line += f"with {qc}.if_test(({cond_reg}, 0b{oracle})) as else_1: \n"
         code_line += "    pass\n"
         code_line += f"with else_1: \n"
         code_line += "    qc.h(0)\n"

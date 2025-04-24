@@ -31,8 +31,9 @@ opt_passes = {  "Optimize1qGates": Optimize1qGates(), "Optimize1qGatesDecomposit
             }
 
 class QiskitGenerator:
-    def __init__(self, qubit_num, measure_num = 1, gate_num_upper = 5, measure_times = 10000, transplie = None, backend = "aer", use_pass = None):
+    def __init__(self, qubit_num, measure_num = 1, gate_num_upper = 5, measure_times = 10000, transplie = None, backend = "aer", use_pass = None, cond_qubit = 2):
         self.qnum = qubit_num
+        self.cnum = cond_qubit
         self.code = ""
         self.fuzzing_code = ""
         self.code_without_exec = ""
@@ -40,6 +41,7 @@ class QiskitGenerator:
         self.qreg = "qreg"
         self.creg = "creg"
         self.qc = "qc"
+        self.cond_creg = "cond_creg"
         self.gate_list = []
         self.code_structure = "odi"
         self.backend = backend
@@ -107,7 +109,7 @@ class QiskitGenerator:
     def transpile_choice(self):
         # 对于未指定transpile函数中的参数时，随机指定以下的参数
         optimization_level = [0, 1, 2, 3]
-        routing_method = ['none', 'stochastic', 'sabre']
+        routing_method = ['basic', 'lookahead', 'sabre']
         layout_method = ["trivial", "dense", "noise_adaptive"]
         scheduling_method = ["asap", "alap"]
         basis_gates = []
@@ -158,22 +160,29 @@ class QiskitGenerator:
         self.code_without_exec += self.gate_list[3]
 
         # 添加实现优化和模拟器调用的代码
-        self.code += f"{self.qc}.measure({self.qreg}, {self.creg}) \n"
-        self.code_without_exec += f"{self.qc}.measure({self.qreg}, {self.creg}) \n"
+        for i in range(self.qnum):
+            self.code += f"{self.qc}.measure({self.qreg}[{i}], {self.creg}[{i}]) \n"
+            self.code_without_exec += f"{self.qc}.measure({self.qreg}[{i}], {self.creg}[{i}]) \n"
         self.code += self.final_part(show_type="simulator")
 
     def fuzzing_combine(self):
+        dcf = DeadCodeFuzzer(qubit_num=self.cnum)
         self.fuzzing_code += self.write_import()
         self.fuzzing_code += self.basic_set()
         self.fuzzing_code += self.gate_list[0]
 
         # 在if_test语句前添加dead code进行fuzzing
-        self.fuzzing_code += DeadCodeFuzzer().classical_dead()
-        self.fuzzing_code += DeadCodeFuzzer().quantum_dead()
+        self.fuzzing_code += dcf.classical_dead()
+        oracle, deadcode, deadqc= dcf.quantum_dead()
+        self.fuzzing_code += deadcode
+        self.fuzzing_code += f"{self.qc}.compose({deadqc}, inplace = True, qubits = {[self.qnum+i for i in range(self.cnum)]}) \n"
+        self.fuzzing_code += dcf.if_test_dead(oracle = oracle, qc=self.qc, qreg=self.qreg,
+                                              cond_reg=self.cond_creg, qnum=self.qnum, cnum=self.cnum)
 
         self.fuzzing_code += self.only_dynamic_if()
         self.fuzzing_code += self.gate_list[3]
-        self.fuzzing_code += f"{self.qc}.measure({self.qreg}, {self.creg}) \n"
+        for i in range(self.qnum):
+            self.fuzzing_code += f"{self.qc}.measure({self.qreg}[{i}], {self.creg}[{i}]) \n"
         self.fuzzing_code += self.final_part(show_type="simulator")
 
         self.fuzzing_code_without_exec += self.write_import()
@@ -181,12 +190,17 @@ class QiskitGenerator:
         self.fuzzing_code_without_exec += self.gate_list[0]
 
         # 在if_test语句前添加dead code进行fuzzing
-        self.fuzzing_code_without_exec += DeadCodeFuzzer().classical_dead()
-        self.fuzzing_code_without_exec += DeadCodeFuzzer().quantum_dead()
+        self.fuzzing_code_without_exec += dcf.classical_dead()
+        oracle, deadcode, deadqc= dcf.quantum_dead()
+        self.fuzzing_code_without_exec += deadcode
+        self.fuzzing_code_without_exec += f"{self.qc}.compose({deadqc}, inplace = True, qubits = {[self.qnum+i for i in range(self.cnum)]}) \n"
+        self.fuzzing_code_without_exec += dcf.if_test_dead(oracle = oracle, qc=self.qc, qreg=self.qreg,
+                                              cond_reg=self.cond_creg, qnum=self.qnum, cnum=self.cnum)
 
         self.fuzzing_code_without_exec += self.only_dynamic_if()
         self.fuzzing_code_without_exec += self.gate_list[3]
-        self.fuzzing_code_without_exec += f"{self.qc}.measure({self.qreg}, {self.creg}) \n"
+        for i in range(self.qnum):
+            self.fuzzing_code_without_exec += f"{self.qc}.measure({self.qreg}[{i}], {self.creg}[{i}]) \n"
 
 
     def only_dynamic_if(self):
@@ -224,9 +238,10 @@ class QiskitGenerator:
     def basic_set(self):
         # 声明QuantumCircuit， QuantumRegister， ClassicalRegister语句
         code_line = ""
-        code_line += f"{self.qreg} = QuantumRegister({self.qnum}) \n"
+        code_line += f"{self.qreg} = QuantumRegister({self.qnum + self.cnum}) \n"
         code_line += f"{self.creg} = ClassicalRegister({self.qnum}) \n"
-        code_line += f"{self.qc} = QuantumCircuit({self.qreg}, {self.creg}) \n"
+        code_line += f"{self.cond_creg} = ClassicalRegister({self.cnum}) \n"
+        code_line += f"{self.qc} = QuantumCircuit({self.qreg}, {self.creg}, {self.cond_creg}) \n"
         # q_mindx = ",".join([f"{self.qreg}[{i}]" for i in self.measure_index])
         # c_mindx = ",".join([f"{self.creg}[{i}]" for i in self.measure_index])
         # code_line += f"({q_mindx}) = {self.qreg} \n"
@@ -366,4 +381,5 @@ class QiskitGenerator:
 
 if __name__ == "__main__":
     a = QiskitGenerator(5,1)
-    a.check_code()
+    # a.check_code()
+    a.run()

@@ -206,7 +206,7 @@ def generate_grover_code(num_qubits=4, cir_name="qc", qreg_name="qreg", creg_nam
     body.append(f"for _ in range({r}):")
     body.append(f"    grdc_qc.append(oracle_gate, qargs=grdc_qreg)")
     body.append(f"    grdc_qc.append(diffuser_gate, qargs=grdc_qreg)")
-    body.append(f"    grdc_qc.measure(grdc_qreg, grdc_creg)")
+    # body.append(f"    grdc_qc.measure(grdc_qreg, grdc_creg)")
     body.append("\n")
     # body.append(f"    compiled = transpile(qc, backend)")
     # body.append(f"    job = backend.run(compiled, shots=1)")
