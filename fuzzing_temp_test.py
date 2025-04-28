@@ -8,13 +8,13 @@ creg = ClassicalRegister(5)
 cond_creg = ClassicalRegister(2)
 qc = QuantumCircuit(qreg, creg, cond_creg)
 ##########################################################################################
+diffuser_gate = QuantumCircuit(QuantumRegister(2), name='Diffuser').to_gate(label='Diffuser')
+grdc_qreg = QuantumRegister(2)
+grdc_creg = ClassicalRegister(2)
+grdc_qc = QuantumCircuit(grdc_qreg, grdc_creg)
+grdc_qc.append(diffuser_gate, qargs=grdc_qreg)
 
-
-
-
-
-
-
+qc.compose(grdc_qc, inplace = True, qubits = [5, 6])
 ##########################################################################################
 
 qc.measure(qreg[4], creg[4])
