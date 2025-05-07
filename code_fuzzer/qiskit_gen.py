@@ -227,6 +227,27 @@ class QiskitGenerator:
         # code_line += "\n"
         return code_line
 
+    def dynamic_for_continue(self):
+        code_line = ""
+        code_line += f"with {self.qc}.for_loop(range(5)) as i:\n"
+        code_line += self.gate_list[1]
+        code_line += f"\tqc.continue_loop()\n"
+        return code_line
+
+    def dynamic_for_break(self):
+        code_line = ""
+        code_line += f"with {self.qc}.for_loop(range(5)) as i:\n"
+        code_line += self.gate_list[1]
+        code_line += f"\tqc.break_loop()\n"
+        return code_line
+
+    def dynamic_for_zero(self):
+        code_line = "a = 0\n"
+        code_line += f"with {self.qc}.for_loop(range(a)) as i:\n"
+        code_line += self.gate_list[1]
+        code_line += f"\tqc.break_loop()\n"
+        return code_line
+
 
     def write_import(self):
         # 最基本的import语句
