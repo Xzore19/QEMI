@@ -218,13 +218,13 @@ class QiskitGenerator:
         # 最基本的dynamic circuit
         # 只使用if_test执行的单次控制流嵌套
         code_line = ""
-        for i in self.measure_index:
-            code_line += f"{self.qc}.measure({self.qreg}[{i}], {self.creg}[{i}])\n"
-        code_line += f"with {self.qc}.if_test(({self.creg}{self.measure_index}, 0b{self.result})) as else_1: \n"
-        code_line += self.gate_list[1]
-        code_line += f"with else_1: \n"
-        code_line += self.gate_list[2]
-        code_line += "\n"
+        # for i in self.measure_index:
+        #     code_line += f"{self.qc}.measure({self.qreg}[{i}], {self.creg}[{i}])\n"
+        # code_line += f"with {self.qc}.if_test(({self.creg}{self.measure_index}, 0b{self.result})) as else_1: \n"
+        # code_line += self.gate_list[1]
+        # code_line += f"with else_1: \n"
+        # code_line += self.gate_list[2]
+        # code_line += "\n"
         return code_line
 
 
