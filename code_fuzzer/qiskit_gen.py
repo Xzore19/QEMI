@@ -176,8 +176,12 @@ class QiskitGenerator:
         oracle, deadcode, deadqc= dcf.quantum_dead()
         self.fuzzing_code += deadcode
         self.fuzzing_code += f"{self.qc}.compose({deadqc}, inplace = True, qubits = {[self.qnum+i for i in range(self.cnum)]}) \n"
-        self.fuzzing_code += dcf.if_test_dead(oracle = oracle, qc=self.qc, qreg=self.qreg,
-                                              cond_reg=self.cond_creg, qnum=self.qnum, cnum=self.cnum)
+        # self.fuzzing_code += dcf.if_test_dead(oracle = oracle, qc=self.qc, qreg=self.qreg,
+        #                                       cond_reg=self.cond_creg, qnum=self.qnum, cnum=self.cnum)
+
+        while_gate = self.gate_generation(indent=1)
+        self.fuzzing_code += dcf.while_dead(oracle = oracle, qc=self.qc, qreg=self.qreg,
+                                              cond_reg=self.cond_creg, qnum=self.qnum, cnum=self.cnum, gate_list=while_gate)
 
         self.fuzzing_code += self.only_dynamic_if()
         self.fuzzing_code += self.gate_list[3]
@@ -194,8 +198,15 @@ class QiskitGenerator:
         oracle, deadcode, deadqc= dcf.quantum_dead()
         self.fuzzing_code_without_exec += deadcode
         self.fuzzing_code_without_exec += f"{self.qc}.compose({deadqc}, inplace = True, qubits = {[self.qnum+i for i in range(self.cnum)]}) \n"
-        self.fuzzing_code_without_exec += dcf.if_test_dead(oracle = oracle, qc=self.qc, qreg=self.qreg,
-                                              cond_reg=self.cond_creg, qnum=self.qnum, cnum=self.cnum)
+        # if dead
+        # self.fuzzing_code_without_exec += dcf.if_test_dead(oracle = oracle, qc=self.qc, qreg=self.qreg,
+        #                                       cond_reg=self.cond_creg, qnum=self.qnum, cnum=self.cnum)
+
+        # while dead
+        while_gate = self.gate_generation(indent=1)
+        self.fuzzing_code_without_exec += dcf.while_dead(oracle=oracle, qc=self.qc, qreg=self.qreg,
+                                            cond_reg=self.cond_creg, qnum=self.qnum, cnum=self.cnum,
+                                            gate_list=while_gate)
 
         self.fuzzing_code_without_exec += self.only_dynamic_if()
         self.fuzzing_code_without_exec += self.gate_list[3]
