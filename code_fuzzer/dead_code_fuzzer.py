@@ -1,4 +1,5 @@
 from dc_cond_gen.gr_generator import generate_grover_code
+from qiskit_gates_generator import gate_generator
 class DeadCodeFuzzer():
     # 用于生成明确的dead code
     def __init__(self, qubit_num = 2):
@@ -30,6 +31,24 @@ class DeadCodeFuzzer():
         code_line += "    pass\n"
         code_line += f"with else_1: \n"
         code_line += "    qc.h(0)\n"
+        code_line += "\n"
+        return code_line
+
+
+    def while_dead(self, oracle, qc, qreg, cond_reg, qnum, cnum, gate_list):
+        if oracle[-1] == "0":
+            oracle = oracle[:-1] + "1"
+        else:
+            oracle = oracle[:-1] + "0"
+
+        code_line = ""
+        for i in range(cnum):
+            code_line += f"{qc}.measure({qreg}[{qnum+i}], {cond_reg}[{i}]) \n"
+
+        code_line += f"with {qc}.while_loop(({cond_reg}, 0b{oracle})): \n"
+        code_line += gate_list
+        for i in range(cnum):
+            code_line += f"\t{qc}.measure({qreg}[{qnum + i}], {cond_reg}[{i}]) \n"
         code_line += "\n"
         return code_line
 

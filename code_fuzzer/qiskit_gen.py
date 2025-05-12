@@ -176,8 +176,12 @@ class QiskitGenerator:
         oracle, deadcode, deadqc= dcf.quantum_dead()
         self.fuzzing_code += deadcode
         self.fuzzing_code += f"{self.qc}.compose({deadqc}, inplace = True, qubits = {[self.qnum+i for i in range(self.cnum)]}) \n"
-        self.fuzzing_code += dcf.if_test_dead(oracle = oracle, qc=self.qc, qreg=self.qreg,
-                                              cond_reg=self.cond_creg, qnum=self.qnum, cnum=self.cnum)
+        # self.fuzzing_code += dcf.if_test_dead(oracle = oracle, qc=self.qc, qreg=self.qreg,
+        #                                       cond_reg=self.cond_creg, qnum=self.qnum, cnum=self.cnum)
+
+        while_gate = self.gate_generation(indent=1)
+        self.fuzzing_code += dcf.while_dead(oracle = oracle, qc=self.qc, qreg=self.qreg,
+                                              cond_reg=self.cond_creg, qnum=self.qnum, cnum=self.cnum, gate_list=while_gate)
 
         self.fuzzing_code += self.only_dynamic_if()
         self.fuzzing_code += self.gate_list[3]
@@ -194,8 +198,15 @@ class QiskitGenerator:
         oracle, deadcode, deadqc= dcf.quantum_dead()
         self.fuzzing_code_without_exec += deadcode
         self.fuzzing_code_without_exec += f"{self.qc}.compose({deadqc}, inplace = True, qubits = {[self.qnum+i for i in range(self.cnum)]}) \n"
-        self.fuzzing_code_without_exec += dcf.if_test_dead(oracle = oracle, qc=self.qc, qreg=self.qreg,
-                                              cond_reg=self.cond_creg, qnum=self.qnum, cnum=self.cnum)
+        # if dead
+        # self.fuzzing_code_without_exec += dcf.if_test_dead(oracle = oracle, qc=self.qc, qreg=self.qreg,
+        #                                       cond_reg=self.cond_creg, qnum=self.qnum, cnum=self.cnum)
+
+        # while dead
+        while_gate = self.gate_generation(indent=1)
+        self.fuzzing_code_without_exec += dcf.while_dead(oracle=oracle, qc=self.qc, qreg=self.qreg,
+                                            cond_reg=self.cond_creg, qnum=self.qnum, cnum=self.cnum,
+                                            gate_list=while_gate)
 
         self.fuzzing_code_without_exec += self.only_dynamic_if()
         self.fuzzing_code_without_exec += self.gate_list[3]
@@ -207,13 +218,34 @@ class QiskitGenerator:
         # 最基本的dynamic circuit
         # 只使用if_test执行的单次控制流嵌套
         code_line = ""
-        for i in self.measure_index:
-            code_line += f"{self.qc}.measure({self.qreg}[{i}], {self.creg}[{i}])\n"
-        code_line += f"with {self.qc}.if_test(({self.creg}{self.measure_index}, 0b{self.result})) as else_1: \n"
+        # for i in self.measure_index:
+        #     code_line += f"{self.qc}.measure({self.qreg}[{i}], {self.creg}[{i}])\n"
+        # code_line += f"with {self.qc}.if_test(({self.creg}{self.measure_index}, 0b{self.result})) as else_1: \n"
+        # code_line += self.gate_list[1]
+        # code_line += f"with else_1: \n"
+        # code_line += self.gate_list[2]
+        # code_line += "\n"
+        return code_line
+
+    def dynamic_for_continue(self):
+        code_line = ""
+        code_line += f"with {self.qc}.for_loop(range(5)) as i:\n"
         code_line += self.gate_list[1]
-        code_line += f"with else_1: \n"
-        code_line += self.gate_list[2]
-        code_line += "\n"
+        code_line += f"\tqc.continue_loop()\n"
+        return code_line
+
+    def dynamic_for_break(self):
+        code_line = ""
+        code_line += f"with {self.qc}.for_loop(range(5)) as i:\n"
+        code_line += self.gate_list[1]
+        code_line += f"\tqc.break_loop()\n"
+        return code_line
+
+    def dynamic_for_zero(self):
+        code_line = "a = 0\n"
+        code_line += f"with {self.qc}.for_loop(range(a)) as i:\n"
+        code_line += self.gate_list[1]
+        code_line += f"\tqc.break_loop()\n"
         return code_line
 
 
