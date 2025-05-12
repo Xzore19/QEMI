@@ -7,7 +7,7 @@ qreg = QuantumRegister(7)
 creg = ClassicalRegister(5)
 cond_creg = ClassicalRegister(2)
 qc = QuantumCircuit(qreg, creg, cond_creg)
-##########################################################################################
+#############################  Insert a dummy gate  #################################################
 diffuser_gate = QuantumCircuit(QuantumRegister(2), name='Diffuser').to_gate(label='Diffuser')
 grdc_qreg = QuantumRegister(2)
 grdc_creg = ClassicalRegister(2)
@@ -15,14 +15,14 @@ grdc_qc = QuantumCircuit(grdc_qreg, grdc_creg)
 grdc_qc.append(diffuser_gate, qargs=grdc_qreg)
 
 qc.compose(grdc_qc, inplace = True, qubits = [5, 6])
-##########################################################################################
+#####################################################################################################
 
 qc.measure(qreg[4], creg[4])
 with qc.if_test((creg[4], 0b1)) as else_1:
 	qc.cx(2, 0)
 	qc.iswap(4, 2)
 with else_1:
-	pass
+	qc.cx(2, 0)
 
 qc.measure(qreg[0], creg[0])
 qc.measure(qreg[1], creg[1])

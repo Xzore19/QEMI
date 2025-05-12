@@ -7,22 +7,13 @@ qreg = QuantumRegister(7)
 creg = ClassicalRegister(5)
 cond_creg = ClassicalRegister(2)
 qc = QuantumCircuit(qreg, creg, cond_creg)
-##########################################################################################
-
-
-
-
-
-
-
-##########################################################################################
 
 qc.measure(qreg[4], creg[4])
 with qc.if_test((creg[4], 0b1)) as else_1:
 	qc.cx(2, 0)
 	qc.iswap(4, 2)
 with else_1:
-	pass
+	qc.cx(2, 0)
 
 qc.measure(qreg[0], creg[0])
 qc.measure(qreg[1], creg[1])
