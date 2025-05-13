@@ -22,7 +22,7 @@ symqv_single_qubit_gates = ["h", "x", "z", "rx", "rz"]
 symqv_double_qubit_gates = ["ch", "cx", "cz", "swap", "iswap", "crx", "crz"]
 
 
-def weight_gate_generator(qubits_num, pi_phase = 1, cir_name = "qc"):
+def weight_gate_generator(qubits_num, pi_phase = 0, cir_name = "qc"):
     # for given gate, return an effective gate with effective parameters
     qubits_index = [i for i in range(qubits_num)]
     weight = random.uniform(0, 0.75)

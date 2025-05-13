@@ -1,4 +1,5 @@
 from string import Template
+import re
 import os
 import ast
 import random
@@ -14,30 +15,36 @@ from qiskit.transpiler import PassManager, generate_preset_pass_manager
 from code_fuzzer.dead_code_fuzzer import DeadCodeFuzzer
 from code_fuzzer.result_analysis import probability_checker
 
-opt_passes = {  "Optimize1qGates": Optimize1qGates(), "Optimize1qGatesDecomposition":Optimize1qGatesDecomposition(),
-                "Collect1qRuns": Collect1qRuns(), "Collect2qBlocks": Collect2qBlocks(),
-                "CollectMultiQBlocks":CollectMultiQBlocks(),"CollectLinearFunctions":CollectLinearFunctions(),
-                "CollectCliffords":CollectCliffords(),"ConsolidateBlocks":ConsolidateBlocks(),
-                "InverseCancellation":InverseCancellation([XGate()]),
-                "CommutationAnalysis":CommutationAnalysis(),"CommutativeCancellation":CommutativeCancellation(),
-                "CommutativeInverseCancellation":CommutativeInverseCancellation(),
-                "Optimize1qGatesSimpleCommutation":Optimize1qGatesSimpleCommutation(),
-                "RemoveDiagonalGatesBeforeMeasure":RemoveDiagonalGatesBeforeMeasure(),
-                "RemoveResetInZeroState":RemoveResetInZeroState(),"RemoveFinalReset":RemoveFinalReset(),
-                "HoareOptimizer":HoareOptimizer(),"TemplateOptimization":TemplateOptimization(),
-                "ResetAfterMeasureSimplification":ResetAfterMeasureSimplification(), #"EchoRZXWeylDecomposition":EchoRZXWeylDecomposition(),
-                "OptimizeCliffords":OptimizeCliffords(),"ElidePermutations":ElidePermutations(),
-                "OptimizeAnnotated":OptimizeAnnotated()
-            }
+opt_passes = {"Optimize1qGates": Optimize1qGates(), "Optimize1qGatesDecomposition": Optimize1qGatesDecomposition(),
+              "Collect1qRuns": Collect1qRuns(), "Collect2qBlocks": Collect2qBlocks(),
+              "CollectMultiQBlocks": CollectMultiQBlocks(), "CollectLinearFunctions": CollectLinearFunctions(),
+              "CollectCliffords": CollectCliffords(), "ConsolidateBlocks": ConsolidateBlocks(),
+              "InverseCancellation": InverseCancellation([XGate()]),
+              "CommutationAnalysis": CommutationAnalysis(), "CommutativeCancellation": CommutativeCancellation(),
+              "CommutativeInverseCancellation": CommutativeInverseCancellation(),
+              "Optimize1qGatesSimpleCommutation": Optimize1qGatesSimpleCommutation(),
+              "RemoveDiagonalGatesBeforeMeasure": RemoveDiagonalGatesBeforeMeasure(),
+              "RemoveResetInZeroState": RemoveResetInZeroState(), "RemoveFinalReset": RemoveFinalReset(),
+              "HoareOptimizer": HoareOptimizer(), "TemplateOptimization": TemplateOptimization(),
+              "ResetAfterMeasureSimplification": ResetAfterMeasureSimplification(),
+              # "EchoRZXWeylDecomposition":EchoRZXWeylDecomposition(),
+              "OptimizeCliffords": OptimizeCliffords(), "ElidePermutations": ElidePermutations(),
+              "OptimizeAnnotated": OptimizeAnnotated()
+              }
+
 
 class QiskitGenerator:
-    def __init__(self, qubit_num, measure_num = 1, gate_num_upper = 5, measure_times = 10000, transplie = None, backend = "aer", use_pass = None, cond_qubit = 2):
+    def __init__(self, qubit_num, measure_num=1, gate_num_upper=5, measure_times=10000, transplie=None, backend="aer",
+                 use_pass=None, cond_qubit=2, structure="odi", fuzz_type="for_break"):
         self.qnum = qubit_num
         self.cnum = cond_qubit
         self.code = ""
         self.fuzzing_code = ""
+
+        # without_exec part are for qasm
         self.code_without_exec = ""
         self.fuzzing_code_without_exec = ""
+
         self.qreg = "qreg"
         self.creg = "creg"
         self.qc = "qc"
@@ -52,7 +59,7 @@ class QiskitGenerator:
         self.result = random.choice(range(pow(2, len(self.measure_index))))
         self.transpile = {}
         self.use_pass = None
-
+        self.code_structure = structure
 
         if self.code_structure == "odi":
             self.gate_list.append(self.gate_generation(0))
@@ -70,13 +77,10 @@ class QiskitGenerator:
         else:
             self.pass_choice()
 
-
         self.filename = "fuzzing/temp_test.py"
         self.fuzzing_filename = "fuzzing/fuzzing_test.py"
 
-
-        self.combine()
-        self.fuzzing_combine()
+        self.integrate_combine(fuzz_type=fuzz_type)
 
     def simulator_option(self):
         # 指定使用的模拟器，默认使用的aer
@@ -135,97 +139,129 @@ class QiskitGenerator:
         code_line += f"compiled_circuit = transpile({self.qc}, backend = simulator, optimization_level = {optimization_level}, routing_method = \"{routing_method}\", layout_method = \"{layout_method}\", approximation_degree = {approximation_degree} ) \n"
         return code_line
 
-
-    def combine(self):
-        # 未fuzzing的程序生成
-
+    def integrate_combine(self, fuzz_type):
+        # basic information of quantum program for qiskit
         # 添加基本的import函数
         self.code += self.write_import()
         self.code_without_exec += self.write_import()
+        self.fuzzing_code += self.write_import()
+        self.fuzzing_code_without_exec += self.write_import()
 
         # 添加基本的QuantumCircuit， QuantumRegister， ClassicalRegister的声明语句
         self.code += self.basic_set()
         self.code_without_exec += self.basic_set()
+        self.fuzzing_code += self.basic_set()
+        self.fuzzing_code_without_exec += self.basic_set()
 
         # 添加声明后的第一组量子门操作
         self.code += self.gate_list[0]
         self.code_without_exec += self.gate_list[0]
+        self.fuzzing_code += self.gate_list[0]
+        self.fuzzing_code_without_exec += self.gate_list[0]
 
-        # 添加最基本的dynamic circuit的逻辑语句
-        self.code += self.only_dynamic_if()
-        self.code_without_exec += self.only_dynamic_if()
+        ###################################### fuzzing areas #############################################
+        if fuzz_type == "for_break":
+            self.code += self.dynamic_for_break()
+            self.code_without_exec += self.dynamic_for_break()
 
-        # 添加if_test语句结束后的量子门操作
+            self.fuzzing_code += self.dynamic_for_break()
+            self.fuzzing_code += self.gate_list[2]
+
+            self.fuzzing_code_without_exec += self.dynamic_for_break()
+            self.fuzzing_code_without_exec += self.gate_list[2]
+
+        elif fuzz_type == "for_continue":
+            self.code += self.dynamic_for_continue()
+            self.code_without_exec += self.dynamic_for_continue()
+
+            self.fuzzing_code += self.dynamic_for_continue()
+            self.fuzzing_code += self.gate_list[2]
+
+            self.fuzzing_code_without_exec += self.dynamic_for_continue()
+            self.fuzzing_code_without_exec += self.gate_list[2]
+
+        elif fuzz_type == "for_zero":
+            self.fuzzing_code += self.dynamic_for_zero()
+            self.fuzzing_code += self.gate_list[2]
+
+            self.fuzzing_code_without_exec += self.dynamic_for_zero()
+            self.fuzzing_code_without_exec += self.gate_list[2]
+
+        elif fuzz_type == "while_dead":
+            dcf = DeadCodeFuzzer(qubit_num=self.cnum)
+            oracle, deadcode, deadqc = dcf.quantum_dead()
+            self.fuzzing_code += deadcode
+            self.fuzzing_code += f"{self.qc}.compose({deadqc}, inplace = True, qubits = {[self.qnum + i for i in range(self.cnum)]}) \n"
+
+            while_gate = self.gate_generation(indent=1)
+            self.fuzzing_code += dcf.while_dead(oracle=oracle, qc=self.qc, qreg=self.qreg,
+                                                cond_reg=self.cond_creg, qnum=self.qnum, cnum=self.cnum,
+                                                gate_list=while_gate)
+
+            self.fuzzing_code_without_exec += deadcode
+            self.fuzzing_code_without_exec += f"{self.qc}.compose({deadqc}, inplace = True, qubits = {[self.qnum + i for i in range(self.cnum)]}) \n"
+            self.fuzzing_code_without_exec += dcf.while_dead(oracle=oracle, qc=self.qc, qreg=self.qreg,
+                                                             cond_reg=self.cond_creg, qnum=self.qnum, cnum=self.cnum,
+                                                             gate_list=while_gate)
+
+        elif fuzz_type == "while_break":
+            dcf = DeadCodeFuzzer(qubit_num=self.cnum)
+            oracle, deadcode, deadqc = dcf.quantum_dead()
+            self.fuzzing_code += deadcode
+            self.fuzzing_code += f"{self.qc}.compose({deadqc}, inplace = True, qubits = {[self.qnum + i for i in range(self.cnum)]}) \n"
+
+            while_gate = self.gate_generation(indent=1)
+            self.code += dcf.while_break(oracle=oracle, qc=self.qc, qreg=self.qreg,
+                                         cond_reg=self.cond_creg, qnum=self.qnum, cnum=self.cnum,
+                                         gate_list=while_gate, fuzz=False)
+            self.fuzzing_code += dcf.while_break(oracle=oracle, qc=self.qc, qreg=self.qreg,
+                                                 cond_reg=self.cond_creg, qnum=self.qnum, cnum=self.cnum,
+                                                 gate_list=while_gate, fuzz=True)
+
+            self.fuzzing_code_without_exec += deadcode
+            self.fuzzing_code_without_exec += f"{self.qc}.compose({deadqc}, inplace = True, qubits = {[self.qnum + i for i in range(self.cnum)]}) \n"
+            self.code_without_exec += dcf.while_break(oracle=oracle, qc=self.qc, qreg=self.qreg,
+                                                      cond_reg=self.cond_creg, qnum=self.qnum, cnum=self.cnum,
+                                                      gate_list=while_gate, fuzz=False)
+            self.fuzzing_code_without_exec += dcf.while_break(oracle=oracle, qc=self.qc, qreg=self.qreg,
+                                                              cond_reg=self.cond_creg, qnum=self.qnum, cnum=self.cnum,
+                                                              gate_list=while_gate, fuzz=True)
+
+        elif fuzz_type == "if_test":
+            dcf = DeadCodeFuzzer(qubit_num=self.cnum)
+            oracle, deadcode, deadqc = dcf.quantum_dead()
+            self.fuzzing_code += deadcode
+            self.fuzzing_code += f"{self.qc}.compose({deadqc}, inplace = True, qubits = {[self.qnum + i for i in range(self.cnum)]}) \n"
+
+            self.fuzzing_code += dcf.if_test_dead(oracle=oracle, qc=self.qc, qreg=self.qreg,
+                                                  cond_reg=self.cond_creg, qnum=self.qnum, cnum=self.cnum)
+
+            self.fuzzing_code_without_exec += deadcode
+            self.fuzzing_code_without_exec += f"{self.qc}.compose({deadqc}, inplace = True, qubits = {[self.qnum + i for i in range(self.cnum)]}) \n"
+
+            self.fuzzing_code_without_exec += dcf.if_test_dead(oracle=oracle, qc=self.qc, qreg=self.qreg,
+                                                               cond_reg=self.cond_creg, qnum=self.qnum, cnum=self.cnum)
+
+        ##################################################################################################
+
+        # 添加后续的量子门操作
         self.code += self.gate_list[3]
         self.code_without_exec += self.gate_list[3]
+        self.fuzzing_code += self.gate_list[3]
+        self.fuzzing_code_without_exec += self.gate_list[3]
 
-        # 添加实现优化和模拟器调用的代码
+        # 添加 measure 语句
         for i in range(self.qnum):
             self.code += f"{self.qc}.measure({self.qreg}[{i}], {self.creg}[{i}]) \n"
             self.code_without_exec += f"{self.qc}.measure({self.qreg}[{i}], {self.creg}[{i}]) \n"
-        self.code += self.final_part(show_type="simulator")
 
-    def fuzzing_combine(self):
-        dcf = DeadCodeFuzzer(qubit_num=self.cnum)
-        self.fuzzing_code += self.write_import()
-        self.fuzzing_code += self.basic_set()
-        self.fuzzing_code += self.gate_list[0]
-
-        # 在if_test语句前添加dead code进行fuzzing
-        self.fuzzing_code += dcf.classical_dead()
-        oracle, deadcode, deadqc= dcf.quantum_dead()
-        self.fuzzing_code += deadcode
-        self.fuzzing_code += f"{self.qc}.compose({deadqc}, inplace = True, qubits = {[self.qnum+i for i in range(self.cnum)]}) \n"
-        # self.fuzzing_code += dcf.if_test_dead(oracle = oracle, qc=self.qc, qreg=self.qreg,
-        #                                       cond_reg=self.cond_creg, qnum=self.qnum, cnum=self.cnum)
-
-        while_gate = self.gate_generation(indent=1)
-        self.fuzzing_code += dcf.while_dead(oracle = oracle, qc=self.qc, qreg=self.qreg,
-                                              cond_reg=self.cond_creg, qnum=self.qnum, cnum=self.cnum, gate_list=while_gate)
-
-        self.fuzzing_code += self.only_dynamic_if()
-        self.fuzzing_code += self.gate_list[3]
         for i in range(self.qnum):
             self.fuzzing_code += f"{self.qc}.measure({self.qreg}[{i}], {self.creg}[{i}]) \n"
-        self.fuzzing_code += self.final_part(show_type="simulator")
-
-        self.fuzzing_code_without_exec += self.write_import()
-        self.fuzzing_code_without_exec += self.basic_set()
-        self.fuzzing_code_without_exec += self.gate_list[0]
-
-        # 在if_test语句前添加dead code进行fuzzing
-        self.fuzzing_code_without_exec += dcf.classical_dead()
-        oracle, deadcode, deadqc= dcf.quantum_dead()
-        self.fuzzing_code_without_exec += deadcode
-        self.fuzzing_code_without_exec += f"{self.qc}.compose({deadqc}, inplace = True, qubits = {[self.qnum+i for i in range(self.cnum)]}) \n"
-        # if dead
-        # self.fuzzing_code_without_exec += dcf.if_test_dead(oracle = oracle, qc=self.qc, qreg=self.qreg,
-        #                                       cond_reg=self.cond_creg, qnum=self.qnum, cnum=self.cnum)
-
-        # while dead
-        while_gate = self.gate_generation(indent=1)
-        self.fuzzing_code_without_exec += dcf.while_dead(oracle=oracle, qc=self.qc, qreg=self.qreg,
-                                            cond_reg=self.cond_creg, qnum=self.qnum, cnum=self.cnum,
-                                            gate_list=while_gate)
-
-        self.fuzzing_code_without_exec += self.only_dynamic_if()
-        self.fuzzing_code_without_exec += self.gate_list[3]
-        for i in range(self.qnum):
             self.fuzzing_code_without_exec += f"{self.qc}.measure({self.qreg}[{i}], {self.creg}[{i}]) \n"
 
-
-    def only_dynamic_if(self):
-        # 最基本的dynamic circuit
-        # 只使用if_test执行的单次控制流嵌套
-        code_line = ""
-        # for i in self.measure_index:
-        #     code_line += f"{self.qc}.measure({self.qreg}[{i}], {self.creg}[{i}])\n"
-        # code_line += f"with {self.qc}.if_test(({self.creg}{self.measure_index}, 0b{self.result})) as else_1: \n"
-        # code_line += self.gate_list[1]
-        # code_line += f"with else_1: \n"
-        # code_line += self.gate_list[2]
-        # code_line += "\n"
-        return code_line
+        # 为 code 和fuzzing code添加模拟器，对于qasm则不需要
+        self.code += self.final_part(show_type="simulator")
+        self.fuzzing_code += self.final_part(show_type="simulator")
 
     def dynamic_for_continue(self):
         code_line = ""
@@ -245,9 +281,7 @@ class QiskitGenerator:
         code_line = "a = 0\n"
         code_line += f"with {self.qc}.for_loop(range(a)) as i:\n"
         code_line += self.gate_list[1]
-        code_line += f"\tqc.break_loop()\n"
         return code_line
-
 
     def write_import(self):
         # 最基本的import语句
@@ -281,12 +315,11 @@ class QiskitGenerator:
         code_line += "\n"
         return code_line
 
-
     def gate_generation(self, indent):
         # 随机量子门操作的构建
         gate_code = ""
         for i in range(self.gate_num_upper):
-            gate_code += "\t"* indent + gate_generator(qubits_num=self.qnum, cir_name=self.qc) + "\n"
+            gate_code += "\t" * indent + gate_generator(qubits_num=self.qnum, cir_name=self.qc) + "\n"
         return gate_code
 
     def final_part(self, show_type):
@@ -327,19 +360,34 @@ class QiskitGenerator:
         # print("fuzzing_result:", fuzzing_result.stdout)
         # print(fuzzing_result.stderr == "")
 
-        if (truth_result.stderr == "" and fuzzing_result.stderr != "") or (truth_result.stderr != "" and fuzzing_result.stderr == ""):
+        if (truth_result.stderr == "" and fuzzing_result.stderr != "") or (
+                truth_result.stderr != "" and fuzzing_result.stderr == ""):
             print("Found crash!!!")
             directory = "fuzzing/buggy_program/crash"
 
-            files = sorted(f for f in os.listdir(directory) if os.path.isfile(os.path.join(directory, f)))
+            # files = sorted(f for f in os.listdir(directory) if os.path.isfile(os.path.join(directory, f)))
+            #
+            # if files:
+            #     pre, post = files[-1][:-3].split("_")
+            #     truth_file = directory + f"/truth_{str(int(post) + 1)}.py"
+            #     fuzzing_file = directory + f"/fuzzing_{str(int(post) + 1)}.py"
+            # else:
+            #     truth_file = directory + "/truth_0.py"
+            #     fuzzing_file = directory + "/fuzzing_0.py"
 
-            if files:
-                pre, post = files[-1][:-3].split("_")
-                truth_file = directory + f"/truth_{str(int(post)+1)}.py"
-                fuzzing_file = directory + f"/fuzzing_{str(int(post) + 1)}.py"
-            else:
-                truth_file = directory + "/truth_0.py"
-                fuzzing_file = directory + "/fuzzing_0.py"
+            pattern = re.compile(r"(truth|fuzzing)_(\d+)\.py")
+            max_index = -1
+
+            for f in os.listdir(directory):
+                match = pattern.fullmatch(f)
+                if match:
+                    index = int(match.group(2))
+                    if index > max_index:
+                        max_index = index
+
+            next_index = max_index + 1
+            truth_file = os.path.join(directory, f"truth_{next_index}.py")
+            fuzzing_file = os.path.join(directory, f"fuzzing_{next_index}.py")
 
             with open(truth_file, "w") as file:
                 file.write(self.code)
@@ -349,19 +397,24 @@ class QiskitGenerator:
         elif (truth_result.stderr != "" and fuzzing_result.stderr != ""):
             pass
 
-        elif not probability_checker(eval(truth_result.stdout), eval(fuzzing_result.stdout), shot=self.measure_times, qnum=self.qnum):
+        elif not probability_checker(eval(truth_result.stdout), eval(fuzzing_result.stdout), shot=self.measure_times,
+                                     qnum=self.qnum):
             print("Found wrong!!!")
             directory = "fuzzing/buggy_program/probability"
 
-            files = sorted(f for f in os.listdir(directory) if os.path.isfile(os.path.join(directory, f)))
+            pattern = re.compile(r"(truth|fuzzing)_(\d+)\.py")
+            max_index = -1
 
-            if files:
-                pre, post = files[-1][:-3].split("_")
-                truth_file = directory + f"/truth_{str(int(post) + 1)}.py"
-                fuzzing_file = directory + f"/fuzzing_{str(int(post) + 1)}.py"
-            else:
-                truth_file = directory + "/truth_0.py"
-                fuzzing_file = directory + "/fuzzing_0.py"
+            for f in os.listdir(directory):
+                match = pattern.fullmatch(f)
+                if match:
+                    index = int(match.group(2))
+                    if index > max_index:
+                        max_index = index
+
+            next_index = max_index + 1
+            truth_file = os.path.join(directory, f"truth_{next_index}.py")
+            fuzzing_file = os.path.join(directory, f"fuzzing_{next_index}.py")
 
             with open(truth_file, "w") as file:
                 file.write(self.code)
@@ -404,14 +457,12 @@ class QiskitGenerator:
         with open(fuzzing_qasm_file, "w") as fuzzing_file:
             fuzzing_file.write(fuzzing_qasm_code)
 
-
-
-
     def check_code(self):
         # 检查truth代码和fuzzing代码
         print(self.fuzzing_code_without_exec)
 
+
 if __name__ == "__main__":
-    a = QiskitGenerator(5,1)
+    a = QiskitGenerator(5, 1)
     # a.check_code()
     a.run()

@@ -38,18 +38,28 @@ def generate_transpile():
 #                "Optimize1qGatesSimpleCommutation", "RemoveDiagonalGatesBeforeMeasure", "RemoveResetInZeroState",
 #                "RemoveFinalReset", "HoareOptimizer", "TemplateOptimization", "ResetAfterMeasureSimplification",
 #                "OptimizeCliffords", "ElidePermutations", "NormalizeRXAngle", "OptimizeAnnotated"]
+
+# pass_option = [
+#     "Optimize1qGates", "Optimize1qGatesDecomposition", "Optimize1qGatesSimpleCommutation",
+#     "Collect1qRuns", "Collect2qBlocks", "CollectMultiQBlocks",
+#     "CollectCliffords", "ConsolidateBlocks",
+#     "CommutationAnalysis", "CommutativeCancellation", "CommutativeInverseCancellation",
+#     "RemoveDiagonalGatesBeforeMeasure", "RemoveResetInZeroState", "RemoveFinalReset",
+#     "RemoveFinalMeasurements", "RemoveIdentityEquivalent", "ResetAfterMeasureSimplification",
+#     "HoareOptimizer", "TemplateOptimization", "OptimizeCliffords", "OptimizeAnnotated",
+#     "ElidePermutations", "OptimizeSwapBeforeMeasure"
+# ]
+
 pass_option = [
     "Optimize1qGates", "Optimize1qGatesDecomposition", "Optimize1qGatesSimpleCommutation",
-    "Collect1qRuns", "Collect2qBlocks", "CollectMultiQBlocks",
-    "CollectCliffords", "ConsolidateBlocks",
+    "Collect1qRuns","Collect2qBlocks", "CollectMultiQBlocks",
+    "ConsolidateBlocks",
     "CommutationAnalysis", "CommutativeCancellation", "CommutativeInverseCancellation",
     "RemoveDiagonalGatesBeforeMeasure", "RemoveResetInZeroState", "RemoveFinalReset",
     "RemoveFinalMeasurements", "RemoveIdentityEquivalent", "ResetAfterMeasureSimplification",
     "HoareOptimizer", "TemplateOptimization", "OptimizeCliffords", "OptimizeAnnotated",
     "ElidePermutations", "OptimizeSwapBeforeMeasure"
 ]
-
-# pass_option = ["CollectLinearFunctions"]
 
 if __name__ == "__main__":
     tran_list = generate_transpile()
