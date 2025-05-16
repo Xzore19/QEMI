@@ -4,7 +4,8 @@ import qiskit.qasm3
 from tqdm import tqdm
 import gc
 
-optimization_level = [1, 2, 3]
+# optimization_level = [1, 2, 3]
+optimization_level = [3]
 routing_method = ['none', 'stochastic', 'sabre']
 layout_method = ["trivial", "dense", "noise_adaptive"]
 

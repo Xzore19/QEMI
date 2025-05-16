@@ -14,6 +14,7 @@ from qiskit.transpiler.passes import *
 from qiskit.transpiler import PassManager, generate_preset_pass_manager
 from code_fuzzer.dead_code_fuzzer import DeadCodeFuzzer
 from code_fuzzer.result_analysis import probability_checker
+from qiskit_api import generate_random_append_statement
 
 opt_passes = {"Optimize1qGates": Optimize1qGates(), "Optimize1qGatesDecomposition": Optimize1qGatesDecomposition(),
               "Collect1qRuns": Collect1qRuns(), "Collect2qBlocks": Collect2qBlocks(),
@@ -259,6 +260,14 @@ class QiskitGenerator:
             self.fuzzing_code += f"{self.qc}.measure({self.qreg}[{i}], {self.creg}[{i}]) \n"
             self.fuzzing_code_without_exec += f"{self.qc}.measure({self.qreg}[{i}], {self.creg}[{i}]) \n"
 
+        framework = """
+qc = qc.assign_parameters({p: np.random.uniform(0, 2 * np.pi) for p in qc.parameters})
+"""
+        self.code += framework
+        self.code_without_exec += framework
+        self.fuzzing_code += framework
+        self.fuzzing_code_without_exec += framework
+
         # 为 code 和fuzzing code添加模拟器，对于qasm则不需要
         self.code += self.final_part(show_type="simulator")
         self.fuzzing_code += self.final_part(show_type="simulator")
@@ -286,18 +295,19 @@ class QiskitGenerator:
     def write_import(self):
         # 最基本的import语句
         code_line = ""
-        code_line += "from qiskit import QuantumCircuit, QuantumRegister, ClassicalRegister, transpile \n"
+        code_line += "from qiskit import QuantumCircuit, QuantumRegister, ClassicalRegister, transpile, AncillaRegister \n"
         code_line += "from qiskit_aer import Aer \n"
         code_line += "from qiskit.providers.fake_provider import GenericBackendV2 \n"
         code_line += "from qiskit.providers.fake_provider import GenericBackendV2 \n"
         code_line += "from qiskit.circuit import Parameter, ParameterVector \n"
         code_line += "from qiskit.circuit.library import XGate \n"
         code_line += "from qiskit.transpiler.passes import * \n"
-        code_line += "import z3 \n"
+        code_line += "from qiskit.circuit.library import * \n"
         code_line += "from qiskit.transpiler import PassManager, generate_preset_pass_manager \n"
         # code_line += "from helpers.qiskit_helpers import compare_statevectors, run_on_simulator, run_routing_simulation, run_pass_on_simulator \n"
         # code_line += "from pathlib import Path \n"
         code_line += "from math import pi \n"
+        code_line += "import numpy as np \n"
         code_line += "\n"
         return code_line
 
@@ -318,8 +328,15 @@ class QiskitGenerator:
     def gate_generation(self, indent):
         # 随机量子门操作的构建
         gate_code = ""
+        flag = random.uniform(0,1)
         for i in range(self.gate_num_upper):
-            gate_code += "\t" * indent + gate_generator(qubits_num=self.qnum, cir_name=self.qc) + "\n"
+            if flag > 0.75:
+                gate_code += "\t" * indent + gate_generator(qubits_num=self.qnum, cir_name=self.qc) + "\n"
+            else:
+                qc, code = generate_random_append_statement(max_qubits=self.qnum, qc_var=self.qc, qr_var=self.qreg)
+                code_frag = code.split("\n")
+                for cf in code_frag:
+                    gate_code += "\t" * indent + cf + "\n"
         return gate_code
 
     def final_part(self, show_type):
@@ -335,6 +352,14 @@ class QiskitGenerator:
             code_line += self.simulator_option()
             code_line += self.pass_option()
             code_line += self.transpile_option()
+
+            ############################## decompose ########################################
+            framework = """
+qc = qc.decompose(reps=10)\n
+"""
+            code_line += framework
+
+            #################################################################################
             code_line += f"job = simulator.run(compiled_circuit, shots={self.measure_times}) \n"
             code_line += f"result = job.result().get_counts() \n"
             code_line += f"print(result)"
