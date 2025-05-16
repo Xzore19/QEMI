@@ -29,8 +29,7 @@ DYNAMIC_GATES = [
     (QFT, 1), (Diagonal, 1), (Permutation, 1), (MCXGate, 2), (MCPhaseGate, 2),
     (TwoLocal, 2), (RealAmplitudes, 2), (EfficientSU2, 2), (NLocal, 2),
     (ZZFeatureMap, 2), (ZFeatureMap, 1), (PauliFeatureMap, 2),
-    (StatePreparation, 1), (Initialize, 1), (Isometry, 1),
-    (WeightedAdder, 2), (DraperQFTAdder, 2),
+    (StatePreparation, 1), (Initialize, 1), (Isometry, 1), (DraperQFTAdder, 2),
     (OR, 2), (AND, 2), (XOR, 2),
 ]
 
