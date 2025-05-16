@@ -328,8 +328,8 @@ qc = qc.assign_parameters({p: np.random.uniform(0, 2 * np.pi) for p in qc.parame
     def gate_generation(self, indent):
         # 随机量子门操作的构建
         gate_code = ""
-        flag = random.uniform(0,1)
         for i in range(self.gate_num_upper):
+            flag = random.uniform(0, 1)
             if flag > 0.75:
                 gate_code += "\t" * indent + gate_generator(qubits_num=self.qnum, cir_name=self.qc) + "\n"
             else:
