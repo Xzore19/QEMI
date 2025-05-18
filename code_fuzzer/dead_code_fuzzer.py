@@ -52,7 +52,7 @@ class DeadCodeFuzzer():
         code_line += "\n"
         return code_line
 
-    def while_break(self, oracle, qc, qreg, cond_reg, qnum, cnum, gate_list, fuzz=None):
+    def while_break(self, oracle, qc, qreg, cond_reg, qnum, cnum, gate_list, fuzz=None, gate_list2=None):
 
         code_line = ""
         for i in range(cnum):
@@ -64,7 +64,7 @@ class DeadCodeFuzzer():
             code_line += f"\t{qc}.measure({qreg}[{qnum + i}], {cond_reg}[{i}]) \n"
         code_line += f"\t{qc}.break_loop()\n"
         if fuzz:
-            code_line += gate_list
+            code_line += gate_list2
         return code_line
 
     from qiskit import QuantumCircuit

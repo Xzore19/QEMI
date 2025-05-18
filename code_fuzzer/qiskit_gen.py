@@ -36,7 +36,7 @@ opt_passes = {"Optimize1qGates": Optimize1qGates(), "Optimize1qGatesDecompositio
 
 class QiskitGenerator:
     def __init__(self, qubit_num, measure_num=1, gate_num_upper=5, measure_times=10000, transplie=None, backend="aer",
-                 use_pass=None, cond_qubit=2, structure="odi", fuzz_type="for_break"):
+                 use_pass=None, cond_qubit=2, structure="odi", fuzz_type="while_break"):
         self.qnum = qubit_num
         self.cnum = cond_qubit
         self.code = ""
@@ -212,21 +212,22 @@ class QiskitGenerator:
             self.fuzzing_code += f"{self.qc}.compose({deadqc}, inplace = True, qubits = {[self.qnum + i for i in range(self.cnum)]}) \n"
 
             while_gate = self.gate_generation(indent=1)
+            while_gate2 = self.gate_generation(indent=1)
             self.code += dcf.while_break(oracle=oracle, qc=self.qc, qreg=self.qreg,
                                          cond_reg=self.cond_creg, qnum=self.qnum, cnum=self.cnum,
-                                         gate_list=while_gate, fuzz=False)
+                                         gate_list=while_gate, fuzz=False, gate_list2=None)
             self.fuzzing_code += dcf.while_break(oracle=oracle, qc=self.qc, qreg=self.qreg,
                                                  cond_reg=self.cond_creg, qnum=self.qnum, cnum=self.cnum,
-                                                 gate_list=while_gate, fuzz=True)
+                                                 gate_list=while_gate, fuzz=True, gate_list2=while_gate2)
 
             self.fuzzing_code_without_exec += deadcode
             self.fuzzing_code_without_exec += f"{self.qc}.compose({deadqc}, inplace = True, qubits = {[self.qnum + i for i in range(self.cnum)]}) \n"
             self.code_without_exec += dcf.while_break(oracle=oracle, qc=self.qc, qreg=self.qreg,
                                                       cond_reg=self.cond_creg, qnum=self.qnum, cnum=self.cnum,
-                                                      gate_list=while_gate, fuzz=False)
+                                                      gate_list=while_gate, fuzz=False, gate_list2=None)
             self.fuzzing_code_without_exec += dcf.while_break(oracle=oracle, qc=self.qc, qreg=self.qreg,
                                                               cond_reg=self.cond_creg, qnum=self.qnum, cnum=self.cnum,
-                                                              gate_list=while_gate, fuzz=True)
+                                                              gate_list=while_gate, fuzz=True, gate_list2=while_gate2)
 
         elif fuzz_type == "if_test":
             dcf = DeadCodeFuzzer(qubit_num=self.cnum)
