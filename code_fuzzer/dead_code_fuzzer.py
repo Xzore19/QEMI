@@ -22,7 +22,7 @@ class DeadCodeFuzzer():
         return oracle, code, qc
 
 
-    def if_test_dead(self, oracle, qc, qreg, cond_reg, qnum, cnum):
+    def if_test_dead(self, oracle, qc, qreg, cond_reg, qnum, cnum, gate_list=None):
         code_line = ""
         for i in range(cnum):
             code_line += f"{qc}.measure({qreg}[{qnum+i}], {cond_reg}[{i}]) \n"
@@ -30,7 +30,7 @@ class DeadCodeFuzzer():
         code_line += f"with {qc}.if_test(({cond_reg}, 0b{oracle})) as else_1: \n"
         code_line += "    pass\n"
         code_line += f"with else_1: \n"
-        code_line += "    qc.h(0)\n"
+        code_line += gate_list
         code_line += "\n"
         return code_line
 

@@ -231,18 +231,19 @@ class QiskitGenerator:
 
         elif fuzz_type == "if_test":
             dcf = DeadCodeFuzzer(qubit_num=self.cnum)
+            if_gate = self.gate_generation(indent=1)
             oracle, deadcode, deadqc = dcf.quantum_dead()
             self.fuzzing_code += deadcode
             self.fuzzing_code += f"{self.qc}.compose({deadqc}, inplace = True, qubits = {[self.qnum + i for i in range(self.cnum)]}) \n"
 
             self.fuzzing_code += dcf.if_test_dead(oracle=oracle, qc=self.qc, qreg=self.qreg,
-                                                  cond_reg=self.cond_creg, qnum=self.qnum, cnum=self.cnum)
+                                                  cond_reg=self.cond_creg, qnum=self.qnum, cnum=self.cnum, gate_list=if_gate)
 
             self.fuzzing_code_without_exec += deadcode
             self.fuzzing_code_without_exec += f"{self.qc}.compose({deadqc}, inplace = True, qubits = {[self.qnum + i for i in range(self.cnum)]}) \n"
 
             self.fuzzing_code_without_exec += dcf.if_test_dead(oracle=oracle, qc=self.qc, qreg=self.qreg,
-                                                               cond_reg=self.cond_creg, qnum=self.qnum, cnum=self.cnum)
+                                                               cond_reg=self.cond_creg, qnum=self.qnum, cnum=self.cnum, gate_list=if_gate)
 
         ##################################################################################################
 
