@@ -6,7 +6,7 @@ import gc
 
 # optimization_level = [1, 2, 3]
 optimization_level = [3]
-routing_method = ['none', 'stochastic', 'sabre']
+routing_method = ['none', 'stochastic', 'sabre', 'default']
 layout_method = ["trivial", "dense", "noise_adaptive"]
 
 transpile_detail_0 = {

@@ -114,7 +114,7 @@ class QiskitGenerator:
     def transpile_choice(self):
         # 对于未指定transpile函数中的参数时，随机指定以下的参数
         optimization_level = [0, 1, 2, 3]
-        routing_method = ['basic', 'lookahead', 'sabre']
+        routing_method = ['none', 'stochastic', 'sabre', 'default']
         layout_method = ["trivial", "dense", "noise_adaptive"]
         scheduling_method = ["asap", "alap"]
         basis_gates = []
@@ -162,30 +162,36 @@ class QiskitGenerator:
 
         ###################################### fuzzing areas #############################################
         if fuzz_type == "for_break":
-            self.code += self.dynamic_for_break()
-            self.code_without_exec += self.dynamic_for_break()
+            dcf = DeadCodeFuzzer(qubit_num=self.cnum)
+            dead_code = dcf.dynamic_for_break(qc=self.qc, gate_list=self.gate_list[1])
+            self.code += dead_code
+            self.code_without_exec += dead_code
 
-            self.fuzzing_code += self.dynamic_for_break()
+            self.fuzzing_code += dead_code
             self.fuzzing_code += self.gate_list[2]
 
-            self.fuzzing_code_without_exec += self.dynamic_for_break()
+            self.fuzzing_code_without_exec += dead_code
             self.fuzzing_code_without_exec += self.gate_list[2]
 
         elif fuzz_type == "for_continue":
-            self.code += self.dynamic_for_continue()
-            self.code_without_exec += self.dynamic_for_continue()
+            dcf = DeadCodeFuzzer(qubit_num=self.cnum)
+            dead_code = dcf.dynamic_for_continue(qc=self.qc, gate_list=self.gate_list[1])
+            self.code += dead_code
+            self.code_without_exec += dead_code
 
-            self.fuzzing_code += self.dynamic_for_continue()
+            self.fuzzing_code += dead_code
             self.fuzzing_code += self.gate_list[2]
 
-            self.fuzzing_code_without_exec += self.dynamic_for_continue()
+            self.fuzzing_code_without_exec += dead_code
             self.fuzzing_code_without_exec += self.gate_list[2]
 
         elif fuzz_type == "for_zero":
-            self.fuzzing_code += self.dynamic_for_zero()
+            dcf = DeadCodeFuzzer(qubit_num=self.cnum)
+            dead_code = dcf.dynamic_for_zero(qc=self.qc, gate_list=self.gate_list[1])
+            self.fuzzing_code += dead_code
             self.fuzzing_code += self.gate_list[2]
 
-            self.fuzzing_code_without_exec += self.dynamic_for_zero()
+            self.fuzzing_code_without_exec += dead_code
             self.fuzzing_code_without_exec += self.gate_list[2]
 
         elif fuzz_type == "while_dead":
@@ -237,13 +243,37 @@ class QiskitGenerator:
             self.fuzzing_code += f"{self.qc}.compose({deadqc}, inplace = True, qubits = {[self.qnum + i for i in range(self.cnum)]}) \n"
 
             self.fuzzing_code += dcf.if_test_dead(oracle=oracle, qc=self.qc, qreg=self.qreg,
-                                                  cond_reg=self.cond_creg, qnum=self.qnum, cnum=self.cnum, gate_list=if_gate)
+                                                  cond_reg=self.cond_creg, qnum=self.qnum, cnum=self.cnum,
+                                                  gate_list=if_gate)
 
             self.fuzzing_code_without_exec += deadcode
             self.fuzzing_code_without_exec += f"{self.qc}.compose({deadqc}, inplace = True, qubits = {[self.qnum + i for i in range(self.cnum)]}) \n"
 
             self.fuzzing_code_without_exec += dcf.if_test_dead(oracle=oracle, qc=self.qc, qreg=self.qreg,
-                                                               cond_reg=self.cond_creg, qnum=self.qnum, cnum=self.cnum, gate_list=if_gate)
+                                                               cond_reg=self.cond_creg, qnum=self.qnum, cnum=self.cnum,
+                                                               gate_list=if_gate)
+        elif fuzz_type == "nest":
+            dc_list = ["fb", "fz", "fc", "wd", "wb", "it"]
+            need_qd = ["it", "wb", "wd"]
+            dcf = DeadCodeFuzzer(qubit_num=self.cnum)
+            oracle, deadcode, deadqc = dcf.quantum_dead()
+
+            dc1 = random.choice(dc_list)
+            dc2 = random.choice(dc_list)
+            if dc1 in need_qd or dc2 in need_qd:
+                self.fuzzing_code += deadcode
+                self.fuzzing_code += f"{self.qc}.compose({deadqc}, inplace = True, qubits = {[self.qnum + i for i in range(self.cnum)]}) \n"
+                self.fuzzing_code_without_exec += deadcode
+                self.fuzzing_code_without_exec += f"{self.qc}.compose({deadqc}, inplace = True, qubits = {[self.qnum + i for i in range(self.cnum)]}) \n"
+
+            temp_dc2_code = self.dcf_code(dc=dc2, dcf=dcf, gate_list=self.gate_list[1], oracle=oracle).split("\n")
+            dc2_code = ""
+            for line in temp_dc2_code:
+                dc2_code += "\t"+ line + "\n"
+            dc1_code = self.dcf_code(dc=dc1, dcf=dcf, gate_list=dc2_code, oracle=oracle)
+
+            self.fuzzing_code += dc1_code
+            self.fuzzing_code_without_exec += dc1_code
 
         ##################################################################################################
 
@@ -274,25 +304,26 @@ qc = qc.assign_parameters({p: np.random.uniform(0, 2 * np.pi) for p in qc.parame
         self.code += self.final_part(show_type="simulator")
         self.fuzzing_code += self.final_part(show_type="simulator")
 
-    def dynamic_for_continue(self):
-        code_line = ""
-        code_line += f"with {self.qc}.for_loop(range(5)) as i:\n"
-        code_line += self.gate_list[1]
-        code_line += f"\tqc.continue_loop()\n"
-        return code_line
-
-    def dynamic_for_break(self):
-        code_line = ""
-        code_line += f"with {self.qc}.for_loop(range(5)) as i:\n"
-        code_line += self.gate_list[1]
-        code_line += f"\tqc.break_loop()\n"
-        return code_line
-
-    def dynamic_for_zero(self):
-        code_line = "a = 0\n"
-        code_line += f"with {self.qc}.for_loop(range(a)) as i:\n"
-        code_line += self.gate_list[1]
-        return code_line
+    def dcf_code(self, dc, dcf, gate_list, oracle):
+        if dc == "fb":
+            code = dcf.dynamic_for_break(qc=self.qc, gate_list=gate_list)
+        elif dc == "fz":
+            code = dcf.dynamic_for_zero(qc=self.qc, gate_list=gate_list)
+        elif dc == "fc":
+            code = dcf.dynamic_for_continue(qc=self.qc, gate_list=gate_list)
+        elif dc == "if":
+            code = dcf.if_test_dead(oracle=oracle, qc=self.qc, qreg=self.qreg,
+                                    cond_reg=self.cond_creg, qnum=self.qnum, cnum=self.cnum, gate_list=gate_list)
+        elif dc == "wd":
+            code = dcf.while_dead(oracle=oracle, qc=self.qc, qreg=self.qreg,
+                                  cond_reg=self.cond_creg, qnum=self.qnum, cnum=self.cnum, gate_list=gate_list)
+        elif dc == "wb":
+            code = dcf.while_break(oracle=oracle, qc=self.qc, qreg=self.qreg,
+                                   cond_reg=self.cond_creg, qnum=self.qnum, cnum=self.cnum, gate_list=gate_list,
+                                   fuzz=True)
+        else:
+            code = ""
+        return code
 
     def write_import(self):
         # 最基本的import语句
@@ -486,10 +517,12 @@ qc = qc.decompose(reps=10)\n
 
     def check_code(self):
         # 检查truth代码和fuzzing代码
-        print(self.fuzzing_code_without_exec)
+        print(self.code)
+        print("++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++")
+        print(self.fuzzing_code)
 
 
 if __name__ == "__main__":
-    a = QiskitGenerator(5, 1)
-    # a.check_code()
-    a.run()
+    a = QiskitGenerator(5, 1, fuzz_type="nest")
+    a.check_code()
+    # a.run()

@@ -34,6 +34,25 @@ class DeadCodeFuzzer():
         code_line += "\n"
         return code_line
 
+    def dynamic_for_continue(self, qc, gate_list):
+        code_line = ""
+        code_line += f"with {qc}.for_loop(range(5)) as i:\n"
+        code_line += f"\tqc.continue_loop()\n"
+        code_line += gate_list
+        return code_line
+
+    def dynamic_for_break(self, qc, gate_list):
+        code_line = ""
+        code_line += f"with {qc}.for_loop(range(5)) as i:\n"
+        code_line += f"\tqc.break_loop()\n"
+        code_line += gate_list
+        return code_line
+
+    def dynamic_for_zero(self, qc, gate_list):
+        code_line = "a = 0\n"
+        code_line += f"with {qc}.for_loop(range(a)) as i:\n"
+        code_line += gate_list
+        return code_line
 
     def while_dead(self, oracle, qc, qreg, cond_reg, qnum, cnum, gate_list):
         if oracle[-1] == "0":
@@ -59,12 +78,11 @@ class DeadCodeFuzzer():
             code_line += f"{qc}.measure({qreg}[{qnum+i}], {cond_reg}[{i}]) \n"
 
         code_line += f"with {qc}.while_loop(({cond_reg}, 0b{oracle})): \n"
-        code_line += gate_list
         for i in range(cnum):
             code_line += f"\t{qc}.measure({qreg}[{qnum + i}], {cond_reg}[{i}]) \n"
         code_line += f"\t{qc}.break_loop()\n"
         if fuzz:
-            code_line += gate_list2
+            code_line += gate_list
         return code_line
 
     from qiskit import QuantumCircuit
