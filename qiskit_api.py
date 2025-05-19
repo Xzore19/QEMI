@@ -134,7 +134,7 @@ def generate_dynamic_gate(gate_cls, requested_qubits):
     elif gate_cls in [OR, AND, XOR]:
         num_variable_qubits = requested_qubits - 1
         gate = gate_cls(num_variable_qubits)
-        gate._custom_expr = f"{gate_cls.__name__}({num_variable_qubits})"
+        gate._custom_expr = f"{gate_cls.__name__}({num_variable_qubits}, seed=42)"
         return gate, gate.num_qubits
 
     else:
