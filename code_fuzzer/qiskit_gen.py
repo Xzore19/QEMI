@@ -163,117 +163,103 @@ class QiskitGenerator:
         ###################################### fuzzing areas #############################################
         if fuzz_type == "for_break":
             dcf = DeadCodeFuzzer(qubit_num=self.cnum)
-            dead_code = dcf.dynamic_for_break(qc=self.qc, gate_list=self.gate_list[1])
-            self.code += dead_code
-            self.code_without_exec += dead_code
+            gate_list = self.gate_generation(1)
+            dead_list = self.gate_generation(1)
+            dead_code, unfuzz = dcf.dynamic_for_break(qc=self.qc, gate_list=gate_list, dead_list=dead_list)
+            self.code += unfuzz
+            self.code_without_exec += unfuzz
 
             self.fuzzing_code += dead_code
-            self.fuzzing_code += self.gate_list[2]
-
             self.fuzzing_code_without_exec += dead_code
-            self.fuzzing_code_without_exec += self.gate_list[2]
 
         elif fuzz_type == "for_continue":
             dcf = DeadCodeFuzzer(qubit_num=self.cnum)
-            dead_code = dcf.dynamic_for_continue(qc=self.qc, gate_list=self.gate_list[1])
-            self.code += dead_code
-            self.code_without_exec += dead_code
+            gate_list = self.gate_generation(1)
+            dead_list = self.gate_generation(1)
+            dead_code, unfuzz = dcf.dynamic_for_continue(qc=self.qc, gate_list=gate_list, dead_list=dead_list)
+            self.code += unfuzz
+            self.code_without_exec += unfuzz
 
             self.fuzzing_code += dead_code
-            self.fuzzing_code += self.gate_list[2]
-
             self.fuzzing_code_without_exec += dead_code
-            self.fuzzing_code_without_exec += self.gate_list[2]
 
         elif fuzz_type == "for_zero":
             dcf = DeadCodeFuzzer(qubit_num=self.cnum)
-            dead_code = dcf.dynamic_for_zero(qc=self.qc, gate_list=self.gate_list[1])
+            gate_list = self.gate_generation(1)
+            dead_code, unfuzz = dcf.dynamic_for_zero(qc=self.qc, gate_list=gate_list)
             self.fuzzing_code += dead_code
-            self.fuzzing_code += self.gate_list[2]
-
             self.fuzzing_code_without_exec += dead_code
-            self.fuzzing_code_without_exec += self.gate_list[2]
 
         elif fuzz_type == "while_dead":
             dcf = DeadCodeFuzzer(qubit_num=self.cnum)
-            oracle, deadcode, deadqc = dcf.quantum_dead()
-            self.fuzzing_code += deadcode
-            self.fuzzing_code += f"{self.qc}.compose({deadqc}, inplace = True, qubits = {[self.qnum + i for i in range(self.cnum)]}) \n"
-
             while_gate = self.gate_generation(indent=1)
-            self.fuzzing_code += dcf.while_dead(oracle=oracle, qc=self.qc, qreg=self.qreg,
-                                                cond_reg=self.cond_creg, qnum=self.qnum, cnum=self.cnum,
-                                                gate_list=while_gate)
+            dead_code, unfuzz = dcf.while_dead(qc=self.qc, qreg=self.qreg, cond_reg=self.cond_creg, qnum=self.qnum, gate_list=while_gate)
 
-            self.fuzzing_code_without_exec += deadcode
-            self.fuzzing_code_without_exec += f"{self.qc}.compose({deadqc}, inplace = True, qubits = {[self.qnum + i for i in range(self.cnum)]}) \n"
-            self.fuzzing_code_without_exec += dcf.while_dead(oracle=oracle, qc=self.qc, qreg=self.qreg,
-                                                             cond_reg=self.cond_creg, qnum=self.qnum, cnum=self.cnum,
-                                                             gate_list=while_gate)
+            self.code += unfuzz
+            self.fuzzing_code += dead_code
 
         elif fuzz_type == "while_break":
             dcf = DeadCodeFuzzer(qubit_num=self.cnum)
-            oracle, deadcode, deadqc = dcf.quantum_dead()
-            self.fuzzing_code += deadcode
-            self.fuzzing_code += f"{self.qc}.compose({deadqc}, inplace = True, qubits = {[self.qnum + i for i in range(self.cnum)]}) \n"
 
             while_gate = self.gate_generation(indent=1)
             while_gate2 = self.gate_generation(indent=1)
-            self.code += dcf.while_break(oracle=oracle, qc=self.qc, qreg=self.qreg,
-                                         cond_reg=self.cond_creg, qnum=self.qnum, cnum=self.cnum,
-                                         gate_list=while_gate, fuzz=False, gate_list2=None)
-            self.fuzzing_code += dcf.while_break(oracle=oracle, qc=self.qc, qreg=self.qreg,
-                                                 cond_reg=self.cond_creg, qnum=self.qnum, cnum=self.cnum,
-                                                 gate_list=while_gate, fuzz=True, gate_list2=while_gate2)
+            dead_code, unfuzz = dcf.while_break(qc=self.qc, qreg=self.qreg, cond_reg=self.cond_creg, qnum=self.qnum, gate_list=while_gate, dead_list=while_gate2)
 
-            self.fuzzing_code_without_exec += deadcode
-            self.fuzzing_code_without_exec += f"{self.qc}.compose({deadqc}, inplace = True, qubits = {[self.qnum + i for i in range(self.cnum)]}) \n"
-            self.code_without_exec += dcf.while_break(oracle=oracle, qc=self.qc, qreg=self.qreg,
-                                                      cond_reg=self.cond_creg, qnum=self.qnum, cnum=self.cnum,
-                                                      gate_list=while_gate, fuzz=False, gate_list2=None)
-            self.fuzzing_code_without_exec += dcf.while_break(oracle=oracle, qc=self.qc, qreg=self.qreg,
-                                                              cond_reg=self.cond_creg, qnum=self.qnum, cnum=self.cnum,
-                                                              gate_list=while_gate, fuzz=True, gate_list2=while_gate2)
+            self.code += unfuzz
+            self.fuzzing_code += dead_code
 
-        elif fuzz_type == "if_test":
+
+
+        elif fuzz_type == "if_test_dead":
             dcf = DeadCodeFuzzer(qubit_num=self.cnum)
             if_gate = self.gate_generation(indent=1)
-            oracle, deadcode, deadqc = dcf.quantum_dead()
-            self.fuzzing_code += deadcode
-            self.fuzzing_code += f"{self.qc}.compose({deadqc}, inplace = True, qubits = {[self.qnum + i for i in range(self.cnum)]}) \n"
+            dead_code, unfuzz = dcf.if_test_dead(qc=self.qc, qreg=self.qreg, qnum=self.qnum, cond_reg=self.cond_creg, gate_list=if_gate)
 
-            self.fuzzing_code += dcf.if_test_dead(oracle=oracle, qc=self.qc, qreg=self.qreg,
-                                                  cond_reg=self.cond_creg, qnum=self.qnum, cnum=self.cnum,
-                                                  gate_list=if_gate)
+            self.code += unfuzz
+            self.fuzzing_code += dead_code
 
-            self.fuzzing_code_without_exec += deadcode
-            self.fuzzing_code_without_exec += f"{self.qc}.compose({deadqc}, inplace = True, qubits = {[self.qnum + i for i in range(self.cnum)]}) \n"
-
-            self.fuzzing_code_without_exec += dcf.if_test_dead(oracle=oracle, qc=self.qc, qreg=self.qreg,
-                                                               cond_reg=self.cond_creg, qnum=self.qnum, cnum=self.cnum,
-                                                               gate_list=if_gate)
-        elif fuzz_type == "nest":
-            dc_list = ["fb", "fz", "fc", "wd", "wb", "it"]
-            need_qd = ["it", "wb", "wd"]
+        elif fuzz_type == "if_test_else":
             dcf = DeadCodeFuzzer(qubit_num=self.cnum)
-            oracle, deadcode, deadqc = dcf.quantum_dead()
+            if_gate = self.gate_generation(indent=1)
+            else_gate = self.gate_generation(indent=1)
+            dead_code, unfuzz = dcf.if_test_else(qc=self.qc, qreg=self.qreg, qnum=self.qnum, cond_reg=self.cond_creg, gate_list=if_gate, dead_list=else_gate)
+
+            self.code += unfuzz
+            self.fuzzing_code += dead_code
+
+
+        elif fuzz_type == "nest":
+            dc_list = ["fb", "fz", "fc", "wd", "wb", "itd", "ite"]
+            dcf = DeadCodeFuzzer(qubit_num=self.cnum)
 
             dc1 = random.choice(dc_list)
             dc2 = random.choice(dc_list)
-            if dc1 in need_qd or dc2 in need_qd:
-                self.fuzzing_code += deadcode
-                self.fuzzing_code += f"{self.qc}.compose({deadqc}, inplace = True, qubits = {[self.qnum + i for i in range(self.cnum)]}) \n"
-                self.fuzzing_code_without_exec += deadcode
-                self.fuzzing_code_without_exec += f"{self.qc}.compose({deadqc}, inplace = True, qubits = {[self.qnum + i for i in range(self.cnum)]}) \n"
+            dc3 = random.choice(dc_list)
 
-            temp_dc2_code = self.dcf_code(dc=dc2, dcf=dcf, gate_list=self.gate_list[1], oracle=oracle).split("\n")
-            dc2_code = ""
-            for line in temp_dc2_code:
+            dc2_gate1 = self.gate_generation(1)
+            dc2_gate2 = self.gate_generation(1)
+            temp1, temp2 = self.dcf_code(dc=dc2, dcf=dcf, gate_list=dc2_gate1, dead_list=dc2_gate2)
+            dc2_code, dc2_unfuzz = "", ""
+            for line in temp1.split("\n"):
                 dc2_code += "\t" + line + "\n"
-            dc1_code = self.dcf_code(dc=dc1, dcf=dcf, gate_list=dc2_code, oracle=oracle)
 
-            self.fuzzing_code += dc1_code
-            self.fuzzing_code_without_exec += dc1_code
+            for line in temp2.split("\n"):
+                dc2_unfuzz += "\t" + line + "\n"
+
+            dc3_gate1 = self.gate_generation(1)
+            dc3_gate2 = self.gate_generation(1)
+            temp1, temp2 = self.dcf_code(dc=dc3, dcf=dcf, gate_list=dc3_gate1, dead_list=dc3_gate2)
+            dc3_code, dc3_unfuzz = "", ""
+            for line in temp1.split("\n"):
+                dc3_code += "\t" + line + "\n"
+
+            for line in temp2.split("\n"):
+                dc3_unfuzz += "\t" + line + "\n"
+
+            dead_code, unfuzz = self.dcf_code(dc=dc1, dcf=dcf, gate_list= dc2_code, dead_list=dc3_code)
+
+            self.code += unfuzz
+            self.fuzzing_code += dead_code
 
         ##################################################################################################
 
@@ -304,26 +290,25 @@ qc = qc.assign_parameters({p: np.random.uniform(0, 2 * np.pi) for p in qc.parame
         self.code += self.final_part(show_type="simulator")
         self.fuzzing_code += self.final_part(show_type="simulator")
 
-    def dcf_code(self, dc, dcf, gate_list, oracle):
+    def dcf_code(self, dc, dcf, gate_list, dead_list):
         if dc == "fb":
-            code = dcf.dynamic_for_break(qc=self.qc, gate_list=gate_list)
+            code, unfuzz = dcf.dynamic_for_break(qc=self.qc, gate_list=gate_list, dead_list=dead_list)
         elif dc == "fz":
-            code = dcf.dynamic_for_zero(qc=self.qc, gate_list=gate_list)
+            code, unfuzz = dcf.dynamic_for_zero(qc=self.qc, gate_list=gate_list)
         elif dc == "fc":
-            code = dcf.dynamic_for_continue(qc=self.qc, gate_list=gate_list)
-        elif dc == "it":
-            code = dcf.if_test_dead(oracle=oracle, qc=self.qc, qreg=self.qreg,
-                                    cond_reg=self.cond_creg, qnum=self.qnum, cnum=self.cnum, gate_list=gate_list)
+            code, unfuzz = dcf.dynamic_for_continue(qc=self.qc, gate_list=gate_list, dead_list=dead_list)
+        elif dc == "ite":
+            code, unfuzz = dcf.if_test_else(qc=self.qc, qreg=self.qreg, qnum=self.qnum, cond_reg=self.cond_creg, gate_list=gate_list, dead_list=dead_list)
         elif dc == "wd":
-            code = dcf.while_dead(oracle=oracle, qc=self.qc, qreg=self.qreg,
-                                  cond_reg=self.cond_creg, qnum=self.qnum, cnum=self.cnum, gate_list=gate_list)
+            code, unfuzz = dcf.while_dead(qc=self.qc, qreg=self.qreg, cond_reg=self.cond_creg, qnum=self.qnum, gate_list=gate_list)
         elif dc == "wb":
-            code = dcf.while_break(oracle=oracle, qc=self.qc, qreg=self.qreg,
-                                   cond_reg=self.cond_creg, qnum=self.qnum, cnum=self.cnum, gate_list=gate_list,
-                                   fuzz=True)
+            code, unfuzz = dcf.while_break(qc=self.qc, qreg=self.qreg, cond_reg=self.cond_creg, qnum=self.qnum, gate_list=gate_list, dead_list=dead_list)
+        elif dc == "itd":
+            code, unfuzz = dcf.if_test_dead(qc=self.qc, qreg=self.qreg, qnum=self.qnum, cond_reg=self.cond_creg, gate_list=gate_list)
         else:
             code = "pass \n"
-        return code
+            unfuzz = code
+        return code, unfuzz
 
     def write_import(self):
         # 最基本的import语句
@@ -518,7 +503,7 @@ qc = qc.decompose(reps=10)\n
 
     def check_code(self):
         # 检查truth代码和fuzzing代码
-        # print(self.code)
+        print(self.code)
         print("++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++")
         print(self.fuzzing_code)
 

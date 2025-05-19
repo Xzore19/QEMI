@@ -1,5 +1,8 @@
 from dc_cond_gen.gr_generator import generate_grover_code
 from qiskit_gates_generator import gate_generator
+import random
+from qiskit_api import generate_random_append_statement
+
 class DeadCodeFuzzer():
     # 用于生成明确的dead code
     def __init__(self, qubit_num = 2):
@@ -22,98 +25,129 @@ class DeadCodeFuzzer():
         return oracle, code, qc
 
 
-    def if_test_dead(self, oracle, qc, qreg, cond_reg, qnum, cnum, gate_list=None):
-        code_line = ""
-        for i in range(cnum):
+    def if_test_dead(self, qc, qreg, qnum, cond_reg,gate_list):
+        code_line, unfuzz_line = "", ""
+        oracle, deadcode, deadqc = self.quantum_dead()
+        code_line += deadcode
+        code_line += f"{qc}.compose({deadqc}, inplace = True, qubits = {[qnum + i for i in range(self.qubit_num)]}) \n"
+        for i in range(self.qubit_num):
             code_line += f"{qc}.measure({qreg}[{qnum+i}], {cond_reg}[{i}]) \n"
 
         code_line += f"with {qc}.if_test(({cond_reg}, 0b{oracle})) as else_1: \n"
-        code_line += "    pass\n"
+        code_line += "\tpass\n"
         code_line += f"with else_1: \n"
         code_line += gate_list
         code_line += "\n"
-        return code_line
+        return code_line, unfuzz_line
 
-    def dynamic_for_continue(self, qc, gate_list):
-        code_line = ""
+    def if_test_else(self, qc, qreg, qnum, cond_reg, gate_list, dead_list):
+        code_line, unfuzz_line = "", ""
+        oracle, deadcode, deadqc = self.quantum_dead()
+        code_line += deadcode
+        unfuzz_line += deadcode
+        code_line += f"{qc}.compose({deadqc}, inplace = True, qubits = {[qnum + i for i in range(self.qubit_num)]}) \n"
+        unfuzz_line += f"{qc}.compose({deadqc}, inplace = True, qubits = {[qnum + i for i in range(self.qubit_num)]}) \n"
+
+        for i in range(self.qubit_num):
+            code_line += f"{qc}.measure({qreg}[{qnum+i}], {cond_reg}[{i}]) \n"
+            unfuzz_line += f"{qc}.measure({qreg}[{qnum+i}], {cond_reg}[{i}]) \n"
+
+        code_line += f"with {qc}.if_test(({cond_reg}, 0b{oracle})) as else_1: \n"
+        unfuzz_line += f"with {qc}.if_test(({cond_reg}, 0b{oracle})) as else_1: \n"
+        code_line += gate_list
+        unfuzz_line += gate_list
+        code_line += f"with else_1: \n"
+        unfuzz_line += f"with else_1: \n"
+        code_line += dead_list
+        unfuzz_line +="\tpass \n"
+        unfuzz_line += "\n"
+        code_line += "\n"
+        return code_line, unfuzz_line
+
+    def dynamic_for_continue(self, qc, gate_list, dead_list):
+        code_line, unfuzz_line = "", ""
         code_line += f"with {qc}.for_loop(range(5)) as i:\n"
+        unfuzz_line += f"with {qc}.for_loop(range(5)) as i:\n"
+        code_line += gate_list
+        unfuzz_line += gate_list
         code_line += f"\tqc.continue_loop()\n"
-        code_line += gate_list
-        return code_line
+        unfuzz_line += f"\tqc.continue_loop()\n"
+        code_line += dead_list
+        return code_line, unfuzz_line
 
-    def dynamic_for_break(self, qc, gate_list):
-        code_line = ""
+    def dynamic_for_break(self, qc, gate_list, dead_list):
+        code_line, unfuzz_line = "", ""
         code_line += f"with {qc}.for_loop(range(5)) as i:\n"
-        code_line += f"\tqc.break_loop()\n"
+        unfuzz_line += f"with {qc}.for_loop(range(5)) as i:\n"
         code_line += gate_list
-        return code_line
+        unfuzz_line += gate_list
+        code_line += f"\tqc.break_loop()\n"
+        unfuzz_line += f"\tqc.break_loop()\n"
+        code_line += dead_list
+        return code_line, unfuzz_line
 
     def dynamic_for_zero(self, qc, gate_list):
         code_line = "a = 0\n"
         code_line += f"with {qc}.for_loop(range(a)) as i:\n"
         code_line += gate_list
-        return code_line
+        return code_line, ""
 
-    def while_dead(self, oracle, qc, qreg, cond_reg, qnum, cnum, gate_list):
+    def while_dead(self, qc, qreg, cond_reg, qnum, gate_list):
+        oracle, deadcode, deadqc = self.quantum_dead()
         if oracle[-1] == "0":
             oracle = oracle[:-1] + "1"
         else:
             oracle = oracle[:-1] + "0"
 
-        code_line = ""
-        for i in range(cnum):
+        code_line= ""
+        code_line += deadcode
+        code_line += f"{qc}.compose({deadqc}, inplace = True, qubits = {[qnum + i for i in range(self.qubit_num)]}) \n"
+
+        for i in range(self.qubit_num):
             code_line += f"{qc}.measure({qreg}[{qnum+i}], {cond_reg}[{i}]) \n"
 
         code_line += f"with {qc}.while_loop(({cond_reg}, 0b{oracle})): \n"
         code_line += gate_list
-        for i in range(cnum):
+        for i in range(self.qubit_num):
             code_line += f"\t{qc}.measure({qreg}[{qnum + i}], {cond_reg}[{i}]) \n"
         code_line += "\n"
-        return code_line
+        return code_line, ""
 
-    def while_break(self, oracle, qc, qreg, cond_reg, qnum, cnum, gate_list, fuzz=None, gate_list2=None):
+    def while_break(self, qc, qreg, cond_reg, qnum, gate_list, dead_list):
+        oracle, deadcode, deadqc = self.quantum_dead()
+        code_line, unfuzz_line = "", ""
+        code_line += deadcode
+        unfuzz_line += deadcode
+        code_line += f"{qc}.compose({deadqc}, inplace = True, qubits = {[qnum + i for i in range(self.qubit_num)]}) \n"
+        unfuzz_line += f"{qc}.compose({deadqc}, inplace = True, qubits = {[qnum + i for i in range(self.qubit_num)]}) \n"
 
-        code_line = ""
-        for i in range(cnum):
+        for i in range(self.qubit_num):
             code_line += f"{qc}.measure({qreg}[{qnum+i}], {cond_reg}[{i}]) \n"
+            unfuzz_line += f"{qc}.measure({qreg}[{qnum + i}], {cond_reg}[{i}]) \n"
 
         code_line += f"with {qc}.while_loop(({cond_reg}, 0b{oracle})): \n"
-        for i in range(cnum):
+        unfuzz_line += f"with {qc}.while_loop(({cond_reg}, 0b{oracle})): \n"
+        for i in range(self.qubit_num):
             code_line += f"\t{qc}.measure({qreg}[{qnum + i}], {cond_reg}[{i}]) \n"
+            unfuzz_line += f"\t{qc}.measure({qreg}[{qnum + i}], {cond_reg}[{i}]) \n"
+        code_line += gate_list
+        unfuzz_line += gate_list
         code_line += f"\t{qc}.break_loop()\n"
-        if fuzz:
-            code_line += gate_list
-        return code_line
+        unfuzz_line += f"\t{qc}.break_loop()\n"
+        code_line += dead_list
+        return code_line, unfuzz_line
 
-    from qiskit import QuantumCircuit
 
-    # def circuit_to_qiskit_code(self, circuit: QuantumCircuit, circuit_name="dc_qc") -> str:
-    #     lines = []
-    #     num_qubits = circuit.num_qubits
-    #     num_clbits = circuit.num_clbits
-    #     lines.append(f"from qiskit import QuantumCircuit\n")
-    #     lines.append(f"{circuit_name} = QuantumCircuit({num_qubits}, {num_clbits})\n")
-    #
-    #     for inst in circuit.data:
-    #         instr = inst.operation
-    #         qargs = inst.qubits
-    #         cargs = inst.clbits
-    #
-    #         # 获取量子比特索引
-    #         q_str = ", ".join(f"{circuit_name}.qubits[{circuit.qubits.index(q)}]" for q in qargs)
-    #         # 获取经典比特索引
-    #         c_str = ", ".join(f"{circuit_name}.clbits[{circuit.clbits.index(c)}]" for c in cargs)
-    #
-    #         # 参数处理
-    #         if instr.params:
-    #             param_str = ", ".join([repr(p) for p in instr.params])
-    #             line = f"{circuit_name}.{instr.name}({param_str}, {q_str})"
-    #         else:
-    #             line = f"{circuit_name}.{instr.name}({q_str})"
-    #
-    #         if cargs:
-    #             line = line[:-1] + ", " + c_str + ")"
-    #
-    #         lines.append(line)
-    #
-    #     return "\n".join(lines)
+    def gate_generation(self, indent):
+        # 随机量子门操作的构建
+        gate_code = ""
+        for i in range(self.gate_num_upper):
+            flag = random.uniform(0, 1)
+            if flag > 0.75:
+                gate_code += "\t" * indent + gate_generator(qubits_num=self.qnum, cir_name=self.qc) + "\n"
+            else:
+                qc, code = generate_random_append_statement(max_qubits=self.qnum, qc_var=self.qc, qr_var=self.qreg)
+                code_frag = code.split("\n")
+                for cf in code_frag:
+                    gate_code += "\t" * indent + cf + "\n"
+        return gate_code
