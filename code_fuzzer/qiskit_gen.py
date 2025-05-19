@@ -246,6 +246,8 @@ class QiskitGenerator:
             for line in temp2.split("\n"):
                 dc2_unfuzz += "\t" + line + "\n"
 
+            del(dcf)
+            dcf = DeadCodeFuzzer(qubit_num=self.cnum)
             dc3_gate1 = self.gate_generation(1)
             dc3_gate2 = self.gate_generation(1)
             temp1, temp2 = self.dcf_code(dc=dc3, dcf=dcf, gate_list=dc3_gate1, dead_list=dc3_gate2)
@@ -333,10 +335,9 @@ qc = qc.assign_parameters({p: np.random.uniform(0, 2 * np.pi) for p in qc.parame
     def basic_set(self):
         # 声明QuantumCircuit， QuantumRegister， ClassicalRegister语句
         code_line = ""
-        code_line += f"{self.qreg} = QuantumRegister({self.qnum + self.cnum}) \n"
+        code_line += f"{self.qreg} = QuantumRegister({self.qnum}) \n"
         code_line += f"{self.creg} = ClassicalRegister({self.qnum}) \n"
-        code_line += f"{self.cond_creg} = ClassicalRegister({self.cnum}) \n"
-        code_line += f"{self.qc} = QuantumCircuit({self.qreg}, {self.creg}, {self.cond_creg}) \n"
+        code_line += f"{self.qc} = QuantumCircuit({self.qreg}, {self.creg}) \n"
         # q_mindx = ",".join([f"{self.qreg}[{i}]" for i in self.measure_index])
         # c_mindx = ",".join([f"{self.creg}[{i}]" for i in self.measure_index])
         # code_line += f"({q_mindx}) = {self.qreg} \n"
@@ -418,6 +419,8 @@ qc = qc.decompose(reps=10)\n
             with open(fuzzing_file, "w") as file_f:
                 file_f.write(self.fuzzing_code)
 
+            return None
+
         try:
             fuzzing_result = subprocess.run([sys.executable, self.fuzzing_filename], capture_output=True, text=True, timeout=600)
         except subprocess.TimeoutExpired:
@@ -442,6 +445,8 @@ qc = qc.decompose(reps=10)\n
 
             with open(fuzzing_file, "w") as file_f:
                 file_f.write(self.fuzzing_code)
+
+            return None
 
         if (truth_result.stderr == "" and fuzzing_result.stderr != "") or (
                 truth_result.stderr != "" and fuzzing_result.stderr == ""):
