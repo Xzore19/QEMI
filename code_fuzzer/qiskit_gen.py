@@ -281,7 +281,7 @@ class QiskitGenerator:
             self.fuzzing_code_without_exec += f"{self.qc}.measure({self.qreg}[{i}], {self.creg}[{i}]) \n"
 
         framework = """
-qc = qc.assign_parameters({p: np.random.uniform(0, 2 * np.pi) for p in qc.parameters})
+qc = qc.assign_parameters({p: 0.5 for p in qc.parameters})
 """
         self.code += framework
         self.code_without_exec += framework

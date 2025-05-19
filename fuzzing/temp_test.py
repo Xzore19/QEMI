@@ -15,62 +15,40 @@ qreg = QuantumRegister(5)
 creg = ClassicalRegister(5) 
 qc = QuantumCircuit(qreg, creg) 
 
-qc.append(TwoLocal(3, reps=1, parameter_prefix='theta_4bc563'), [qreg[2], qreg[4], qreg[0]])
-qc.ccz(4, 3, 2)
-qc.append(CUGate(3.769, 3.26, 6.08, 0.066), [qreg[3], qreg[2]])
-qc.cp(1.5707963267948966, 0, 1)
-aux_f7a897 = AncillaRegister(1, 'aux_f7a897')
-qc.add_register(aux_f7a897)
-qc.append(DraperQFTAdder(3), [qreg[3], qreg[0], aux_f7a897[0], qreg[2], qreg[4], qreg[1]])
-
-qr_7ab4bc = QuantumRegister(2)
-cr_7ab4bc = ClassicalRegister(2)
-qc.add_register(qr_7ab4bc)
-qc.add_register(cr_7ab4bc)
-qc.x(qr_7ab4bc[0])
-qc.x(qr_7ab4bc[1])
-qc.measure(qr_7ab4bc[0], cr_7ab4bc[0]) 
-qc.measure(qr_7ab4bc[1], cr_7ab4bc[1]) 
-with qc.if_test((cr_7ab4bc, 0b11)) as else_1: 
+qc.append(U3Gate(4.29, 1.58, 3.66), [qreg[0]])
+qc.append(CCXGate(), [qreg[3], qreg[1], qreg[4]])
+qc.p(1.5707963267948966, 1)
+qc.append(RealAmplitudes(4, reps=1, parameter_prefix='theta_8f4cf8'), [qreg[3], qreg[4], qreg[0], qreg[2]])
+qc.cswap(4, 1, 0)
+with qc.for_loop(range(3)) as i:
+	a = 0
+	with qc.for_loop(range(a)) as i:
+		qc.append(Permutation(1, pattern=[0]), [qreg[3]])
+		qc.append(AND(4), [qreg[4], qreg[3], qreg[1], qreg[0], qreg[2]])
+		qc.append(StatePreparation([(0.06988683018377573-0.20503903291093672j), (0.19474621245745333+0.18055373428859645j), (-0.05456002421860923-0.09348074852815012j), (-0.07676935308699719-0.15288629872918508j), (0.019808432780545213-0.1733283803236083j), (0.4035177011740865-0.09379660092498705j), (-0.15080250668929143+0.10372450928364378j), (-0.05073286223700362+0.44767958669831415j), (0.03474972084840947-0.23601094819266896j), (0.037033888776376755+0.13328656537581168j), (-0.2533061939546118-0.04788564401506931j), (-0.1186983759383854-0.040728622322801264j), (-0.14470686848973968+0.07514997309323072j), (0.11515395157068559+0.26369898348915405j), (-0.07217232375224752-0.015226837818358136j), (-0.1135685469553104+0.3421125957748678j)]), [qreg[2], qreg[4], qreg[0], qreg[1]])
+		qc.z(2)
+		qc.ccx(4, 3, 0)
 	
-	qr_52cca2 = QuantumRegister(2)
-	cr_52cca2 = ClassicalRegister(2)
-	qc.add_register(qr_52cca2)
-	qc.add_register(cr_52cca2)
-	qc.x(qr_52cca2[0])
-	qc.x(qr_52cca2[1])
-	qc.measure(qr_52cca2[0], cr_52cca2[0]) 
-	qc.measure(qr_52cca2[1], cr_52cca2[1]) 
-	with qc.while_loop((cr_52cca2, 0b10)): 
-		qc.append(C3XGate(), [qreg[3], qreg[1], qreg[0], qreg[2]])
-		qc.append(CXGate(), [qreg[4], qreg[3]])
-		qc.iswap(2, 1)
-		qc.append(Permutation(5, pattern=[2, 3, 1, 4, 0]), [qreg[2], qreg[1], qreg[4], qreg[3], qreg[0]])
-		qc.append(RZGate(2.186), [qreg[4]])
-		qc.measure(qr_52cca2[0], cr_52cca2[0]) 
-		qc.measure(qr_52cca2[1], cr_52cca2[1]) 
-	
-	
-with else_1: 
-	pass 
-
-qc.append(XGate(), [qreg[4]])
-qc.append(Isometry(np.array([[1.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0], [0.0, 1.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0], [0.0, 0.0, 1.0, 0.0, 0.0, 0.0, 0.0, 0.0], [0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0, 0.0], [0.0, 0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0], [0.0, 0.0, 0.0, 0.0, 0.0, 1.0, 0.0, 0.0], [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 1.0, 0.0], [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 1.0]]), 0, 0), [qreg[3], qreg[0], qreg[1]])
-qc.append(HGate(), [qreg[3]])
-qc.append(EfficientSU2(2, reps=1, parameter_prefix='theta_d8069f'), [qreg[4], qreg[3]])
-qc.append(CRXGate(0.125), [qreg[4], qreg[2]])
+	qc.break_loop()
+qc.append(ZFeatureMap(5, reps=1, parameter_prefix='x_47cb2d'), [qreg[4], qreg[3], qreg[2], qreg[1], qreg[0]])
+qc.append(U3Gate(6.08, 3.02, 4.297), [qreg[1]])
+qc.ry(0.39269908169872414, 3)
+aux_725fed = AncillaRegister(3, 'aux_725fed')
+qc.add_register(aux_725fed)
+qc.append(DraperQFTAdder(4), [aux_725fed[1], aux_725fed[0], qreg[0], qreg[1], aux_725fed[2], qreg[4], qreg[3], qreg[2]])
+qc.crx(1.5707963267948966, 2, 1)
 qc.measure(qreg[0], creg[0]) 
 qc.measure(qreg[1], creg[1]) 
 qc.measure(qreg[2], creg[2]) 
 qc.measure(qreg[3], creg[3]) 
 qc.measure(qreg[4], creg[4]) 
 
-qc = qc.assign_parameters({p: np.random.uniform(0, 2 * np.pi) for p in qc.parameters})
+qc = qc.assign_parameters({p: 0.5 for p in qc.parameters})
 
 
 simulator = Aer.get_backend("aer_simulator") 
 
-p = PassManager(ConsolidateBlocks()) 
+p = PassManager(Optimize1qGates()) 
 qc = p.run(qc) 
 
 compiled_circuit = transpile(qc, backend = simulator, optimization_level = 3, routing_method = "default", layout_method = "noise_adaptive", approximation_degree = 1 ) 
