@@ -390,34 +390,64 @@ qc = qc.decompose(reps=10)\n
         with open(self.filename, "w") as file:
             file.write(self.code)
 
-        truth_result = subprocess.run([sys.executable, self.filename], capture_output=True, text=True)
-        # truth_result = subprocess.Popen([sys.executable, self.filename], stdout=subprocess.PIPE, stderr=subprocess.PIPE,
-        #                                 text=True)
-
         with open(self.fuzzing_filename, "w") as file:
             file.write(self.fuzzing_code)
 
-        fuzzing_result = subprocess.run([sys.executable, self.fuzzing_filename], capture_output=True, text=True)
+        try:
+            truth_result = subprocess.run([sys.executable, self.filename], capture_output=True, text=True, timeout=600)
+        except subprocess.TimeoutExpired:
+            print("truth timeout")
+            directory = "fuzzing/buggy_program/timeout"
+            pattern = re.compile(r"(truth|fuzzing)_(\d+)\.py")
+            max_index = -1
 
-        # print("truth_result:", truth_result.stdout)
-        # print(truth_result.stderr == "")
-        # print("fuzzing_result:", fuzzing_result.stdout)
-        # print(fuzzing_result.stderr == "")
+            for f in os.listdir(directory):
+                match = pattern.fullmatch(f)
+                if match:
+                    index = int(match.group(2))
+                    if index > max_index:
+                        max_index = index
+
+            next_index = max_index + 1
+            truth_file = os.path.join(directory, f"truth_{next_index}.py")
+            fuzzing_file = os.path.join(directory, f"fuzzing_{next_index}.py")
+
+            with open(truth_file, "w") as file:
+                file.write(self.code)
+
+            with open(fuzzing_file, "w") as file_f:
+                file_f.write(self.fuzzing_code)
+
+        try:
+            fuzzing_result = subprocess.run([sys.executable, self.fuzzing_filename], capture_output=True, text=True, timeout=600)
+        except subprocess.TimeoutExpired:
+            print("fuzzing timeout")
+            directory = "fuzzing/buggy_program/timeout"
+            pattern = re.compile(r"(truth|fuzzing)_(\d+)\.py")
+            max_index = -1
+
+            for f in os.listdir(directory):
+                match = pattern.fullmatch(f)
+                if match:
+                    index = int(match.group(2))
+                    if index > max_index:
+                        max_index = index
+
+            next_index = max_index + 1
+            truth_file = os.path.join(directory, f"truth_{next_index}.py")
+            fuzzing_file = os.path.join(directory, f"fuzzing_{next_index}.py")
+
+            with open(truth_file, "w") as file:
+                file.write(self.code)
+
+            with open(fuzzing_file, "w") as file_f:
+                file_f.write(self.fuzzing_code)
 
         if (truth_result.stderr == "" and fuzzing_result.stderr != "") or (
                 truth_result.stderr != "" and fuzzing_result.stderr == ""):
             print("Found crash!!!")
             directory = "fuzzing/buggy_program/crash"
 
-            # files = sorted(f for f in os.listdir(directory) if os.path.isfile(os.path.join(directory, f)))
-            #
-            # if files:
-            #     pre, post = files[-1][:-3].split("_")
-            #     truth_file = directory + f"/truth_{str(int(post) + 1)}.py"
-            #     fuzzing_file = directory + f"/fuzzing_{str(int(post) + 1)}.py"
-            # else:
-            #     truth_file = directory + "/truth_0.py"
-            #     fuzzing_file = directory + "/fuzzing_0.py"
 
             pattern = re.compile(r"(truth|fuzzing)_(\d+)\.py")
             max_index = -1

@@ -54,10 +54,10 @@ def generate_transpile():
 pass_option = [
     "Optimize1qGates", "Optimize1qGatesDecomposition", "Optimize1qGatesSimpleCommutation",
     "Collect1qRuns","Collect2qBlocks", "CollectMultiQBlocks",
-    "ConsolidateBlocks",
+    "ConsolidateBlocks", "CollectCliffords",
     "CommutationAnalysis", "CommutativeCancellation", "CommutativeInverseCancellation",
     "RemoveDiagonalGatesBeforeMeasure", "RemoveResetInZeroState", "RemoveFinalReset",
-    "RemoveFinalMeasurements", "RemoveIdentityEquivalent", "ResetAfterMeasureSimplification",
+    "RemoveIdentityEquivalent", "ResetAfterMeasureSimplification",
     "HoareOptimizer", "TemplateOptimization", "OptimizeCliffords", "OptimizeAnnotated",
     "ElidePermutations", "OptimizeSwapBeforeMeasure"
 ]
@@ -77,7 +77,7 @@ if __name__ == "__main__":
         for pas in pass_option:
             for con in control:
                 for i in tqdm(range(100), desc="Processing"):
-                    a = QiskitGenerator(qubit_num = 5, measure_num = 1, gate_num_upper = 10, measure_times = 10000, transplie = tran, backend="aer", use_pass= pas, fuzz_type=con)
+                    a = QiskitGenerator(qubit_num = 5, measure_num = 1, gate_num_upper = 5, measure_times = 10000, transplie = tran, backend="aer", use_pass= pas, fuzz_type=con)
                     a.run()
 
                     # 释放内存，防止因为循环的内存崩溃报错

@@ -66,8 +66,8 @@ class DeadCodeFuzzer():
 
     def dynamic_for_continue(self, qc, gate_list, dead_list):
         code_line, unfuzz_line = "", ""
-        code_line += f"with {qc}.for_loop(range(5)) as i:\n"
-        unfuzz_line += f"with {qc}.for_loop(range(5)) as i:\n"
+        code_line += f"with {qc}.for_loop(range(3)) as i:\n"
+        unfuzz_line += f"with {qc}.for_loop(range(3)) as i:\n"
         code_line += gate_list
         unfuzz_line += gate_list
         code_line += f"\tqc.continue_loop()\n"
@@ -77,8 +77,8 @@ class DeadCodeFuzzer():
 
     def dynamic_for_break(self, qc, gate_list, dead_list):
         code_line, unfuzz_line = "", ""
-        code_line += f"with {qc}.for_loop(range(5)) as i:\n"
-        unfuzz_line += f"with {qc}.for_loop(range(5)) as i:\n"
+        code_line += f"with {qc}.for_loop(range(3)) as i:\n"
+        unfuzz_line += f"with {qc}.for_loop(range(3)) as i:\n"
         code_line += gate_list
         unfuzz_line += gate_list
         code_line += f"\tqc.break_loop()\n"
