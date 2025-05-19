@@ -269,7 +269,7 @@ class QiskitGenerator:
             temp_dc2_code = self.dcf_code(dc=dc2, dcf=dcf, gate_list=self.gate_list[1], oracle=oracle).split("\n")
             dc2_code = ""
             for line in temp_dc2_code:
-                dc2_code += "\t"+ line + "\n"
+                dc2_code += "\t" + line + "\n"
             dc1_code = self.dcf_code(dc=dc1, dcf=dcf, gate_list=dc2_code, oracle=oracle)
 
             self.fuzzing_code += dc1_code
@@ -311,7 +311,7 @@ qc = qc.assign_parameters({p: np.random.uniform(0, 2 * np.pi) for p in qc.parame
             code = dcf.dynamic_for_zero(qc=self.qc, gate_list=gate_list)
         elif dc == "fc":
             code = dcf.dynamic_for_continue(qc=self.qc, gate_list=gate_list)
-        elif dc == "if":
+        elif dc == "it":
             code = dcf.if_test_dead(oracle=oracle, qc=self.qc, qreg=self.qreg,
                                     cond_reg=self.cond_creg, qnum=self.qnum, cnum=self.cnum, gate_list=gate_list)
         elif dc == "wd":
@@ -322,7 +322,7 @@ qc = qc.assign_parameters({p: np.random.uniform(0, 2 * np.pi) for p in qc.parame
                                    cond_reg=self.cond_creg, qnum=self.qnum, cnum=self.cnum, gate_list=gate_list,
                                    fuzz=True)
         else:
-            code = ""
+            code = "pass \n"
         return code
 
     def write_import(self):
@@ -341,6 +341,7 @@ qc = qc.assign_parameters({p: np.random.uniform(0, 2 * np.pi) for p in qc.parame
         # code_line += "from pathlib import Path \n"
         code_line += "from math import pi \n"
         code_line += "import numpy as np \n"
+        code_line += "np.random.seed(42) \n"
         code_line += "\n"
         return code_line
 
@@ -517,7 +518,7 @@ qc = qc.decompose(reps=10)\n
 
     def check_code(self):
         # 检查truth代码和fuzzing代码
-        print(self.code)
+        # print(self.code)
         print("++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++")
         print(self.fuzzing_code)
 

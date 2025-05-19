@@ -62,8 +62,12 @@ pass_option = [
     "ElidePermutations", "OptimizeSwapBeforeMeasure"
 ]
 
+# control = [
+#     "for_break", "for_continue", "for_zero", "while_dead", "while_break", "if_test"
+# ]
+
 control = [
-    "for_break", "for_continue", "for_zero", "while_dead", "while_break", "if_test"
+    "nest"
 ]
 
 if __name__ == "__main__":
