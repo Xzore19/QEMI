@@ -263,6 +263,43 @@ class QiskitGenerator:
             self.code += unfuzz
             self.fuzzing_code += dead_code
 
+        elif fuzz_type == "nest_dead":
+            dc_list = ["fb", "fz", "fc", "wd", "wb", "itd", "ite"]
+            dcf = DeadCodeFuzzer(qubit_num=self.cnum)
+
+            dc1 = random.choice(dc_list)
+            dc2 = random.choice(dc_list)
+            dc3 = random.choice(dc_list)
+
+            dc2_gate1 = self.gate_generation(1)
+            dc2_gate2 = self.gate_generation(1)
+            temp1, temp2 = self.dcf_code(dc=dc2, dcf=dcf, gate_list=dc2_gate1, dead_list=dc2_gate2)
+            dc2_code, dc2_unfuzz = "", ""
+            for line in temp1.split("\n"):
+                dc2_code += "\t" + line + "\n"
+
+            for line in temp2.split("\n"):
+                dc2_unfuzz += "\t" + line + "\n"
+
+            del (dcf)
+            dcf = DeadCodeFuzzer(qubit_num=self.cnum)
+            dc3_gate1 = self.gate_generation(1)
+            dc3_gate2 = self.gate_generation(1)
+            temp1, temp2 = self.dcf_code(dc=dc3, dcf=dcf, gate_list=dc3_gate1, dead_list=dc3_gate2)
+            dc3_code, dc3_unfuzz = "", ""
+            for line in temp1.split("\n"):
+                dc3_code += "\t" + line + "\n"
+
+            for line in temp2.split("\n"):
+                dc3_unfuzz += "\t" + line + "\n"
+
+            dead_code, _ = self.dcf_code(dc=dc1, dcf=dcf, gate_list=dc2_code, dead_list=dc3_code)
+            # del dcf
+            _, unfuzz = self.dcf_code(dc=dc1, dcf=dcf, gate_list=dc2_unfuzz, dead_list=dc3_unfuzz)
+
+            self.code += unfuzz
+            self.fuzzing_code += dead_code
+
         ##################################################################################################
 
         # 添加后续的量子门操作
@@ -544,6 +581,6 @@ qc = qc.decompose(reps=10)\n
 
 
 if __name__ == "__main__":
-    a = QiskitGenerator(5, 1, fuzz_type="nest")
+    a = QiskitGenerator(5, 1, fuzz_type="nest_dead")
     a.check_code()
     # a.run()
