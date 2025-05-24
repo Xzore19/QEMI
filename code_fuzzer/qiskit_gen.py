@@ -227,36 +227,38 @@ class QiskitGenerator:
             self.code += unfuzz
             self.fuzzing_code += dead_code
 
+        elif fuzz_type == "switch_dead":
+            dcf = DeadCodeFuzzer(qubit_num=self.cnum)
+            gate_list = self.gate_generation(indent=2)
+            dead_list = self.gate_generation(indent=2)
+
+            dead_code, unfuzz = dcf.switch_dead(qc=self.qc, gate_list=gate_list, dead_list=dead_list)
+            self.code += unfuzz
+            self.fuzzing_code += dead_code
 
         elif fuzz_type == "nest":
-            dc_list = ["fb", "fz", "fc", "wd", "wb", "itd", "ite"]
+            dc_list = ["fb", "fz", "fc", "wd", "wb", "itd", "ite", "sd"]
+            dc_indent = {"sd":2}
             dcf = DeadCodeFuzzer(qubit_num=self.cnum)
 
             dc1 = random.choice(dc_list)
             dc2 = random.choice(dc_list)
             dc3 = random.choice(dc_list)
 
-            dc2_gate1 = self.gate_generation(1)
-            dc2_gate2 = self.gate_generation(1)
+            dc1i, dc2i, dc3i = dc_indent.get(dc1, 1), dc_indent.get(dc2, 1), dc_indent.get(dc3, 1)
+
+
+            dc2_gate1 = self.gate_generation(dc2i)
+            dc2_gate2 = self.gate_generation(dc2i)
             temp1, temp2 = self.dcf_code(dc=dc2, dcf=dcf, gate_list=dc2_gate1, dead_list=dc2_gate2)
-            dc2_code, dc2_unfuzz = "", ""
-            for line in temp1.split("\n"):
-                dc2_code += "\t" + line + "\n"
-
-            for line in temp2.split("\n"):
-                dc2_unfuzz += "\t" + line + "\n"
-
+            dc2_code, dc2_unfuzz = self.code_indent(indent=dc1i, code1=temp1, code2=temp2)
             del(dcf)
-            dcf = DeadCodeFuzzer(qubit_num=self.cnum)
-            dc3_gate1 = self.gate_generation(1)
-            dc3_gate2 = self.gate_generation(1)
-            temp1, temp2 = self.dcf_code(dc=dc3, dcf=dcf, gate_list=dc3_gate1, dead_list=dc3_gate2)
-            dc3_code, dc3_unfuzz = "", ""
-            for line in temp1.split("\n"):
-                dc3_code += "\t" + line + "\n"
 
-            for line in temp2.split("\n"):
-                dc3_unfuzz += "\t" + line + "\n"
+            dcf = DeadCodeFuzzer(qubit_num=self.cnum)
+            dc3_gate1 = self.gate_generation(dc3i)
+            dc3_gate2 = self.gate_generation(dc3i)
+            temp1, temp2 = self.dcf_code(dc=dc3, dcf=dcf, gate_list=dc3_gate1, dead_list=dc3_gate2)
+            dc3_code, dc3_unfuzz = self.code_indent(indent=dc1i, code1=temp1, code2=temp2)
 
             dead_code, unfuzz = self.dcf_code(dc=dc1, dcf=dcf, gate_list= dc2_code, dead_list=dc3_code)
 
@@ -264,35 +266,26 @@ class QiskitGenerator:
             self.fuzzing_code += dead_code
 
         elif fuzz_type == "nest_dead":
-            dc_list = ["fb", "fz", "fc", "wd", "wb", "itd", "ite"]
+            dc_list = ["fb", "fz", "fc", "wd", "wb", "itd", "ite","sd"]
+            dc_indent = {"sd": 2}
             dcf = DeadCodeFuzzer(qubit_num=self.cnum)
 
             dc1 = random.choice(dc_list)
             dc2 = random.choice(dc_list)
             dc3 = random.choice(dc_list)
+            dc1i, dc2i, dc3i = dc_indent.get(dc1, 1), dc_indent.get(dc2, 1), dc_indent.get(dc3, 1)
 
-            dc2_gate1 = self.gate_generation(1)
-            dc2_gate2 = self.gate_generation(1)
+            dc2_gate1 = self.gate_generation(dc2i)
+            dc2_gate2 = self.gate_generation(dc2i)
             temp1, temp2 = self.dcf_code(dc=dc2, dcf=dcf, gate_list=dc2_gate1, dead_list=dc2_gate2)
-            dc2_code, dc2_unfuzz = "", ""
-            for line in temp1.split("\n"):
-                dc2_code += "\t" + line + "\n"
-
-            for line in temp2.split("\n"):
-                dc2_unfuzz += "\t" + line + "\n"
-
+            dc2_code, dc2_unfuzz = self.code_indent(indent=dc1i, code1=temp1, code2=temp2)
             del (dcf)
+
             dcf = DeadCodeFuzzer(qubit_num=self.cnum)
-            dc3_gate1 = self.gate_generation(1)
-            dc3_gate2 = self.gate_generation(1)
+            dc3_gate1 = self.gate_generation(dc3i)
+            dc3_gate2 = self.gate_generation(dc3i)
             temp1, temp2 = self.dcf_code(dc=dc3, dcf=dcf, gate_list=dc3_gate1, dead_list=dc3_gate2)
-            dc3_code, dc3_unfuzz = "", ""
-            for line in temp1.split("\n"):
-                dc3_code += "\t" + line + "\n"
-
-            for line in temp2.split("\n"):
-                dc3_unfuzz += "\t" + line + "\n"
-
+            dc3_code, dc3_unfuzz = self.code_indent(indent=dc1i, code1=temp1, code2=temp2)
             dead_code, _ = self.dcf_code(dc=dc1, dcf=dcf, gate_list=dc2_code, dead_list=dc3_code)
             # del dcf
             _, unfuzz = self.dcf_code(dc=dc1, dcf=dcf, gate_list=dc2_unfuzz, dead_list=dc3_unfuzz)
@@ -329,6 +322,16 @@ qc = qc.assign_parameters({p: 0.5 for p in qc.parameters})
         self.code += self.final_part(show_type="simulator")
         self.fuzzing_code += self.final_part(show_type="simulator")
 
+    def code_indent(self, indent, code1, code2):
+        new1, new2 = "", ""
+        for line in code1.split("\n"):
+            new1 += "\t"*indent + line + "\n"
+
+        for line in code2.split("\n"):
+            new2 += "\t"*indent + line + "\n"
+
+        return new1, new2
+
     def dcf_code(self, dc, dcf, gate_list, dead_list):
         if dc == "fb":
             code, unfuzz = dcf.dynamic_for_break(qc=self.qc, gate_list=gate_list, dead_list=dead_list)
@@ -344,6 +347,8 @@ qc = qc.assign_parameters({p: 0.5 for p in qc.parameters})
             code, unfuzz = dcf.while_break(qc=self.qc, qreg=self.qreg, cond_reg=self.cond_creg, qnum=self.qnum, gate_list=gate_list, dead_list=dead_list)
         elif dc == "itd":
             code, unfuzz = dcf.if_test_dead(qc=self.qc, qreg=self.qreg, qnum=self.qnum, cond_reg=self.cond_creg, gate_list=gate_list)
+        elif dc == "sd":
+            code, unfuzz = dcf.switch_dead(qc=self.qc, gate_list=gate_list, dead_list=dead_list)
         else:
             code = "pass \n"
             unfuzz = code
