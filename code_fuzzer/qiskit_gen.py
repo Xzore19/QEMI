@@ -139,7 +139,7 @@ class QiskitGenerator:
         # 使用的参数是 optimizatio_level, routing_method, layout_method, approximation_degree
         # code_line += f"compiled_circuit = transpile({self.qc}, backend = simulator, optimization_level = {optimization_level}, routing_method = \"{routing_method}\", layout_method = \"{layout_method}\", approximation_degree = {approximation_degree},basis_gates=[\"cx\", \"h\", \"id\", \"t\"] ) \n"
 
-        code_line += f"compiled_circuit = transpile({self.qc}, backend = simulator, optimization_level = {optimization_level}, routing_method = \"{routing_method}\", layout_method = \"{layout_method}\", approximation_degree = {approximation_degree} \n"
+        code_line += f"compiled_circuit = transpile({self.qc}, backend = simulator, optimization_level = {optimization_level}, routing_method = \"{routing_method}\", layout_method = \"{layout_method}\", approximation_degree = {approximation_degree}) \n"
         return code_line
 
     def integrate_combine(self, fuzz_type):
