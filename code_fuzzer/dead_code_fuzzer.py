@@ -50,7 +50,7 @@ qc.cx({self.qr_name}[0], {self.qr_name}[1])
 
 
     def if_test_dead(self, qc, qreg, qnum, cond_reg,gate_list):
-        code_line, unfuzz_line = "", ""
+        code_line, unfuzz_line = "", "pass\n"
         oracle, deadcode, _ = self.quantum_dead()
         code_line += deadcode
         # code_line += f"{qc}.compose({deadqc}, inplace = True, qubits = {[qnum + i for i in range(self.qubit_num)]}) \n"
@@ -114,7 +114,7 @@ qc.cx({self.qr_name}[0], {self.qr_name}[1])
         code_line = "a = 0\n"
         code_line += f"with {qc}.for_loop(range(a)) as i:\n"
         code_line += gate_list
-        return code_line, ""
+        return code_line, "pass\n"
 
     def while_dead(self, qc, qreg, cond_reg, qnum, gate_list):
         oracle, deadcode, _ = self.quantum_dead()
@@ -135,7 +135,7 @@ qc.cx({self.qr_name}[0], {self.qr_name}[1])
         for i in range(self.qubit_num):
             code_line += f"\t{qc}.measure({self.qr_name}[{i}], {self.cr_name}[{i}]) \n"
         code_line += "\n"
-        return code_line, ""
+        return code_line, "pass\n"
 
     def while_break(self, qc, qreg, cond_reg, qnum, gate_list, dead_list):
         oracle, deadcode, _ = self.quantum_dead()
