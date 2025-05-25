@@ -57,11 +57,11 @@ qc.cx({self.qr_name}[0], {self.qr_name}[1])
         for i in range(self.qubit_num):
             code_line += f"{qc}.measure({self.qr_name}[{i}], {self.cr_name}[{i}]) \n"
 
-        code_line += f"with {qc}.if_test(({self.cr_name}, 0b{oracle})) as else_1: \n"
+        code_line += f"with {qc}.if_test(({self.cr_name}, 0b{oracle})) as else_{self.uid}: \n"
         code_line += "\tpass\n"
-        code_line += f"with else_1: \n"
+        code_line += f"with else_{self.uid}: \n"
         code_line += gate_list
-        code_line += "\n"
+        code_line += f"{qc}.reset({self.qr_name})\n"
         return code_line, unfuzz_line
 
     def if_test_else(self, qc, qreg, qnum, cond_reg, gate_list, dead_list):
@@ -76,22 +76,22 @@ qc.cx({self.qr_name}[0], {self.qr_name}[1])
             code_line += f"{qc}.measure({self.qr_name}[{i}], {self.cr_name}[{i}]) \n"
             unfuzz_line += f"{qc}.measure({self.qr_name}[{i}], {self.cr_name}[{i}]) \n"
 
-        code_line += f"with {qc}.if_test(({self.cr_name}, 0b{oracle})) as else_1: \n"
-        unfuzz_line += f"with {qc}.if_test(({self.cr_name}, 0b{oracle})) as else_1: \n"
+        code_line += f"with {qc}.if_test(({self.cr_name}, 0b{oracle})) as else_{self.uid}: \n"
+        unfuzz_line += f"with {qc}.if_test(({self.cr_name}, 0b{oracle})) as else_{self.uid}: \n"
         code_line += gate_list
         unfuzz_line += gate_list
-        code_line += f"with else_1: \n"
-        unfuzz_line += f"with else_1: \n"
+        code_line += f"with else_{self.uid}: \n"
+        unfuzz_line += f"with else_{self.uid}: \n"
         code_line += dead_list
         unfuzz_line +="\tpass \n"
-        unfuzz_line += "\n"
-        code_line += "\n"
+        unfuzz_line += f"{qc}.reset({self.qr_name})\n"
+        code_line += f"{qc}.reset({self.qr_name})\n"
         return code_line, unfuzz_line
 
     def dynamic_for_continue(self, qc, gate_list, dead_list):
         code_line, unfuzz_line = "", ""
-        code_line += f"with {qc}.for_loop(range(3)) as i:\n"
-        unfuzz_line += f"with {qc}.for_loop(range(3)) as i:\n"
+        code_line += f"with {qc}.for_loop(range(3)) as i_{self.uid}:\n"
+        unfuzz_line += f"with {qc}.for_loop(range(3)) as i_{self.uid}:\n"
         code_line += gate_list
         unfuzz_line += gate_list
         code_line += f"\tqc.continue_loop()\n"
@@ -101,8 +101,8 @@ qc.cx({self.qr_name}[0], {self.qr_name}[1])
 
     def dynamic_for_break(self, qc, gate_list, dead_list):
         code_line, unfuzz_line = "", ""
-        code_line += f"with {qc}.for_loop(range(3)) as i:\n"
-        unfuzz_line += f"with {qc}.for_loop(range(3)) as i:\n"
+        code_line += f"with {qc}.for_loop(range(3)) as i_{self.uid}:\n"
+        unfuzz_line += f"with {qc}.for_loop(range(3)) as i_{self.uid}:\n"
         code_line += gate_list
         unfuzz_line += gate_list
         code_line += f"\tqc.break_loop()\n"
@@ -112,7 +112,7 @@ qc.cx({self.qr_name}[0], {self.qr_name}[1])
 
     def dynamic_for_zero(self, qc, gate_list):
         code_line = "a = 0\n"
-        code_line += f"with {qc}.for_loop(range(a)) as i:\n"
+        code_line += f"with {qc}.for_loop(range(a)) as i_{self.uid}:\n"
         code_line += gate_list
         return code_line, "pass\n"
 
@@ -134,7 +134,7 @@ qc.cx({self.qr_name}[0], {self.qr_name}[1])
         code_line += gate_list
         for i in range(self.qubit_num):
             code_line += f"\t{qc}.measure({self.qr_name}[{i}], {self.cr_name}[{i}]) \n"
-        code_line += "\n"
+        code_line += f"{qc}.reset({self.qr_name})\n"
         return code_line, "pass\n"
 
     def while_break(self, qc, qreg, cond_reg, qnum, gate_list, dead_list):
@@ -159,6 +159,8 @@ qc.cx({self.qr_name}[0], {self.qr_name}[1])
         code_line += f"\t{qc}.break_loop()\n"
         unfuzz_line += f"\t{qc}.break_loop()\n"
         code_line += dead_list
+        code_line += f"{qc}.reset({self.qr_name})\n"
+        unfuzz_line += f"{qc}.reset({self.qr_name})\n"
         return code_line, unfuzz_line
 
     def switch_dead(self, qc, gate_list, dead_list):
@@ -185,6 +187,9 @@ qc.cx({self.qr_name}[0], {self.qr_name}[1])
 
         code_line += dead_list
         unfuzz_line += "\t\tpass\n"
+
+        code_line += f"{qc}.reset({self.qr_name})\n"
+        unfuzz_line += f"{qc}.reset({self.qr_name})\n"
 
         return code_line, unfuzz_line
 

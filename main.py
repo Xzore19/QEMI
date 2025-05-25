@@ -67,7 +67,7 @@ pass_option = [
 # ]
 
 control = [
-    "switch_dead", "nest_dead"
+    "nest_dead"
 ]
 
 if __name__ == "__main__":
