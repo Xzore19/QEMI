@@ -1,5 +1,4 @@
-# 完整更新后的 QSharpGenerator 类，支持内置预设电路封装类型自动判断
-
+import os
 import random
 import math
 
@@ -13,16 +12,27 @@ class QSharpGenerator:
         self.generated_single_gate_blocks = []
         self.generated_single_gate_block_names = set()
         self.required_imports = set()
+        self.qsharp_builtin_blocks = {}
+        self.adj_ctl_block_counter = 0
+        self.single_block_counter = 0
 
-        self.qsharp_builtin_blocks = {
-            "ApplyQFT": {
-                "import": "Std.Canon",
-                "call": "ApplyQFT(q);",
-                "adjoint": True,
-                "controlled": False
-            },
-            "ApproximatelyPreparePureStateCP": self.make_random_stateprep_block()
+        self.qsharp_builtin_blocks["ApplyQFT"] = {
+            "import": "Std.Canon",
+            "call": "ApplyQFT(q);",
+            "adjoint": True,
+            "controlled": False
         }
+        self.builtin_block_names = ["ApplyQFT", "ApproximatelyPreparePureStateCP", "ApplyIfEqualLE"]
+
+    def get_apply_to_each_call(self, block_name: str, call_type: str) -> str:
+        if call_type == "controlled":
+            return f"ApplyToEachCA({block_name}, q);"
+        elif call_type == "adjoint":
+            return f"ApplyToEachA({block_name}, q);"
+        elif call_type == "plain":
+            return f"ApplyToEach({block_name}, q);"
+        else:
+            return f"ApplyToEachCA({block_name}, q);"
 
     def generate_random_complexpolar_vector(self, num_qubits):
         dim = 2 ** num_qubits
@@ -30,13 +40,20 @@ class QSharpGenerator:
         total = sum(squares)
         normed = [math.sqrt(x / total) for x in squares]
         phases = [random.uniform(0, 2 * math.pi) for _ in range(dim)]
-        return [
-            f"ComplexPolar({round(r, 6)}, {round(phi, 6)})"
-            for r, phi in zip(normed, phases)
-        ]
+        return [f"ComplexPolar({round(r, 6)}, {round(phi, 6)})" for r, phi in zip(normed, phases)]
 
-    def make_random_stateprep_block(self):
-        vec = self.generate_random_complexpolar_vector(self.qubit_num)
+    def make_random_stateprep_block(self, num_qubits: int, call_type: str = "plain"):
+        MAX_QUBIT_FOR_STATEPREP = 9
+        if num_qubits < 1 or num_qubits > MAX_QUBIT_FOR_STATEPREP:
+            apply_stmt = self.get_apply_to_each_call("H", call_type)
+            return {
+                "import": "Std.Canon",
+                "call": apply_stmt,
+                "adjoint": True,
+                "controlled": call_type in ("controlled", "adj+ctl")
+            }
+
+        vec = self.generate_random_complexpolar_vector(num_qubits)
         coeff_str = "[\n        " + ",\n        ".join(vec) + "\n    ]"
         return {
             "import": "Std.StatePreparation",
@@ -51,7 +68,40 @@ class QSharpGenerator:
             "controlled": False
         }
 
-    def generate_single_qubit_block(self, idx):
+    def make_apply_if_equalle_block(self, available_indices):
+        self.required_imports.add("Std.Arithmetic")
+        available = available_indices.copy()
+        random.shuffle(available)
+        max_cmp_len = min(len(available) // 2, 3)
+        while max_cmp_len > 0:
+            if len(available) >= 2 * max_cmp_len + 1:
+                break
+            max_cmp_len -= 1
+        if max_cmp_len < 1:
+            return None
+        cmp_len = random.randint(1, max_cmp_len)
+        x_indices = sorted(available[:cmp_len])
+        y_indices = sorted(available[cmp_len:2 * cmp_len])
+        remaining = available[2 * cmp_len:]
+        target_len = random.randint(1, len(remaining))
+        target_indices = sorted(random.sample(remaining, target_len))
+        def to_array_str(name, indices):
+            return f"let {name} = [" + ", ".join(f"q[{i}]" for i in indices) + "];"
+        x_decl = to_array_str("x", x_indices)
+        y_decl = to_array_str("y", y_indices)
+        target_decl = to_array_str("target", target_indices)
+        block_name = self.generate_adj_ctl_block(list(range(len(target_indices))), call_type="adj+ctl")
+        call = f"{x_decl}\n{y_decl}\n{target_decl}\nApplyIfEqualLE({block_name}, x, y, target);"
+        return {
+            "import": "Std.Arithmetic",
+            "call": call,
+            "adjoint": True,
+            "controlled": False
+        }
+
+    def generate_single_qubit_block(self):
+        idx = self.single_block_counter
+        self.single_block_counter += 1
         gates = ["H", "X", "Y", "Z", "S", "T", "I", "Rx", "Ry", "Rz", "R1"]
         instructions = []
         for _ in range(random.randint(2, 4)):
@@ -66,12 +116,33 @@ class QSharpGenerator:
         return name, f"    operation {name}(q : Qubit) : Unit is Adj + Ctl {{\n{body}\n    }}"
 
     def ensure_single_block(self):
-        idx = len(self.generated_single_gate_blocks)
-        block_name, op_text = self.generate_single_qubit_block(idx)
-        if block_name not in self.generated_single_gate_block_names:
-            self.generated_single_gate_block_names.add(block_name)
-            self.generated_single_gate_blocks.append(op_text)
-        return block_name, op_text
+        while True:
+            block_name, op_text = self.generate_single_qubit_block()
+            if block_name not in self.generated_single_gate_block_names:
+                self.generated_single_gate_block_names.add(block_name)
+                self.generated_single_gate_blocks.append(op_text)
+                return block_name, op_text
+
+    def generate_adj_ctl_block(self, target_indices, call_type="adj+ctl"):
+        block_size = len(target_indices)
+        local_indices = list(range(block_size))
+        while True:
+            idx = self.adj_ctl_block_counter
+            block_name = f"MyAdjCtlBlock{idx}"
+            self.adj_ctl_block_counter += 1
+            if block_name not in self.generated_single_gate_block_names:
+                break
+
+        used_indices, instructions, extra_ops = self.generate_random_gate_block(
+            call_type=call_type,
+            idx=idx,
+            target_indices=local_indices
+        )
+        body = self.indent(instructions, level=2)
+        op_def = f"    operation {block_name}(q : Qubit[]) : Unit is Adj + Ctl {{\n{body}\n    }}"
+        self.generated_single_gate_blocks.append(op_def)
+        self.generated_single_gate_block_names.add(block_name)
+        return block_name
 
     def generate_random_gate_block(self, call_type, idx, target_indices):
         single_no_param = ["H", "X", "Y", "Z", "S", "T", "I"]
@@ -88,51 +159,75 @@ class QSharpGenerator:
         extra_ops = []
 
         for _ in range(self.depth_per_block):
-            # 20% chance to insert builtin Q# block
             if random.random() < 0.2:
-                name, props = random.choice(list(self.qsharp_builtin_blocks.items()))
-                if call_type == "controlled" and not props["controlled"]:
+                name = random.choice(self.builtin_block_names)
+
+                # 特殊处理：ApproximatelyPreparePureStateCP 不缓存
+                if name == "ApproximatelyPreparePureStateCP":
+                    props = self.make_random_stateprep_block(len(target_indices), call_type=call_type)
+                elif name == "ApplyIfEqualLE":
+                    if name not in self.qsharp_builtin_blocks:
+                        if len(target_indices) < 3:
+                            instructions.append("I(q[0]);")
+                            continue
+                        block = self.make_apply_if_equalle_block(target_indices)
+                        if block is None:
+                            instructions.append("I(q[0]);")
+                            continue
+                        self.qsharp_builtin_blocks[name] = block
+                    props = self.qsharp_builtin_blocks[name]
+                else:
+                    props = self.qsharp_builtin_blocks[name]
+
+                # 检查是否允许当前调用类型
+                if call_type == "controlled" and not props.get("controlled", False):
                     continue
-                if call_type == "adjoint" and not props["adjoint"]:
+                if call_type == "adjoint" and not props.get("adjoint", False):
                     continue
 
-                q_expr = "q"
-
-                call_text = props["call"].replace("{q_expr}", q_expr)
-                instructions.append(call_text)
+                # 插入内置模块指令
+                instructions.append(props["call"])
                 self.required_imports.add(props["import"])
-                used_indices.update(range(len(target_indices)))
+                used_indices.update(range(len(target_indices)))  # 粗略标记为使用了全部 q
                 continue
 
+            # 20% 概率插入自定义单量子门 block
             if random.random() < 0.2:
                 block_name, op_text = self.ensure_single_block()
-                instructions.append(f"ApplyToEachCA({block_name}, q);")
+                # 动态选择正确的 ApplyToEachX 调用
+                instructions.append(self.get_apply_to_each_call(block_name, call_type))
                 used_indices.update(range(len(target_indices)))
                 extra_ops.append(op_text)
                 continue
 
+            # 否则随机插入普通门操作
             gate_type = random.choice(all_gates)
             if call_type == "controlled" and gate_type not in control_safe:
                 continue
+
             max_index = len(target_indices) - 1
             if gate_type in single_no_param:
                 q = random.randint(0, max_index)
                 used_indices.add(q)
                 instructions.append(f"{gate_type}(q[{q}]);")
+
             elif gate_type in single_with_param:
                 q = random.randint(0, max_index)
                 angle = round(random.uniform(0, 2 * math.pi), 6)
                 used_indices.add(q)
                 instructions.append(f"{gate_type}({angle}, q[{q}]);")
+
             elif gate_type in two_no_param and len(target_indices) >= 2:
                 q1, q2 = random.sample(range(len(target_indices)), 2)
                 used_indices.update([q1, q2])
                 instructions.append(f"{gate_type}(q[{q1}], q[{q2}]);")
+
             elif gate_type in two_with_param and len(target_indices) >= 2:
                 q1, q2 = random.sample(range(len(target_indices)), 2)
                 angle = round(random.uniform(0, 2 * math.pi), 6)
                 used_indices.update([q1, q2])
                 instructions.append(f"{gate_type}({angle}, q[{q1}], q[{q2}]);")
+
             elif gate_type in three_qubit and len(target_indices) >= 3:
                 q0, q1, q2 = random.sample(range(len(target_indices)), 3)
                 used_indices.update([q0, q1, q2])
@@ -152,18 +247,20 @@ class QSharpGenerator:
     def generate_qsharp_code(self):
         self.blocks.clear()
         self.add_measure_all()
-        self.generated_single_gate_blocks = []
-        self.generated_single_gate_block_names = set()
         self.required_imports = set()
-
         call_types = random.choices(["plain", "adjoint", "controlled"], k=self.num_blocks)
         block_ops = []
         test_body = []
         extra_single_blocks = []
-
         for idx, call_type in enumerate(call_types):
-            qualifier = "Adj" if call_type in ["plain", "adjoint"] else "Adj + Ctl"
-
+            if call_type == "plain":
+                qualifier = ""
+            elif call_type == "adjoint":
+                qualifier = "is Adj"
+            elif call_type == "controlled":
+                qualifier = "is Adj + Ctl"
+            else:
+                qualifier = "is Adj + Ctl"
             if call_type == "controlled":
                 available = list(range(self.qubit_num))
                 num_ctrl = random.randint(1, self.qubit_num - 1)
@@ -176,12 +273,14 @@ class QSharpGenerator:
             else:
                 target = list(range(self.qubit_num))
                 ctrl = []
-
             used_indices, block, extra_ops = self.generate_random_gate_block(call_type, idx, target)
             extra_single_blocks.extend(extra_ops)
             body = self.indent(block, level=2)
-            block_ops.append(f"    operation ApplyRandomBlock{idx}(q : Qubit[]) : Unit is {qualifier} {{\n{body}\n    }}")
-
+            signature_line = f"    operation ApplyRandomBlock{idx}(q : Qubit[]) : Unit"
+            if qualifier:
+                signature_line += f" {qualifier}"
+            signature_line += " {\n" + body + "\n    }"
+            block_ops.append(signature_line)
             if call_type == "plain":
                 test_body.append(f"ApplyRandomBlock{idx}(q);")
             elif call_type == "adjoint":
@@ -190,25 +289,22 @@ class QSharpGenerator:
                 ctrl_str = ", ".join([f"q[{i}]" for i in ctrl])
                 tgt_str = ", ".join([f"q[{i}]" for i in target])
                 test_body.append(f"Controlled ApplyRandomBlock{idx}([{ctrl_str}], [{tgt_str}]);")
-
         test_body += self.measure_instructions
         test_body.append("ResetAll(q);")
         test_body.append("return [" + ", ".join([f"r{i}" for i in range(self.qubit_num)]) + "];")
         test_body_indented = self.indent(test_body, level=3)
-
         default_imports = [
-            "Std.Intrinsic",
-            "Std.Measurement",
-            "Std.Math",
-            "Std.Canon",
-            "Std.Convert",
-            "Std.Diagnostics"
+            "Std.Intrinsic", "Std.Measurement", "Std.Math", "Std.Canon", "Std.Convert", "Std.Diagnostics"
         ]
         all_imports = sorted(set(default_imports).union(self.required_imports))
         header = "\n".join(f"    open {lib};" for lib in all_imports)
-
-        test_circuit_op = f"    operation TestCircuit() : Result[] {{\n        use q = Qubit[{self.qubit_num}] {{\n{test_body_indented}\n        }}\n    }}"
-
+        test_circuit_op = (
+            f"    operation TestCircuit() : Result[] {{\n"
+            f"        use q = Qubit[{self.qubit_num}] {{\n"
+            f"{test_body_indented}\n"
+            f"        }}\n"
+            f"    }}"
+        )
         return (
             f"namespace Main {{\n"
             f"{header}\n\n"
@@ -217,12 +313,15 @@ class QSharpGenerator:
             f"{test_circuit_op}\n}}"
         )
 
+
+
     def save_to_file(self, filename="src/Main.qs"):
         code = self.generate_qsharp_code()
+        os.makedirs(os.path.dirname(filename), exist_ok=True)
         with open(filename, "w") as f:
             f.write(code)
         print(f"Q# code saved to {filename}")
 
 if __name__ == "__main__":
-    g = QSharpGenerator(qubit_num=4, num_blocks=3, depth_per_block=8)
+    g = QSharpGenerator(qubit_num=12, num_blocks=3, depth_per_block=8)
     g.save_to_file()
