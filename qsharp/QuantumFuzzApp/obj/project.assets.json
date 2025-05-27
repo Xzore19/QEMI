@@ -7456,19 +7456,19 @@
     ]
   },
   "packageFolders": {
-    "/home/luojunjie/.nuget/packages/": {}
+    "C:\\Users\\Lmrun\\.nuget\\packages\\": {}
   },
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "/home/luojunjie/EMI/qsharp/QuantumFuzzApp/QuantumFuzzApp.csproj",
+      "projectUniqueName": "C:\\Users\\Lmrun\\EMI\\qsharp\\QuantumFuzzApp\\QuantumFuzzApp.csproj",
       "projectName": "QuantumFuzzApp",
-      "projectPath": "/home/luojunjie/EMI/qsharp/QuantumFuzzApp/QuantumFuzzApp.csproj",
-      "packagesPath": "/home/luojunjie/.nuget/packages/",
-      "outputPath": "/home/luojunjie/EMI/qsharp/QuantumFuzzApp/obj/",
+      "projectPath": "C:\\Users\\Lmrun\\EMI\\qsharp\\QuantumFuzzApp\\QuantumFuzzApp.csproj",
+      "packagesPath": "C:\\Users\\Lmrun\\.nuget\\packages\\",
+      "outputPath": "C:\\Users\\Lmrun\\EMI\\qsharp\\QuantumFuzzApp\\obj\\",
       "projectStyle": "PackageReference",
       "configFilePaths": [
-        "/home/luojunjie/.nuget/NuGet/NuGet.Config"
+        "C:\\Users\\Lmrun\\AppData\\Roaming\\NuGet\\NuGet.Config"
       ],
       "originalTargetFrameworks": [
         "net6.0"
@@ -7538,7 +7538,7 @@
             "privateAssets": "all"
           }
         },
-        "runtimeIdentifierGraphPath": "/home/luojunjie/.dotnet/sdk/6.0.428/RuntimeIdentifierGraph.json"
+        "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\6.0.428\\RuntimeIdentifierGraph.json"
       }
     }
   }

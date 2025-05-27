@@ -4,20 +4,20 @@
     <RestoreSuccess Condition=" '$(RestoreSuccess)' == '' ">True</RestoreSuccess>
     <RestoreTool Condition=" '$(RestoreTool)' == '' ">NuGet</RestoreTool>
     <ProjectAssetsFile Condition=" '$(ProjectAssetsFile)' == '' ">$(MSBuildThisFileDirectory)project.assets.json</ProjectAssetsFile>
-    <NuGetPackageRoot Condition=" '$(NuGetPackageRoot)' == '' ">/home/luojunjie/.nuget/packages/</NuGetPackageRoot>
-    <NuGetPackageFolders Condition=" '$(NuGetPackageFolders)' == '' ">/home/luojunjie/.nuget/packages/</NuGetPackageFolders>
+    <NuGetPackageRoot Condition=" '$(NuGetPackageRoot)' == '' ">$(UserProfile)\.nuget\packages\</NuGetPackageRoot>
+    <NuGetPackageFolders Condition=" '$(NuGetPackageFolders)' == '' ">C:\Users\Lmrun\.nuget\packages\</NuGetPackageFolders>
     <NuGetProjectStyle Condition=" '$(NuGetProjectStyle)' == '' ">PackageReference</NuGetProjectStyle>
     <NuGetToolVersion Condition=" '$(NuGetToolVersion)' == '' ">6.3.4</NuGetToolVersion>
   </PropertyGroup>
   <ItemGroup Condition=" '$(ExcludeRestorePackageImports)' != 'true' ">
-    <SourceRoot Include="/home/luojunjie/.nuget/packages/" />
+    <SourceRoot Include="C:\Users\Lmrun\.nuget\packages\" />
   </ItemGroup>
   <ImportGroup Condition=" '$(ExcludeRestorePackageImports)' != 'true' ">
-    <Import Project="$(NuGetPackageRoot)bond.csharp/9.0.3/build/Bond.CSharp.props" Condition="Exists('$(NuGetPackageRoot)bond.csharp/9.0.3/build/Bond.CSharp.props')" />
-    <Import Project="$(NuGetPackageRoot)microsoft.quantum.csharpgeneration/0.28.302812/build/Microsoft.Quantum.CSharpGeneration.props" Condition="Exists('$(NuGetPackageRoot)microsoft.quantum.csharpgeneration/0.28.302812/build/Microsoft.Quantum.CSharpGeneration.props')" />
+    <Import Project="$(NuGetPackageRoot)bond.csharp\9.0.3\build\Bond.CSharp.props" Condition="Exists('$(NuGetPackageRoot)bond.csharp\9.0.3\build\Bond.CSharp.props')" />
+    <Import Project="$(NuGetPackageRoot)microsoft.quantum.csharpgeneration\0.28.302812\build\Microsoft.Quantum.CSharpGeneration.props" Condition="Exists('$(NuGetPackageRoot)microsoft.quantum.csharpgeneration\0.28.302812\build\Microsoft.Quantum.CSharpGeneration.props')" />
   </ImportGroup>
   <PropertyGroup Condition=" '$(ExcludeRestorePackageImports)' != 'true' ">
-    <PkgMicrosoft_CodeAnalysis_Analyzers Condition=" '$(PkgMicrosoft_CodeAnalysis_Analyzers)' == '' ">/home/luojunjie/.nuget/packages/microsoft.codeanalysis.analyzers/3.0.0</PkgMicrosoft_CodeAnalysis_Analyzers>
-    <PkgBond_CSharp Condition=" '$(PkgBond_CSharp)' == '' ">/home/luojunjie/.nuget/packages/bond.csharp/9.0.3</PkgBond_CSharp>
+    <PkgMicrosoft_CodeAnalysis_Analyzers Condition=" '$(PkgMicrosoft_CodeAnalysis_Analyzers)' == '' ">C:\Users\Lmrun\.nuget\packages\microsoft.codeanalysis.analyzers\3.0.0</PkgMicrosoft_CodeAnalysis_Analyzers>
+    <PkgBond_CSharp Condition=" '$(PkgBond_CSharp)' == '' ">C:\Users\Lmrun\.nuget\packages\bond.csharp\9.0.3</PkgBond_CSharp>
   </PropertyGroup>
 </Project>

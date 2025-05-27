@@ -19,30 +19,33 @@ class QSharpGenerator:
             return "\n".join(f"{indent_str}{line}" for line in lines)
 
         body_lines = self.gate_instructions + self.measure_instructions
-        result_array = ", ".join([f"{{{r.split()[1]}}}" for r in self.measure_instructions])
-        body_lines.append(f'Message($"Result: [{result_array}]");')
+
+        result_vars = [line.split()[1] for line in self.measure_instructions]
         body_lines.append("ResetAll(q);")
+        body_lines.append("return [" + ", ".join(result_vars) + "];")
 
         body = indent(body_lines, level=3)
 
         return f"""namespace QuantumFuzz {{
         open Microsoft.Quantum.Intrinsic;
         open Microsoft.Quantum.Measurement;
+        open Microsoft.Quantum.Canon;
+        open Microsoft.Quantum.Convert;
+        open Microsoft.Quantum.Diagnostics;
 
-        @EntryPoint()
-        operation RunCircuit() : Unit {{
+        operation TestCircuit() : Result[] {{
             use q = Qubit[{self.qubit_num}] {{
     {body}
             }}
         }}
     }}"""
 
-
     def save_to_file(self, filename="QuantumFuzzApp/Program.qs"):
         code = self.generate_qsharp_code()
         with open(filename, "w") as f:
             f.write(code)
         print(f"Q# code saved to {filename}")
+
 
 if __name__ == "__main__":
     g = QSharpGenerator(qubit_num=2)
