@@ -6,6 +6,7 @@ from qsharp_generator.custom_blocks import (
     generate_random_gate_block,
     make_apply_if_equalle_block,
 )
+from qsharp_generator.deadcode import make_fixed_apply_if_equalle_block
 
 class QSharpGenerator:
     def __init__(self, qubit_num=3, num_blocks=3, depth_per_block=6):
@@ -67,21 +68,43 @@ class QSharpGenerator:
                     make_if_block_adapter=make_if_block_adapter,
                 )
 
-            used_indices, block, extra_ops = generate_random_gate_block(
-                call_type=call_type,
-                target_indices=target,
-                depth=self.depth_per_block,
-                builtin_block_names=self.builtin_block_names,
-                ensure_single_block=lambda: ensure_single_block(
-                    self.single_block_counter,
-                    self.generated_single_gate_block_names,
-                    self.generated_single_gate_blocks
-                ),
-                required_imports=self.required_imports,
-                make_apply_if_equalle_block=make_if_block_adapter
-            )
-            extra_single_blocks.extend(extra_ops)
-            body = indent(block, level=2)
+            # ✅ 第一个 block 使用 fixed deadcode
+            if idx == 0:
+                target_indices = target
+                target_expr = "q"
+                props = make_fixed_apply_if_equalle_block(
+                    target_register=target_expr,
+                    target_indices=target_indices,  # ✅ 现在要传的是 index 列表
+                    depth=self.depth_per_block,
+                    builtin_block_names=self.builtin_block_names,
+                    ensure_single_block=lambda: ensure_single_block(
+                        self.single_block_counter,
+                        self.generated_single_gate_block_names,
+                        self.generated_single_gate_blocks
+                    ),
+                    required_imports=self.required_imports,
+                    make_if_block_adapter=make_if_block_adapter
+                )
+                block = props["call"]
+                self.required_imports.add(props["import"])
+                body = indent(block.split("\n"), level=2)
+
+            else:
+                used_indices, block, extra_ops = generate_random_gate_block(
+                    call_type=call_type,
+                    target_indices=target,
+                    depth=self.depth_per_block,
+                    builtin_block_names=self.builtin_block_names,
+                    ensure_single_block=lambda: ensure_single_block(
+                        self.single_block_counter,
+                        self.generated_single_gate_block_names,
+                        self.generated_single_gate_blocks
+                    ),
+                    required_imports=self.required_imports,
+                    make_apply_if_equalle_block=make_if_block_adapter
+                )
+                extra_single_blocks.extend(extra_ops)
+                body = indent(block, level=2)
             signature = f"    operation ApplyRandomBlock{idx}(q : Qubit[]) : Unit"
             if qualifier:
                 signature += f" {qualifier}"
