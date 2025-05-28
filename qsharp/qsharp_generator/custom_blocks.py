@@ -4,29 +4,6 @@ import uuid
 from typing import List, Tuple, Callable, Set, Dict, Any, Optional
 from qsharp_generator.functions import indent, generate_random_complexpolar_vector, get_apply_to_each_call
 
-def generate_single_qubit_block(idx: int) -> Tuple[str, str]:
-    """
-    Generate a custom single-qubit gate block with a unique index.
-
-    Args:
-        idx (int): Index to use in the operation name.
-
-    Returns:
-        Tuple[str, str]: (operation name, Q# operation definition string)
-    """
-    gates = ["H", "X", "Y", "Z", "S", "T", "I", "Rx", "Ry", "Rz", "R1"]
-    instructions = []
-    for _ in range(random.randint(2, 4)):
-        gate = random.choice(gates)
-        if gate in ["Rx", "Ry", "Rz", "R1"]:
-            angle = round(random.uniform(0, 2 * math.pi), 6)
-            instructions.append(f"{gate}({angle}, q);")
-        else:
-            instructions.append(f"{gate}(q);")
-    body = indent(instructions, level=2)
-    name = f"MySingleBlock{idx}"
-    return name, f"    operation {name}(q : Qubit) : Unit is Adj + Ctl {{\n{body}\n    }}"
-
 def make_random_stateprep_block(num_qubits: int, call_type: str = "plain") -> dict:
     """
     Generate a Q# ApproximatelyPreparePureStateCP operation or fallback H layer.
@@ -126,7 +103,7 @@ def generate_random_gate_block(
             continue
 
         if random.random() < 0.2:
-            block_name, op_text = ensure_single_block()
+            block_name, op_text, _ = ensure_single_block()
             instructions.append(get_apply_to_each_call(block_name, call_type))
             used_indices.update(range(len(target_indices)))
             extra_ops.append(op_text)

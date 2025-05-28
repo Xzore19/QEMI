@@ -9,580 +9,94 @@ namespace Main {
     open Std.StatePreparation;
 
     operation MySingleBlock0(q : Qubit) : Unit is Adj + Ctl {
-        Y(q);
-        Rz(3.956001, q);
+        Rx(3.541082, q);
+        Ry(2.864049, q);
+        T(q);
+    }
+    operation MySingleBlock1(q : Qubit) : Unit is Adj + Ctl {
+        I(q);
+        H(q);
+    }
+    operation MySingleBlock2(q : Qubit) : Unit is Adj + Ctl {
+        Z(q);
+        R1(0.925951, q);
+    }
+    operation MySingleBlock3(q : Qubit) : Unit is Adj + Ctl {
+        X(q);
+        Rz(4.763527, q);
+        I(q);
+        Rx(2.843202, q);
     }
 
-    operation ApplyRandomBlock0(q : Qubit[]) : Unit is Adj + Ctl {
-        R1(0.955266, q[1]);
-        H(q[1]);
+    operation ApplyRandomBlock0(q : Qubit[]) : Unit is Adj {
+        T(q[3]);
+        Z(q[7]);
+        ApplyToEachA(MySingleBlock0, q);
+        Y(q[6]);
+        I(q[2]);
+        Z(q[2]);
+        Rxx(1.151889, q[10], q[2]);
         ApplyQFT(q);
-        Ry(3.815589, q[1]);
-        X(q[1]);
-        Ry(1.052366, q[1]);
-        SWAP(q[1], q[0]);
     }
     operation ApplyRandomBlock1(q : Qubit[]) : Unit is Adj + Ctl {
-        ApproximatelyPreparePureStateCP(
-    1e-6,
-    [
-        ComplexPolar(0.08139, 0.576985),
-        ComplexPolar(0.054292, 3.187755),
-        ComplexPolar(0.045775, 3.449798),
-        ComplexPolar(0.050104, 4.701916),
-        ComplexPolar(0.051253, 4.148297),
-        ComplexPolar(0.062619, 1.442022),
-        ComplexPolar(0.075911, 4.013355),
-        ComplexPolar(0.070329, 3.943761),
-        ComplexPolar(0.046923, 2.743443),
-        ComplexPolar(0.0163, 3.2093),
-        ComplexPolar(0.035768, 6.204),
-        ComplexPolar(0.078766, 2.614101),
-        ComplexPolar(0.063807, 4.955953),
-        ComplexPolar(0.061361, 2.419989),
-        ComplexPolar(0.035134, 2.36644),
-        ComplexPolar(0.076539, 1.271194),
-        ComplexPolar(0.074721, 2.724773),
-        ComplexPolar(0.017981, 5.377435),
-        ComplexPolar(0.031516, 0.332398),
-        ComplexPolar(0.073756, 2.493331),
-        ComplexPolar(0.065439, 2.505768),
-        ComplexPolar(0.071201, 1.710111),
-        ComplexPolar(0.03161, 5.338264),
-        ComplexPolar(0.077353, 3.85671),
-        ComplexPolar(0.017405, 0.244755),
-        ComplexPolar(0.064621, 5.189114),
-        ComplexPolar(0.071442, 3.331335),
-        ComplexPolar(0.035426, 5.391957),
-        ComplexPolar(0.070876, 3.666406),
-        ComplexPolar(0.084479, 3.695597),
-        ComplexPolar(0.063801, 1.60915),
-        ComplexPolar(0.064511, 1.167056),
-        ComplexPolar(0.042464, 1.155948),
-        ComplexPolar(0.075851, 5.485086),
-        ComplexPolar(0.084102, 0.190313),
-        ComplexPolar(0.076865, 0.49705),
-        ComplexPolar(0.043263, 4.463736),
-        ComplexPolar(0.082363, 0.401653),
-        ComplexPolar(0.07844, 2.653695),
-        ComplexPolar(0.064201, 4.508406),
-        ComplexPolar(0.067029, 4.39535),
-        ComplexPolar(0.060168, 3.898567),
-        ComplexPolar(0.077766, 3.214705),
-        ComplexPolar(0.063955, 1.638834),
-        ComplexPolar(0.05432, 4.405713),
-        ComplexPolar(0.08053, 2.931047),
-        ComplexPolar(0.017332, 3.605505),
-        ComplexPolar(0.073721, 4.558333),
-        ComplexPolar(0.080101, 2.460005),
-        ComplexPolar(0.047199, 4.14532),
-        ComplexPolar(0.046857, 1.583541),
-        ComplexPolar(0.041656, 3.531619),
-        ComplexPolar(0.033492, 0.534022),
-        ComplexPolar(0.061662, 0.77135),
-        ComplexPolar(0.062915, 0.618006),
-        ComplexPolar(0.074537, 2.622993),
-        ComplexPolar(0.073711, 4.127859),
-        ComplexPolar(0.060378, 6.021112),
-        ComplexPolar(0.059143, 5.239643),
-        ComplexPolar(0.078105, 2.004834),
-        ComplexPolar(0.033502, 3.370319),
-        ComplexPolar(0.084799, 0.310275),
-        ComplexPolar(0.076868, 5.319927),
-        ComplexPolar(0.081637, 4.566605),
-        ComplexPolar(0.076455, 2.953963),
-        ComplexPolar(0.068001, 4.924639),
-        ComplexPolar(0.057909, 2.214073),
-        ComplexPolar(0.078576, 4.321245),
-        ComplexPolar(0.049755, 4.199829),
-        ComplexPolar(0.079684, 6.146415),
-        ComplexPolar(0.079167, 4.145193),
-        ComplexPolar(0.042652, 2.441201),
-        ComplexPolar(0.073308, 2.293594),
-        ComplexPolar(0.060805, 6.075965),
-        ComplexPolar(0.061694, 0.712305),
-        ComplexPolar(0.004755, 5.923981),
-        ComplexPolar(0.065986, 3.999662),
-        ComplexPolar(0.03546, 4.754818),
-        ComplexPolar(0.070619, 2.230165),
-        ComplexPolar(0.075388, 3.922015),
-        ComplexPolar(0.052942, 5.173119),
-        ComplexPolar(0.028937, 1.186107),
-        ComplexPolar(0.082629, 2.792573),
-        ComplexPolar(0.026137, 2.394796),
-        ComplexPolar(0.050918, 4.117827),
-        ComplexPolar(0.055408, 1.620311),
-        ComplexPolar(0.069119, 1.794787),
-        ComplexPolar(0.085483, 1.610306),
-        ComplexPolar(0.0393, 5.441598),
-        ComplexPolar(0.076122, 4.62544),
-        ComplexPolar(0.033492, 2.290717),
-        ComplexPolar(0.076184, 4.413525),
-        ComplexPolar(0.03101, 3.960554),
-        ComplexPolar(0.071448, 5.870867),
-        ComplexPolar(0.009094, 2.83376),
-        ComplexPolar(0.029057, 4.056484),
-        ComplexPolar(0.05177, 4.670224),
-        ComplexPolar(0.059178, 0.649476),
-        ComplexPolar(0.07999, 2.473179),
-        ComplexPolar(0.076066, 2.484183),
-        ComplexPolar(0.025767, 3.819829),
-        ComplexPolar(0.019461, 4.373587),
-        ComplexPolar(0.081706, 4.347095),
-        ComplexPolar(0.065331, 4.231149),
-        ComplexPolar(0.04454, 0.567186),
-        ComplexPolar(0.082504, 3.136531),
-        ComplexPolar(0.018617, 6.190538),
-        ComplexPolar(0.043026, 1.511708),
-        ComplexPolar(0.077011, 2.840266),
-        ComplexPolar(0.074152, 1.696507),
-        ComplexPolar(0.079246, 2.153671),
-        ComplexPolar(0.060624, 4.651862),
-        ComplexPolar(0.078274, 3.640645),
-        ComplexPolar(0.069638, 0.653898),
-        ComplexPolar(0.064198, 0.344631),
-        ComplexPolar(0.051817, 1.161083),
-        ComplexPolar(0.0668, 1.254331),
-        ComplexPolar(0.046277, 4.055426),
-        ComplexPolar(0.078369, 5.523551),
-        ComplexPolar(0.020195, 5.36704),
-        ComplexPolar(0.04815, 0.470139),
-        ComplexPolar(0.041652, 0.873845),
-        ComplexPolar(0.082289, 4.781128),
-        ComplexPolar(0.084071, 0.675051),
-        ComplexPolar(0.048958, 4.245746),
-        ComplexPolar(0.069215, 4.69714),
-        ComplexPolar(0.083735, 0.313703),
-        ComplexPolar(0.036858, 0.447147),
-        ComplexPolar(0.080912, 2.60484),
-        ComplexPolar(0.065717, 3.876378),
-        ComplexPolar(0.080008, 0.498776),
-        ComplexPolar(0.05365, 4.203087),
-        ComplexPolar(0.07423, 3.273503),
-        ComplexPolar(0.060309, 1.967304),
-        ComplexPolar(0.057494, 5.144458),
-        ComplexPolar(0.058051, 1.021362),
-        ComplexPolar(0.066207, 6.056605),
-        ComplexPolar(0.08158, 6.121534),
-        ComplexPolar(0.077237, 3.460608),
-        ComplexPolar(0.041369, 5.071997),
-        ComplexPolar(0.066012, 0.207498),
-        ComplexPolar(0.05075, 2.877892),
-        ComplexPolar(0.066414, 5.908577),
-        ComplexPolar(0.034107, 5.073999),
-        ComplexPolar(0.030719, 5.488976),
-        ComplexPolar(0.064777, 4.29475),
-        ComplexPolar(0.015641, 2.626864),
-        ComplexPolar(0.049926, 0.376564),
-        ComplexPolar(0.035321, 3.823066),
-        ComplexPolar(0.064748, 3.468805),
-        ComplexPolar(0.062573, 2.467394),
-        ComplexPolar(0.0764, 1.267248),
-        ComplexPolar(0.041985, 3.290891),
-        ComplexPolar(0.076183, 1.803854),
-        ComplexPolar(0.008313, 2.4207),
-        ComplexPolar(0.023296, 1.438801),
-        ComplexPolar(0.028551, 1.085275),
-        ComplexPolar(0.063624, 0.028334),
-        ComplexPolar(0.053152, 1.146098),
-        ComplexPolar(0.073225, 4.990083),
-        ComplexPolar(0.053472, 2.226174),
-        ComplexPolar(0.078533, 0.691959),
-        ComplexPolar(0.083288, 0.632568),
-        ComplexPolar(0.023147, 4.817327),
-        ComplexPolar(0.082289, 0.758933),
-        ComplexPolar(0.056132, 0.593947),
-        ComplexPolar(0.014633, 1.161898),
-        ComplexPolar(0.078416, 1.597699),
-        ComplexPolar(0.07976, 4.837606),
-        ComplexPolar(0.022404, 4.043515),
-        ComplexPolar(0.077175, 5.956282),
-        ComplexPolar(0.074059, 2.952193),
-        ComplexPolar(0.069091, 0.506089),
-        ComplexPolar(0.043952, 1.686434),
-        ComplexPolar(0.055874, 6.196811),
-        ComplexPolar(0.024943, 2.442074),
-        ComplexPolar(0.042356, 0.086249),
-        ComplexPolar(0.079828, 2.649797),
-        ComplexPolar(0.074579, 3.497002),
-        ComplexPolar(0.076955, 6.016083),
-        ComplexPolar(0.066318, 4.915354),
-        ComplexPolar(0.074663, 3.207319),
-        ComplexPolar(0.047906, 5.025769),
-        ComplexPolar(0.049342, 5.62499),
-        ComplexPolar(0.083769, 2.519687),
-        ComplexPolar(0.049683, 1.61948),
-        ComplexPolar(0.077586, 4.422334),
-        ComplexPolar(0.040142, 4.892432),
-        ComplexPolar(0.062973, 6.260385),
-        ComplexPolar(0.007988, 4.747416),
-        ComplexPolar(0.059548, 1.459091),
-        ComplexPolar(0.072549, 4.620916),
-        ComplexPolar(0.029777, 0.343116),
-        ComplexPolar(0.013792, 4.913681),
-        ComplexPolar(0.056562, 2.837791),
-        ComplexPolar(0.052294, 0.390235),
-        ComplexPolar(0.060415, 4.726877),
-        ComplexPolar(0.05981, 1.428311),
-        ComplexPolar(0.085772, 2.906276),
-        ComplexPolar(0.025232, 5.129769),
-        ComplexPolar(0.037169, 5.305397),
-        ComplexPolar(0.018706, 4.7166),
-        ComplexPolar(0.079729, 1.436292),
-        ComplexPolar(0.0323, 2.582598),
-        ComplexPolar(0.036522, 3.768301),
-        ComplexPolar(0.06814, 2.454164),
-        ComplexPolar(0.06935, 2.81739),
-        ComplexPolar(0.070153, 5.383958),
-        ComplexPolar(0.083131, 4.779731),
-        ComplexPolar(0.080513, 4.377828),
-        ComplexPolar(0.05184, 2.166646),
-        ComplexPolar(0.063124, 4.031382),
-        ComplexPolar(0.072721, 3.772892),
-        ComplexPolar(0.070763, 1.21923),
-        ComplexPolar(0.058927, 2.517611),
-        ComplexPolar(0.027416, 5.463057),
-        ComplexPolar(0.035038, 4.367343),
-        ComplexPolar(0.082585, 5.038316),
-        ComplexPolar(0.054796, 2.483114),
-        ComplexPolar(0.037692, 2.508396),
-        ComplexPolar(0.072418, 1.278475),
-        ComplexPolar(0.067861, 4.812605),
-        ComplexPolar(0.080992, 5.453554),
-        ComplexPolar(0.071761, 1.498915),
-        ComplexPolar(0.074165, 3.336278),
-        ComplexPolar(0.049414, 2.587584),
-        ComplexPolar(0.082081, 5.894159),
-        ComplexPolar(0.078321, 1.273704),
-        ComplexPolar(0.06064, 1.41722),
-        ComplexPolar(0.070465, 4.322635),
-        ComplexPolar(0.074876, 3.727896),
-        ComplexPolar(0.071369, 1.426051),
-        ComplexPolar(0.070888, 3.179649),
-        ComplexPolar(0.07108, 0.21545),
-        ComplexPolar(0.067679, 3.50965),
-        ComplexPolar(0.060189, 5.44522),
-        ComplexPolar(0.064586, 3.469454),
-        ComplexPolar(0.051938, 4.162674),
-        ComplexPolar(0.071605, 6.032057),
-        ComplexPolar(0.078806, 6.213823),
-        ComplexPolar(0.0782, 2.976782),
-        ComplexPolar(0.05534, 3.466426),
-        ComplexPolar(0.077586, 2.281025),
-        ComplexPolar(0.054713, 5.597322),
-        ComplexPolar(0.068073, 1.201895),
-        ComplexPolar(0.068099, 6.027953),
-        ComplexPolar(0.082975, 5.458769),
-        ComplexPolar(0.046651, 1.751069),
-        ComplexPolar(0.065637, 4.141458),
-        ComplexPolar(0.072511, 1.975676),
-        ComplexPolar(0.072148, 3.778723),
-        ComplexPolar(0.015576, 4.734825),
-        ComplexPolar(0.076953, 2.356963),
-        ComplexPolar(0.068428, 5.273938),
-        ComplexPolar(0.049448, 1.963193),
-        ComplexPolar(0.081875, 3.27757)
-    ],
-    q
-);
-        Rx(5.630206, q[1]);
-        T(q[1]);
-        ApproximatelyPreparePureStateCP(
-    1e-6,
-    [
-        ComplexPolar(0.084872, 2.16652),
-        ComplexPolar(0.068802, 4.110628),
-        ComplexPolar(0.060372, 2.784314),
-        ComplexPolar(0.024815, 0.503622),
-        ComplexPolar(0.06729, 1.394304),
-        ComplexPolar(0.086592, 4.055542),
-        ComplexPolar(0.057508, 4.977994),
-        ComplexPolar(0.078341, 3.982136),
-        ComplexPolar(0.045933, 2.66669),
-        ComplexPolar(0.080706, 5.872269),
-        ComplexPolar(0.050464, 1.675785),
-        ComplexPolar(0.078941, 6.144269),
-        ComplexPolar(0.042808, 1.033435),
-        ComplexPolar(0.067396, 0.885924),
-        ComplexPolar(0.040436, 0.221743),
-        ComplexPolar(0.018607, 2.743725),
-        ComplexPolar(0.086433, 5.540606),
-        ComplexPolar(0.046025, 4.456979),
-        ComplexPolar(0.052348, 4.591167),
-        ComplexPolar(0.087561, 3.808785),
-        ComplexPolar(0.077931, 2.47447),
-        ComplexPolar(0.011479, 1.160558),
-        ComplexPolar(0.025686, 5.403044),
-        ComplexPolar(0.024323, 6.062194),
-        ComplexPolar(0.020714, 1.347111),
-        ComplexPolar(0.031701, 1.588789),
-        ComplexPolar(0.034211, 4.614238),
-        ComplexPolar(0.065657, 0.110966),
-        ComplexPolar(0.080229, 3.303474),
-        ComplexPolar(0.015648, 0.646937),
-        ComplexPolar(0.068956, 1.849191),
-        ComplexPolar(0.0756, 5.287201),
-        ComplexPolar(0.036229, 6.099775),
-        ComplexPolar(0.041296, 2.513544),
-        ComplexPolar(0.048139, 4.955679),
-        ComplexPolar(0.082359, 1.929096),
-        ComplexPolar(0.079314, 4.631533),
-        ComplexPolar(0.082772, 0.16026),
-        ComplexPolar(0.032873, 1.330735),
-        ComplexPolar(0.059173, 0.006078),
-        ComplexPolar(0.063841, 4.820496),
-        ComplexPolar(0.042724, 5.786208),
-        ComplexPolar(0.040891, 2.878278),
-        ComplexPolar(0.058856, 2.578619),
-        ComplexPolar(0.08096, 0.431995),
-        ComplexPolar(0.018594, 0.205141),
-        ComplexPolar(0.063715, 1.132479),
-        ComplexPolar(0.049044, 3.756207),
-        ComplexPolar(0.088175, 0.153937),
-        ComplexPolar(0.066102, 3.446794),
-        ComplexPolar(0.087782, 1.275062),
-        ComplexPolar(0.04714, 6.174718),
-        ComplexPolar(0.042387, 3.559152),
-        ComplexPolar(0.071331, 0.545482),
-        ComplexPolar(0.085672, 3.197067),
-        ComplexPolar(0.074268, 2.769455),
-        ComplexPolar(0.042367, 1.894421),
-        ComplexPolar(0.075328, 1.745138),
-        ComplexPolar(0.053572, 2.027307),
-        ComplexPolar(0.065169, 2.098248),
-        ComplexPolar(0.058638, 0.068711),
-        ComplexPolar(0.042071, 4.516413),
-        ComplexPolar(0.059425, 2.633693),
-        ComplexPolar(0.05755, 2.286726),
-        ComplexPolar(0.079429, 1.094183),
-        ComplexPolar(0.088807, 1.183638),
-        ComplexPolar(0.05461, 6.2245),
-        ComplexPolar(0.054909, 1.871836),
-        ComplexPolar(0.083773, 0.832245),
-        ComplexPolar(0.081749, 4.933891),
-        ComplexPolar(0.050156, 1.999962),
-        ComplexPolar(0.080356, 2.722827),
-        ComplexPolar(0.076237, 5.296833),
-        ComplexPolar(0.046495, 3.470881),
-        ComplexPolar(0.023946, 2.292031),
-        ComplexPolar(0.066813, 3.952872),
-        ComplexPolar(0.070809, 5.057923),
-        ComplexPolar(0.086687, 0.726093),
-        ComplexPolar(0.02827, 3.382665),
-        ComplexPolar(0.072129, 0.207059),
-        ComplexPolar(0.075368, 4.686336),
-        ComplexPolar(0.022165, 3.842116),
-        ComplexPolar(0.079566, 0.334088),
-        ComplexPolar(0.05371, 5.516003),
-        ComplexPolar(0.071277, 3.122147),
-        ComplexPolar(0.069032, 4.366004),
-        ComplexPolar(0.028728, 1.678403),
-        ComplexPolar(0.085255, 2.476346),
-        ComplexPolar(0.076826, 5.243925),
-        ComplexPolar(0.03839, 2.375053),
-        ComplexPolar(0.047, 1.384464),
-        ComplexPolar(0.037068, 4.399278),
-        ComplexPolar(0.074796, 1.549784),
-        ComplexPolar(0.0824, 2.518725),
-        ComplexPolar(0.035246, 5.119084),
-        ComplexPolar(0.046735, 1.857434),
-        ComplexPolar(0.036857, 4.22209),
-        ComplexPolar(0.063547, 4.247363),
-        ComplexPolar(0.055453, 2.919853),
-        ComplexPolar(0.074857, 1.587804),
-        ComplexPolar(0.086558, 4.847993),
-        ComplexPolar(0.08293, 3.736495),
-        ComplexPolar(0.042203, 6.073536),
-        ComplexPolar(0.055434, 5.485306),
-        ComplexPolar(0.029068, 4.208896),
-        ComplexPolar(0.012775, 0.72802),
-        ComplexPolar(0.079936, 2.717924),
-        ComplexPolar(0.012406, 2.918135),
-        ComplexPolar(0.024005, 4.983469),
-        ComplexPolar(0.081788, 4.047896),
-        ComplexPolar(0.057999, 2.029157),
-        ComplexPolar(0.084094, 1.83967),
-        ComplexPolar(0.05341, 4.32278),
-        ComplexPolar(0.087023, 0.049571),
-        ComplexPolar(0.023118, 1.859794),
-        ComplexPolar(0.081063, 2.589509),
-        ComplexPolar(0.068769, 1.761984),
-        ComplexPolar(0.074629, 2.189695),
-        ComplexPolar(0.008326, 5.114662),
-        ComplexPolar(0.054215, 1.911842),
-        ComplexPolar(0.064298, 2.599297),
-        ComplexPolar(0.044081, 3.425843),
-        ComplexPolar(0.086211, 4.676597),
-        ComplexPolar(0.088818, 5.554172),
-        ComplexPolar(0.084294, 4.090366),
-        ComplexPolar(0.082308, 2.630018),
-        ComplexPolar(0.085946, 0.804764),
-        ComplexPolar(0.077998, 2.109011),
-        ComplexPolar(0.064242, 2.182861),
-        ComplexPolar(0.069737, 2.357013),
-        ComplexPolar(0.052557, 3.454413),
-        ComplexPolar(0.088678, 5.870282),
-        ComplexPolar(0.040039, 1.100117),
-        ComplexPolar(0.084347, 3.20572),
-        ComplexPolar(0.077232, 1.84809),
-        ComplexPolar(0.087344, 2.663949),
-        ComplexPolar(0.049212, 4.391415),
-        ComplexPolar(0.074699, 4.07877),
-        ComplexPolar(0.074759, 3.938327),
-        ComplexPolar(0.077463, 1.914265),
-        ComplexPolar(0.032235, 2.291775),
-        ComplexPolar(0.036129, 1.178273),
-        ComplexPolar(0.017021, 2.823192),
-        ComplexPolar(0.028568, 0.033545),
-        ComplexPolar(0.072076, 2.783577),
-        ComplexPolar(0.052791, 4.183376),
-        ComplexPolar(0.066808, 3.173407),
-        ComplexPolar(0.067277, 2.941822),
-        ComplexPolar(0.042208, 3.080168),
-        ComplexPolar(0.070637, 4.988981),
-        ComplexPolar(0.006083, 2.932955),
-        ComplexPolar(0.083039, 0.402309),
-        ComplexPolar(0.045883, 6.232433),
-        ComplexPolar(0.052663, 1.918665),
-        ComplexPolar(0.074271, 5.804586),
-        ComplexPolar(0.044894, 5.299634),
-        ComplexPolar(0.01128, 2.350178),
-        ComplexPolar(0.013882, 1.618317),
-        ComplexPolar(0.082252, 3.994386),
-        ComplexPolar(0.030234, 0.522743),
-        ComplexPolar(0.03176, 5.116955),
-        ComplexPolar(0.05925, 1.048989),
-        ComplexPolar(0.07422, 1.814053),
-        ComplexPolar(0.067792, 4.967928),
-        ComplexPolar(0.047476, 0.302069),
-        ComplexPolar(0.02527, 4.698126),
-        ComplexPolar(0.07266, 4.31538),
-        ComplexPolar(0.023523, 5.033125),
-        ComplexPolar(0.082397, 0.790953),
-        ComplexPolar(0.0481, 4.771371),
-        ComplexPolar(0.055998, 2.583744),
-        ComplexPolar(0.019183, 4.500403),
-        ComplexPolar(0.045302, 0.099653),
-        ComplexPolar(0.037213, 4.909225),
-        ComplexPolar(0.049467, 5.047788),
-        ComplexPolar(0.071861, 0.355833),
-        ComplexPolar(0.069051, 4.064321),
-        ComplexPolar(0.046415, 0.312179),
-        ComplexPolar(0.085487, 5.708917),
-        ComplexPolar(0.053832, 3.067021),
-        ComplexPolar(0.071073, 3.287095),
-        ComplexPolar(0.036038, 3.554078),
-        ComplexPolar(0.029208, 5.377356),
-        ComplexPolar(0.034506, 2.029696),
-        ComplexPolar(0.08881, 4.543219),
-        ComplexPolar(0.046206, 4.274516),
-        ComplexPolar(0.073781, 1.429024),
-        ComplexPolar(0.072188, 2.082186),
-        ComplexPolar(0.022487, 2.524183),
-        ComplexPolar(0.08383, 5.863637),
-        ComplexPolar(0.078184, 0.216767),
-        ComplexPolar(0.08221, 2.679122),
-        ComplexPolar(0.055456, 2.632306),
-        ComplexPolar(0.082346, 0.983613),
-        ComplexPolar(0.085039, 1.590162),
-        ComplexPolar(0.071332, 0.40661),
-        ComplexPolar(0.06129, 4.061528),
-        ComplexPolar(0.046493, 5.768365),
-        ComplexPolar(0.010519, 4.003461),
-        ComplexPolar(0.078428, 3.212926),
-        ComplexPolar(0.076489, 5.994334),
-        ComplexPolar(0.050704, 2.116983),
-        ComplexPolar(0.07527, 1.217614),
-        ComplexPolar(0.056657, 6.093659),
-        ComplexPolar(0.037346, 0.032878),
-        ComplexPolar(0.080144, 0.945035),
-        ComplexPolar(0.059722, 5.95107),
-        ComplexPolar(0.065478, 3.12656),
-        ComplexPolar(0.06141, 2.466307),
-        ComplexPolar(0.085026, 2.408876),
-        ComplexPolar(0.07163, 3.2831),
-        ComplexPolar(0.057848, 1.856365),
-        ComplexPolar(0.08746, 3.431455),
-        ComplexPolar(0.049178, 3.453566),
-        ComplexPolar(0.074062, 4.304591),
-        ComplexPolar(0.072088, 1.093448),
-        ComplexPolar(0.087249, 6.02661),
-        ComplexPolar(0.087854, 1.585048),
-        ComplexPolar(0.052348, 5.492395),
-        ComplexPolar(0.053664, 2.312378),
-        ComplexPolar(0.078336, 2.307804),
-        ComplexPolar(0.045459, 3.35667),
-        ComplexPolar(0.086208, 5.622478),
-        ComplexPolar(0.047959, 1.310254),
-        ComplexPolar(0.054253, 5.786259),
-        ComplexPolar(0.013794, 1.080825),
-        ComplexPolar(0.066336, 3.016407),
-        ComplexPolar(0.054256, 4.135671),
-        ComplexPolar(0.032312, 0.187421),
-        ComplexPolar(0.076206, 3.146174),
-        ComplexPolar(0.056406, 3.267733),
-        ComplexPolar(0.005143, 4.555718),
-        ComplexPolar(0.071054, 3.165164),
-        ComplexPolar(0.078728, 2.506316),
-        ComplexPolar(0.079708, 0.079475),
-        ComplexPolar(0.026903, 1.117993),
-        ComplexPolar(0.085765, 2.609346),
-        ComplexPolar(0.068949, 3.049728),
-        ComplexPolar(0.079114, 0.546593),
-        ComplexPolar(0.023116, 6.267356),
-        ComplexPolar(0.042388, 5.495716),
-        ComplexPolar(0.062388, 2.630479),
-        ComplexPolar(0.057753, 4.915338),
-        ComplexPolar(0.01879, 4.830751),
-        ComplexPolar(0.061339, 0.473334),
-        ComplexPolar(0.052207, 5.176102),
-        ComplexPolar(0.081503, 4.521851),
-        ComplexPolar(0.006812, 0.30091),
-        ComplexPolar(0.065029, 5.915649),
-        ComplexPolar(0.015831, 2.067995),
-        ComplexPolar(0.04943, 6.013744),
-        ComplexPolar(0.086296, 0.983596),
-        ComplexPolar(0.08257, 5.793658),
-        ComplexPolar(0.07258, 5.465586),
-        ComplexPolar(0.081656, 5.708176),
-        ComplexPolar(0.013253, 1.657701)
-    ],
-    q
-);
-        I(q[4]);
-        Ry(1.975267, q[3]);
-        operation __InlineApplyIfEqualAction_d2526cc0(q : Qubit[]) : Unit is Adj + Ctl {
-        ApplyQFT(q);
-        H(q[2]);
-        Rzz(3.767079, q[2], q[3]);
-        Z(q[2]);
-        Rx(2.251709, q[2]);
-        Y(q[1]);
-        ApplyQFT(q);
-        R1(5.701878, q[0]);
-}
-let x = [q[0], q[4]];
-let y = [q[5], q[7]];
-let target = [q[1], q[2], q[3], q[6]];
-ApplyIfEqualLE(__InlineApplyIfEqualAction_d2526cc0, x, y, target);
-        SWAP(q[0], q[3]);
-    }
-    operation ApplyRandomBlock2(q : Qubit[]) : Unit is Adj + Ctl {
-        H(q[1]);
-        X(q[1]);
-        ApplyToEachCA(MySingleBlock0, q);
-        Ry(4.477283, q[5]);
-        ApplyQFT(q);
-        ApplyQFT(q);
         ApplyToEachCA(H, q);
-        Ry(6.159416, q[4]);
+        ApplyToEachCA(MySingleBlock1, q);
+        Rx(5.983075, q[0]);
+        operation __InlineApplyIfEqualAction_7ee405d5(q : Qubit[]) : Unit is Adj + Ctl {
+        Z(q[0]);
+        I(q[0]);
+        ApplyQFT(q);
+        ApplyToEachCA(MySingleBlock2, q);
+}
+let x = [q[2], q[5]];
+let y = [q[0], q[3]];
+let target = [q[1]];
+ApplyIfEqualLE(__InlineApplyIfEqualAction_7ee405d5, x, y, target);
+        SWAP(q[0], q[2]);
+        operation __InlineApplyIfEqualAction_db30804b(q : Qubit[]) : Unit is Adj + Ctl {
+        Ry(0.511945, q[1]);
+        X(q[1]);
+        CNOT(q[1], q[0]);
+        Rzz(3.571603, q[2], q[0]);
+        Rz(0.810483, q[2]);
+        Rxx(3.940471, q[2], q[0]);
+        ApproximatelyPreparePureStateCP(
+    1e-6,
+    [
+        ComplexPolar(0.183774, 0.094727),
+        ComplexPolar(0.335143, 0.211985),
+        ComplexPolar(0.385423, 3.73676),
+        ComplexPolar(0.17467, 4.751043),
+        ComplexPolar(0.32911, 3.781561),
+        ComplexPolar(0.482104, 0.022044),
+        ComplexPolar(0.494912, 5.961452),
+        ComplexPolar(0.298615, 3.362773)
+    ],
+    q
+);
+        ApplyQFT(q);
+}
+let x = [q[4], q[6]];
+let y = [q[3], q[5]];
+let target = [q[0], q[1], q[2]];
+ApplyIfEqualLE(__InlineApplyIfEqualAction_db30804b, x, y, target);
+    }
+    operation ApplyRandomBlock2(q : Qubit[]) : Unit is Adj {
+        I(q[9]);
+        ApplyToEachA(MySingleBlock3, q);
+        Rxx(0.060994, q[7], q[9]);
+        Rz(4.162136, q[10]);
+        Rx(1.921403, q[5]);
+        ApplyToEachA(H, q);
+        Rzz(1.995917, q[1], q[3]);
+        Ryy(3.471386, q[11], q[0]);
     }
 
     operation TestCircuit() : Result[] {
         use q = Qubit[12] {
-            Controlled ApplyRandomBlock0([q[2], q[3], q[4], q[5], q[6], q[7], q[8], q[9], q[10], q[11]], [q[0], q[1]]);
-            Controlled ApplyRandomBlock1([q[0], q[3], q[4], q[9]], [q[1], q[2], q[5], q[6], q[7], q[8], q[10], q[11]]);
-            Controlled ApplyRandomBlock2([q[9]], [q[0], q[1], q[2], q[3], q[4], q[5], q[6], q[7], q[8], q[10], q[11]]);
+            Adjoint ApplyRandomBlock0(q);
+            Controlled ApplyRandomBlock1([q[0], q[2], q[4], q[5], q[8]], [q[1], q[3], q[6], q[7], q[9], q[10], q[11]]);
+            Adjoint ApplyRandomBlock2(q);
             let r0 = M(q[0]);
             let r1 = M(q[1]);
             let r2 = M(q[2]);
