@@ -3,7 +3,7 @@ import traceback
 import time
 
 LOG_FILE = "stress_test_log.txt"
-ITERATIONS = 100
+ITERATIONS = 1000
 
 def log(message):
     with open(LOG_FILE, "a", encoding="utf-8") as f:

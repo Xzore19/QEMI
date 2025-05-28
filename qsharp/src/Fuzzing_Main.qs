@@ -1,4 +1,4 @@
-namespace Main {
+namespace Main_fuzzing {
     open Std.Arithmetic;
     open Std.Canon;
     open Std.Convert;
@@ -34,28 +34,6 @@ namespace Main {
     }
 
     operation ApplyRandomBlock0(q : Qubit[]) : Unit is Adj + Ctl {
-        // --- DEADCODE START ---
-        operation __InlineApplyIfEqualAction_ff362604(q : Qubit[]) : Unit is Adj + Ctl {
-                Ry(3.267729, q[5]);
-                S(q[2]);
-                X(q[6]);
-                Rx(5.453725, q[2]);
-                ApplyToEachCA(MySingleBlock0, q);
-                Rzz(5.337552, q[0], q[10]);
-                ApplyToEachCA(MySingleBlock1, q);
-                R1(0.395399, q[4]);
-        }
-        use x = Qubit[2];
-        X(x[0]);
-        X(x[1]);
-        use y = Qubit[2];
-        X(y[0]);
-        let target = q;
-        ApplyIfEqualLE(__InlineApplyIfEqualAction_ff362604, x, y, target);
-        X(x[0]);
-        X(x[1]);
-        X(y[0]);
-        // --- DEADCODE END ---
     }
     operation ApplyRandomBlock1(q : Qubit[]) : Unit is Adj + Ctl {
         Z(q[0]);
