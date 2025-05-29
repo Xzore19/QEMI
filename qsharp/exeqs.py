@@ -31,10 +31,10 @@ def perform_chi_square_test(dist1: Counter, dist2: Counter, name1="A", name2="B"
     ]
     chi2, p, _, _ = chi2_contingency(obs)
     print(f"Chi-square test p-value: {p:.4f}")
-    if p < 0.05:
-        print(f"❌ 分布之间存在统计显著差异 (p < 0.05)")
+    if p >= 0.05:
+        print("[PASS] (p >= 0.05)")
     else:
-        print(f"✅ 无统计显著差异，分布一致 (p >= 0.05)")
+        print("[FAIL] (p < 0.05)")
     print()
 
 # 参数

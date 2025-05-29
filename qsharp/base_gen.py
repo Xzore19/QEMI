@@ -6,6 +6,7 @@ from qsharp_generator.custom_blocks import (
     generate_random_gate_block,
 )
 from qsharp_generator.deadcode import make_fixed_apply_if_equalle_block
+from qsharp_generator.custom_ctl import generate_random_control_block
 
 class QSharpGenerator:
     def __init__(self, qubit_num=3, num_blocks=3, depth_per_block=6, include_deadcode=True):
@@ -62,13 +63,31 @@ class QSharpGenerator:
                 block = props["call"]
                 body = indent(block.split("\n"), level=2)
             else:
-                used_indices, block, extra_ops = generate_random_gate_block(
-                    call_type=call_type,
-                    target_indices=target,
-                    depth=self.depth_per_block,
-                )
-                extra_single_blocks.extend(extra_ops)
-                body = indent(block, level=2)
+                # 50% 概率尝试插入控制结构
+                if random.random() < 0.5:
+                    ctl = generate_random_control_block(
+                        available_indices=target,
+                        depth=self.depth_per_block,
+                    )
+                    if ctl is not None:
+                        block = ctl["call"]
+                        body = indent(block.split("\n"), level=2)
+                    else:
+                        used_indices, block, extra_ops = generate_random_gate_block(
+                            call_type=call_type,
+                            target_indices=target,
+                            depth=self.depth_per_block,
+                        )
+                        extra_single_blocks.extend(extra_ops)
+                        body = indent(block, level=2)
+                else:
+                    used_indices, block, extra_ops = generate_random_gate_block(
+                        call_type=call_type,
+                        target_indices=target,
+                        depth=self.depth_per_block,
+                    )
+                    extra_single_blocks.extend(extra_ops)
+                    body = indent(block, level=2)
 
             signature = f"    operation ApplyRandomBlock{idx}(q : Qubit[]) : Unit"
             if qualifier:
