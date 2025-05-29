@@ -8,7 +8,7 @@ def make_fixed_apply_if_equalle_block(
     target_indices: List[int],
     depth: int,
     builtin_block_names: List[str],
-    ensure_single_block,
+    register_block: Callable[[], str],  # ✅ 新增这一行
     required_imports: Set[str],
     make_if_block_adapter: Callable[[List[int]], Optional[Dict[str, Any]]],
 ) -> Dict[str, Any]:
@@ -21,7 +21,7 @@ def make_fixed_apply_if_equalle_block(
         target_indices=local_indices,
         depth=depth,
         builtin_block_names=builtin_block_names,
-        ensure_single_block=ensure_single_block,
+        register_block=register_block,
         required_imports=required_imports,
         make_apply_if_equalle_block=make_if_block_adapter,
     )

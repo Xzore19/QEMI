@@ -5,16 +5,6 @@ from typing import List, Tuple, Callable, Set, Dict, Any, Optional
 from qsharp_generator.functions import indent, generate_random_complexpolar_vector, get_apply_to_each_call
 
 def make_random_stateprep_block(num_qubits: int, call_type: str = "plain") -> dict:
-    """
-    Generate a Q# ApproximatelyPreparePureStateCP operation or fallback H layer.
-
-    Args:
-        num_qubits (int): Number of qubits for state preparation.
-        call_type (str): Type of operation call context ('plain', 'adjoint', 'controlled').
-
-    Returns:
-        dict: A dictionary containing 'import', 'call', 'adjoint', and 'controlled' flags.
-    """
     MAX_QUBIT_FOR_STATEPREP = 6
     if num_qubits < 1 or num_qubits > MAX_QUBIT_FOR_STATEPREP:
         apply_stmt = get_apply_to_each_call("H", call_type)
@@ -57,7 +47,7 @@ def generate_random_gate_block(
     target_indices: List[int],
     depth: int,
     builtin_block_names: List[str],
-    ensure_single_block,
+    register_block: Callable[[], str],
     required_imports: Set[str],
     make_apply_if_equalle_block: Callable[[List[int]], Optional[Dict[str, Any]]],
 ) -> Tuple[Set[int], List[str], List[str]]:
@@ -79,18 +69,16 @@ def generate_random_gate_block(
             name = random.choice(builtin_block_names)
 
             if name == "ApplyQFT":
-                props = props = make_apply_qft_props(call_type)
+                props = make_apply_qft_props(call_type)
             elif name == "ApproximatelyPreparePureStateCP":
                 props = make_random_stateprep_block(len(target_indices), call_type)
-
             elif name == "ApplyIfEqualLE":
                 props = make_apply_if_equalle_block(target_indices)
                 if props is None:
                     instructions.append("I(q[0]);")
                     continue
-
             else:
-                continue  # skip unknown built-ins
+                continue
 
             if call_type == "controlled" and not props.get("controlled", False):
                 continue
@@ -103,10 +91,10 @@ def generate_random_gate_block(
             continue
 
         if random.random() < 0.2:
-            block_name, op_text, _ = ensure_single_block()
+            block_name = register_block()
             instructions.append(get_apply_to_each_call(block_name, call_type))
             used_indices.update(range(len(target_indices)))
-            extra_ops.append(op_text)
+            extra_ops.append(block_name)
             continue
 
         gate_type = random.choice(all_gates)
@@ -143,13 +131,11 @@ def generate_random_gate_block(
 
     return used_indices, instructions, extra_ops
 
-import uuid
-
 def make_apply_if_equalle_block(
     available_indices: List[int],
     depth: int,
     builtin_block_names: List[str],
-    ensure_single_block,
+    register_block: Callable[[], str],
     required_imports: Set[str],
     make_if_block_adapter,
 ) -> Optional[Dict[str, Any]]:
@@ -160,7 +146,7 @@ def make_apply_if_equalle_block(
     if N < 3:
         return None
 
-    local_indices = list(range(N))  # map available_indices to 0..N-1
+    local_indices = list(range(N))
     random.shuffle(local_indices)
 
     max_cmp_len = min(N // 2, 3)
@@ -181,15 +167,14 @@ def make_apply_if_equalle_block(
     target_len = random.randint(1, len(remaining))
     target_indices = sorted(random.sample(remaining, target_len))
 
-    # 内联 block（只作用于 target）
     _, instructions, _ = generate_random_gate_block(
         call_type="adj+ctl",
         target_indices=list(range(len(target_indices))),
         depth=depth,
         builtin_block_names=builtin_block_names,
-        ensure_single_block=ensure_single_block,
+        register_block=register_block,
         required_imports=required_imports,
-        make_apply_if_equalle_block=make_if_block_adapter  # ✅ 使用 adapter 避免重复传参
+        make_apply_if_equalle_block=make_if_block_adapter
     )
 
     body = indent(instructions, level=2)

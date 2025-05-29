@@ -1,4 +1,5 @@
 namespace Main {
+
     open Std.Arithmetic;
     open Std.Canon;
     open Std.Convert;
@@ -6,44 +7,89 @@ namespace Main {
     open Std.Intrinsic;
     open Std.Math;
     open Std.Measurement;
+    open Std.StatePreparation;
 
-    operation MySingleBlock0(q : Qubit) : Unit is Adj + Ctl {
+    operation MySingleBlock_13e16aab(q : Qubit) : Unit is Adj + Ctl {
+        I(q);
+        R1(5.210234, q);
+        Rz(5.603679, q);
+        X(q);
+    }
+    operation MySingleBlock_781d64ae(q : Qubit) : Unit is Adj + Ctl {
+        R1(3.328709, q);
         Z(q);
-        X(q);
+        Ry(2.677822, q);
+        H(q);
     }
-    operation MySingleBlock1(q : Qubit) : Unit is Adj + Ctl {
-        X(q);
-        X(q);
-        Rz(3.554153, q);
-    }
-    operation MySingleBlock2(q : Qubit) : Unit is Adj + Ctl {
-        X(q);
+    operation MySingleBlock_e406b308(q : Qubit) : Unit is Adj + Ctl {
         T(q);
-    }
-    operation MySingleBlock3(q : Qubit) : Unit is Adj + Ctl {
-        T(q);
-        Rz(4.102214, q);
-        Rz(4.339647, q);
         Y(q);
     }
-    operation MySingleBlock4(q : Qubit) : Unit is Adj + Ctl {
-        R1(5.971955, q);
-        R1(0.919645, q);
-        I(q);
+    operation MySingleBlock_d45bc802(q : Qubit) : Unit is Adj + Ctl {
         H(q);
+        Y(q);
+        R1(5.557385, q);
+    }
+    operation MySingleBlock_fe0c6a74(q : Qubit) : Unit is Adj + Ctl {
+        Y(q);
+        Y(q);
+        X(q);
+    }
+    operation MySingleBlock_cfd4aee5(q : Qubit) : Unit is Adj + Ctl {
+        X(q);
+        I(q);
+        Rx(5.174124, q);
+    }
+    operation MySingleBlock_04c16f35(q : Qubit) : Unit is Adj + Ctl {
+        Rz(3.378324, q);
+        S(q);
     }
 
     operation ApplyRandomBlock0(q : Qubit[]) : Unit is Adj + Ctl {
         // --- DEADCODE START ---
-        operation __InlineApplyIfEqualAction_ff362604(q : Qubit[]) : Unit is Adj + Ctl {
-                Ry(3.267729, q[5]);
-                S(q[2]);
-                X(q[6]);
-                Rx(5.453725, q[2]);
-                ApplyToEachCA(MySingleBlock0, q);
-                Rzz(5.337552, q[0], q[10]);
-                ApplyToEachCA(MySingleBlock1, q);
-                R1(0.395399, q[4]);
+        operation __InlineApplyIfEqualAction_20fd760d(q : Qubit[]) : Unit is Adj + Ctl {
+                Y(q[0]);
+                operation __InlineApplyIfEqualAction_f98ac2f9(q : Qubit[]) : Unit is Adj + Ctl {
+                ApplyToEachCA(MySingleBlock_13e16aab, q);
+                ApproximatelyPreparePureStateCP(
+            1e-6,
+            [
+                ComplexPolar(0.40178, 5.513912),
+                ComplexPolar(0.125927, 0.120396),
+                ComplexPolar(0.034243, 4.216196),
+                ComplexPolar(0.489686, 2.16874),
+                ComplexPolar(0.284899, 4.008414),
+                ComplexPolar(0.385038, 0.642822),
+                ComplexPolar(0.403705, 2.645377),
+                ComplexPolar(0.435145, 3.390508)
+            ],
+            q
+        );
+                ApplyToEachCA(MySingleBlock_781d64ae, q);
+                ApplyToEachCA(MySingleBlock_e406b308, q);
+                operation __InlineApplyIfEqualAction_f4864b8b(q : Qubit[]) : Unit is Adj + Ctl {
+                ApplyQFT(q);
+                Rz(2.379416, q[0]);
+                ApplyToEachCA(MySingleBlock_d45bc802, q);
+        }
+        let x = [q[0]];
+        let y = [q[1]];
+        let target = [q[2]];
+        ApplyIfEqualLE(__InlineApplyIfEqualAction_f4864b8b, x, y, target);
+                X(q[2]);
+                ApplyToEachCA(MySingleBlock_fe0c6a74, q);
+                Y(q[0]);
+        }
+        let x = [q[0], q[4], q[6]];
+        let y = [q[1], q[8], q[9]];
+        let target = [q[3], q[5], q[7]];
+        ApplyIfEqualLE(__InlineApplyIfEqualAction_f98ac2f9, x, y, target);
+                Rz(0.601463, q[5]);
+                Y(q[5]);
+                S(q[0]);
+                CCNOT(q[2], q[6], q[0]);
+                ApplyQFT(q);
+                ApplyToEachCA(H, q);
         }
         use x = Qubit[2];
         X(x[0]);
@@ -51,63 +97,42 @@ namespace Main {
         use y = Qubit[2];
         X(y[0]);
         let target = q;
-        ApplyIfEqualLE(__InlineApplyIfEqualAction_ff362604, x, y, target);
+        ApplyIfEqualLE(__InlineApplyIfEqualAction_20fd760d, x, y, target);
         X(x[0]);
         X(x[1]);
         X(y[0]);
         // --- DEADCODE END ---
     }
     operation ApplyRandomBlock1(q : Qubit[]) : Unit is Adj + Ctl {
-        Z(q[0]);
-        ApplyToEachCA(MySingleBlock2, q);
-        R1(3.539547, q[0]);
-        ApplyQFT(q);
-        H(q[0]);
+        S(q[0]);
+        ApplyToEachCA(MySingleBlock_cfd4aee5, q);
         I(q[0]);
-        I(q[1]);
+        R1(1.989895, q[1]);
+        I(q[0]);
+        ApplyToEachCA(MySingleBlock_04c16f35, q);
     }
-    operation ApplyRandomBlock2(q : Qubit[]) : Unit is Adj {
-        Rxx(4.697685, q[8], q[10]);
-        Rz(0.598734, q[5]);
-        ApplyQFT(q);
-        CCNOT(q[10], q[0], q[4]);
-        ApplyToEachA(MySingleBlock3, q);
-        X(q[6]);
-        ApplyQFT(q);
-        operation __InlineApplyIfEqualAction_5fdab434(q : Qubit[]) : Unit is Adj + Ctl {
-        Rzz(1.135698, q[3], q[2]);
-        ApplyQFT(q);
-        Y(q[3]);
-        CNOT(q[2], q[0]);
-        ApplyQFT(q);
-        Rz(4.226311, q[1]);
-        Ryy(3.075486, q[1], q[2]);
-        operation __InlineApplyIfEqualAction_01a6aac7(q : Qubit[]) : Unit is Adj + Ctl {
-        ApplyQFT(q);
-        R1(4.903472, q[1]);
+    operation ApplyRandomBlock2(q : Qubit[]) : Unit is Adj + Ctl {
         I(q[0]);
-        Ryy(5.996557, q[1], q[0]);
-        Z(q[1]);
-        Ry(0.673845, q[0]);
-        ApplyToEachCA(MySingleBlock4, q);
-        X(q[0]);
-}
-let x = [q[0]];
-let y = [q[3]];
-let target = [q[1], q[2]];
-ApplyIfEqualLE(__InlineApplyIfEqualAction_01a6aac7, x, y, target);
-}
-let x = [q[1]];
-let y = [q[0]];
-let target = [q[2], q[4], q[7], q[11]];
-ApplyIfEqualLE(__InlineApplyIfEqualAction_5fdab434, x, y, target);
+        S(q[0]);
+        R1(4.354572, q[0]);
+        R1(0.733273, q[0]);
+        R1(1.338921, q[0]);
+        T(q[0]);
+        ApproximatelyPreparePureStateCP(
+    1e-6,
+    [
+        ComplexPolar(0.756781, 6.270964),
+        ComplexPolar(0.653668, 0.87321)
+    ],
+    q
+);
     }
 
     operation TestCircuit() : Result[] {
         use q = Qubit[12] {
-            Controlled ApplyRandomBlock0([], q);
-            Controlled ApplyRandomBlock1([q[0], q[1], q[2], q[4], q[5], q[6], q[7], q[9], q[10], q[11]], [q[3], q[8]]);
-            Adjoint ApplyRandomBlock2(q);
+            Controlled ApplyRandomBlock0([q[0], q[3]], [q[1], q[2], q[4], q[5], q[6], q[7], q[8], q[9], q[10], q[11]]);
+            Controlled ApplyRandomBlock1([q[0], q[1], q[2], q[3], q[4], q[5], q[7], q[9], q[10], q[11]], [q[6], q[8]]);
+            Controlled ApplyRandomBlock2([q[0], q[1], q[2], q[3], q[4], q[5], q[6], q[7], q[8], q[10], q[11]], [q[9]]);
             let r0 = M(q[0]);
             let r1 = M(q[1]);
             let r2 = M(q[2]);

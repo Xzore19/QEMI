@@ -25,8 +25,18 @@ class QSharpGenerator:
         ]
         self.single_block_counter = 0
 
+    def register_single_qubit_block(self) -> str:
+        from qsharp_generator.functions import generate_single_qubit_block
+
+        while True:
+            name, text = generate_single_qubit_block()
+            if name not in self.generated_single_gate_block_names:
+                self.generated_single_gate_block_names.add(name)
+                self.generated_single_gate_blocks.append(text)
+                return name
+
     def generate_qsharp_code(self, namespace_name="Main"):
-        from qsharp_generator.functions import ensure_single_block, add_measure_all
+        from qsharp_generator.functions import add_measure_all
 
         self.measure_instructions = add_measure_all(self.qubit_num)
         self.required_imports = set()
@@ -37,7 +47,7 @@ class QSharpGenerator:
 
         start_idx = 0
         if not self.include_deadcode:
-            start_idx = 1  # 跳过 idx == 0，避免插入 deadcode
+            start_idx = 1
 
         for idx in range(start_idx, self.num_blocks):
             call_type = call_types[idx]
@@ -66,11 +76,7 @@ class QSharpGenerator:
                     available_indices=available_indices,
                     depth=self.depth_per_block,
                     builtin_block_names=self.builtin_block_names,
-                    ensure_single_block=lambda: ensure_single_block(
-                        self.single_block_counter,
-                        self.generated_single_gate_block_names,
-                        self.generated_single_gate_blocks
-                    ),
+                    register_block=lambda: self.register_single_qubit_block(),
                     required_imports=self.required_imports,
                     make_if_block_adapter=make_if_block_adapter,
                 )
@@ -83,11 +89,7 @@ class QSharpGenerator:
                     target_indices=target_indices,
                     depth=self.depth_per_block,
                     builtin_block_names=self.builtin_block_names,
-                    ensure_single_block=lambda: ensure_single_block(
-                        self.single_block_counter,
-                        self.generated_single_gate_block_names,
-                        self.generated_single_gate_blocks
-                    ),
+                    register_block=lambda: self.register_single_qubit_block(),
                     required_imports=self.required_imports,
                     make_if_block_adapter=make_if_block_adapter
                 )
@@ -98,26 +100,19 @@ class QSharpGenerator:
                 )
                 self.required_imports.add(props["import"])
                 body = indent(block.split("\n"), level=2)
-                signature = f"    operation ApplyRandomBlock{idx}(q : Qubit[]) : Unit is Adj + Ctl {{\n{body}\n    }}"
-                block_ops.append(signature)
-                test_body.append(f"Controlled ApplyRandomBlock{idx}([], q);")  # deadcode 被视为可控模块
-                continue
+            else:
+                used_indices, block, extra_ops = generate_random_gate_block(
+                    call_type=call_type,
+                    target_indices=target,
+                    depth=self.depth_per_block,
+                    builtin_block_names=self.builtin_block_names,
+                    register_block=lambda: self.register_single_qubit_block(),
+                    required_imports=self.required_imports,
+                    make_apply_if_equalle_block=make_if_block_adapter
+                )
+                extra_single_blocks.extend(extra_ops)
+                body = indent(block, level=2)
 
-            used_indices, block, extra_ops = generate_random_gate_block(
-                call_type=call_type,
-                target_indices=target,
-                depth=self.depth_per_block,
-                builtin_block_names=self.builtin_block_names,
-                ensure_single_block=lambda: ensure_single_block(
-                    self.single_block_counter,
-                    self.generated_single_gate_block_names,
-                    self.generated_single_gate_blocks
-                ),
-                required_imports=self.required_imports,
-                make_apply_if_equalle_block=make_if_block_adapter
-            )
-            extra_single_blocks.extend(extra_ops)
-            body = indent(block, level=2)
             signature = f"    operation ApplyRandomBlock{idx}(q : Qubit[]) : Unit"
             if qualifier:
                 signature += f" {qualifier}"
@@ -147,7 +142,7 @@ class QSharpGenerator:
             "Std.Diagnostics",
         ]
         all_imports = sorted(set(default_imports).union(self.required_imports))
-        header = "\n".join(f"    open {lib};" for lib in all_imports)
+        header = "\n" + "\n".join(f"    open {lib};" for lib in all_imports)
 
         test_circuit_op = (
             f"    operation TestCircuit() : Result[] {{\n"
@@ -173,15 +168,11 @@ class QSharpGenerator:
         print(f"Q# code saved to {filename}")
 
     def save_dual_versions(self, main_path="src/Main.qs", fuzzing_path="src/Fuzzing_Main.qs"):
-        # 生成代码（包含 deadcode）使用 namespace Main
         code = self.generate_qsharp_code(namespace_name="Main")
-
         os.makedirs(os.path.dirname(main_path), exist_ok=True)
-
         with open(main_path, "w") as f:
             f.write(code)
 
-        # 移除 deadcode 并替换 namespace 为 Main_fuzzing
         fuzzing_code_lines = []
         inside_deadcode = False
         for line in code.splitlines():

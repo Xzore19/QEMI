@@ -1,6 +1,7 @@
 import math
 import random
 from typing import List, Tuple, Callable, Set, Dict, Any, Optional
+import uuid
 
 def generate_random_complexpolar_vector(num_qubits):
     """
@@ -56,12 +57,9 @@ def indent(lines, level=1, spaces_per_level=4):
     return "\n".join(f"{indent_str}{line}" for line in lines)
 
 
-def generate_single_qubit_block(idx: int) -> Tuple[str, str]:
+def generate_single_qubit_block() -> Tuple[str, str]:
     """
-    Generate a custom single-qubit gate block with a unique index.
-
-    Args:
-        idx (int): Index to use in the operation name.
+    Generate a custom single-qubit gate block with a unique UUID-based name.
 
     Returns:
         Tuple[str, str]: (operation name, Q# operation definition string)
@@ -75,20 +73,11 @@ def generate_single_qubit_block(idx: int) -> Tuple[str, str]:
             instructions.append(f"{gate}({angle}, q);")
         else:
             instructions.append(f"{gate}(q);")
+
     body = indent(instructions, level=2)
-    name = f"MySingleBlock{idx}"
+    uid = uuid.uuid4().hex[:8]
+    name = f"MySingleBlock_{uid}"
     return name, f"    operation {name}(q : Qubit) : Unit is Adj + Ctl {{\n{body}\n    }}"
-
-def ensure_single_block(counter: int, existing_names: Set[str], blocks: List[str]) -> Tuple[str, str, int]:
-    while True:
-        idx = counter
-        counter += 1
-        block_name, op_text = generate_single_qubit_block(idx)
-        if block_name not in existing_names:
-            existing_names.add(block_name)
-            blocks.append(op_text)
-            return block_name, op_text, counter
-
 
 def add_measure_all(qubit_num: int) -> List[str]:
     return [f"let r{i} = M(q[{i}]);" for i in range(qubit_num)]

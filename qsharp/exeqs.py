@@ -38,7 +38,7 @@ def perform_chi_square_test(dist1: Counter, dist2: Counter, name1="A", name2="B"
     print()
 
 # 参数
-SHOTS = 1000
+SHOTS = 1
 
 # 收集主程序分布及耗时
 main_dist, main_time = collect_distribution("Main.TestCircuit", shots=SHOTS)
