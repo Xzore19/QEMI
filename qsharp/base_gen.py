@@ -59,7 +59,6 @@ class QSharpGenerator:
                     target_register=target_expr,
                     target_indices=target_indices,
                     depth=self.depth_per_block,
-                    control_op_name=None
                 )
                 block = props["call"]
                 body = indent(block.split("\n"), level=2)

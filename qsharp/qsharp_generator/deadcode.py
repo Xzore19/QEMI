@@ -5,7 +5,7 @@ from qsharp_generator.custom_blocks import generate_random_gate_block
 from qsharp_generator.functions import indent
 from qsharp_generator.custom_ctl import make_nested_or_fallback_body
 
-SUPPORTED_CONTROL_OPS = [
+APPLY_IF_OPS = [
     "ApplyIfEqualL",
     "ApplyIfEqualLE",
     "ApplyIfGreaterL",
@@ -19,19 +19,12 @@ SUPPORTED_CONTROL_OPS = [
 ]
 
 def make_fixed_apply_if_relation_block(
-    control_op_name: str,
     target_register: str,
     target_indices: List[int],
     depth: int,
 ) -> Dict[str, Any]:
 
     local_indices = list(range(len(target_indices)))
-    # _, instructions, _ = generate_random_gate_block(
-    #     call_type="adj+ctl",
-    #     target_indices=local_indices,
-    #     depth=depth,
-    # )
-    # body = indent(instructions, level=2)
     body = make_nested_or_fallback_body(local_indices, depth)
 
     inline_name = f"__InlineApplyIfRelation_{uuid.uuid4().hex[:8]}"
@@ -42,8 +35,7 @@ def make_fixed_apply_if_relation_block(
     )
 
     lines = [inline_op]
-    if control_op_name not in SUPPORTED_CONTROL_OPS:
-        control_op_name = random.choice(SUPPORTED_CONTROL_OPS)
+    control_op_name = random.choice(APPLY_IF_OPS)
 
     # 具体构造控制输入以确保 "deadcode 条件永远不满足"
     if control_op_name == "ApplyIfEqualLE":
