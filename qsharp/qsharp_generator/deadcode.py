@@ -2,8 +2,9 @@ import uuid
 from typing import List, Dict, Any
 import random
 from qsharp_generator.custom_blocks import generate_random_gate_block
-from qsharp_generator.functions import indent
+from qsharp_generator.functions import indent, get_qsharp_modifier
 from qsharp_generator.custom_ctl import make_nested_or_fallback_body
+from qsharp_generator.illegal_block import make_nested_or_illegal_or_fallback_body
 
 APPLY_IF_OPS = [
     "ApplyIfEqualL",
@@ -22,14 +23,17 @@ def make_fixed_apply_if_relation_block(
     target_register: str,
     target_indices: List[int],
     depth: int,
+    call_type: str = "adj+ctl",
 ) -> Dict[str, Any]:
 
+    call_type = "adj+ctl"
     local_indices = list(range(len(target_indices)))
-    body = make_nested_or_fallback_body(local_indices, depth)
-
+    body = make_nested_or_fallback_body(local_indices, depth, call_type)
+    
     inline_name = f"__InlineApplyIfRelation_{uuid.uuid4().hex[:8]}"
+    modifier = get_qsharp_modifier(call_type)
     inline_op = (
-        f"operation {inline_name}(q : Qubit[]) : Unit is Adj + Ctl {{\n"
+        f"operation {inline_name}(q : Qubit[]) : Unit{modifier} {{\n"
         f"{body}\n"
         f"}}"
     )

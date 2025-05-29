@@ -104,3 +104,15 @@ def indent(lines, level=1, spaces_per_level=4):
 def add_measure_all(qubit_num: int) -> List[str]:
     return [f"let r{i} = M(q[{i}]);" for i in range(qubit_num)]
 
+
+def get_qsharp_modifier(call_type: str) -> str:
+    normalized = call_type.lower()
+    if normalized in ["adjoint", "adj"]:
+        return " is Adj"
+    elif normalized in ["controlled", "ctl"]:
+        return " is Ctl"
+    elif normalized in ["adj+ctl", "adjoint+controlled", "controlled+adjoint", "ctl+adj"]:
+        return " is Adj + Ctl"
+    else:
+        return ""
+

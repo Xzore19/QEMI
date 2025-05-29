@@ -21,7 +21,7 @@ class QSharpGenerator:
         from qsharp_generator.functions import add_measure_all
 
         self.measure_instructions = add_measure_all(self.qubit_num)
-        call_types = random.choices(["plain", "adjoint", "controlled"], k=self.num_blocks)
+        call_types = random.choices(["plain", "adjoint", "controlled", "adj+ctl"], k=self.num_blocks)
         block_ops = []
         test_body = []
         extra_single_blocks = []
@@ -36,8 +36,9 @@ class QSharpGenerator:
             qualifier = {
                 "plain": "",
                 "adjoint": "is Adj",
-                "controlled": "is Adj + Ctl",
-            }.get(call_type, "is Adj + Ctl")
+                "controlled": "is Ctl",
+                "adj+ctl": "is Adj + Ctl",
+            }[call_type]
 
             if call_type == "controlled":
                 available = list(range(self.qubit_num))
@@ -58,7 +59,9 @@ class QSharpGenerator:
                 props = make_fixed_apply_if_relation_block(
                     target_register=target_expr,
                     target_indices=target_indices,
+                    # available_indices=target,
                     depth=self.depth_per_block,
+                    call_type=call_type,
                 )
                 block = props["call"]
                 body = indent(block.split("\n"), level=2)
@@ -66,6 +69,7 @@ class QSharpGenerator:
                 # 50% 概率尝试插入控制结构
                 if random.random() < 0.5:
                     ctl = generate_random_control_block(
+                        call_type=call_type,
                         available_indices=target,
                         depth=self.depth_per_block,
                     )
@@ -103,6 +107,10 @@ class QSharpGenerator:
                 ctrl_str = ", ".join([f"q[{i}]" for i in ctrl])
                 tgt_str = ", ".join([f"q[{i}]" for i in target])
                 test_body.append(f"Controlled ApplyRandomBlock{idx}([{ctrl_str}], [{tgt_str}]);")
+            elif call_type == "adj+ctl":
+                ctrl_str = ", ".join([f"q[{i}]" for i in ctrl])
+                tgt_str = ", ".join([f"q[{i}]" for i in target])
+                test_body.append(f"Controlled Adjoint ApplyRandomBlock{idx}([{ctrl_str}], [{tgt_str}]);")
 
         test_body += self.measure_instructions
         test_body.append("ResetAll(q);")
