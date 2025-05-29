@@ -3,12 +3,17 @@ import math
 import uuid
 from typing import List, Tuple, Callable, Set, Dict, Any, Optional
 from qsharp_generator.functions import indent, generate_random_complexpolar_vector, get_apply_to_each_call
-
-BUILTIN_BLOCK_NAMES = [
+ 
+BUILTIN_QUANTUM_OPERATIONS = [
     "ApplyQFT",
     "ApproximatelyPreparePureStateCP",
+]
+
+BUILTIN_CONTROL_STRUCTURES = [
     "ApplyIfEqualLE",
 ]
+
+BUILTIN_BLOCK_NAMES = BUILTIN_QUANTUM_OPERATIONS + BUILTIN_CONTROL_STRUCTURES
 
 def make_random_stateprep_block(num_qubits: int, call_type: str = "plain") -> dict:
     MAX_QUBIT_FOR_STATEPREP = 6
@@ -52,7 +57,6 @@ def generate_random_gate_block(
     call_type: str,
     target_indices: List[int],
     depth: int,
-    register_block: Callable[[], str],
 ) -> Tuple[Set[int], List[str], List[str]]:
     single_no_param = ["H", "X", "Y", "Z", "S", "T", "I"]
     single_with_param = ["Rx", "Ry", "Rz", "R1"]
@@ -79,7 +83,6 @@ def generate_random_gate_block(
                 props = make_apply_if_equalle_block(
                     available_indices=target_indices,
                     depth=depth,
-                    register_block=register_block
                 )
                 if props is None:
                     instructions.append("I(q[0]);")
@@ -97,7 +100,9 @@ def generate_random_gate_block(
             continue
 
         if random.random() < 0.2:
-            block_name = register_block()
+            from qsharp_generator.functions import register_single_qubit_block
+
+            block_name = register_single_qubit_block()
             instructions.append(get_apply_to_each_call(block_name, call_type))
             used_indices.update(range(len(target_indices)))
             extra_ops.append(block_name)
@@ -140,7 +145,6 @@ def generate_random_gate_block(
 def make_apply_if_equalle_block(
     available_indices: List[int],
     depth: int,
-    register_block: Callable[[], str],
 ) -> Optional[Dict[str, Any]]:
     from qsharp_generator.custom_blocks import generate_random_gate_block
     from qsharp_generator.functions import indent
@@ -175,7 +179,6 @@ def make_apply_if_equalle_block(
         call_type="adj+ctl",
         target_indices=list(range(len(target_indices))),
         depth=depth,
-        register_block=register_block,
     )
 
     body = indent(instructions, level=2)

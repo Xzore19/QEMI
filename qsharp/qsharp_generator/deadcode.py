@@ -7,7 +7,6 @@ def make_fixed_apply_if_equalle_block(
     target_register: str,
     target_indices: List[int],
     depth: int,
-    register_block: Callable[[], str],
 ) -> Dict[str, Any]:
 
     # 构造 inline block
@@ -16,7 +15,6 @@ def make_fixed_apply_if_equalle_block(
         call_type="adj+ctl",
         target_indices=local_indices,
         depth=depth,
-        register_block=register_block,
     )
 
     body = indent(instructions, level=2)

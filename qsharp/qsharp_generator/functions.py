@@ -3,6 +3,28 @@ import random
 from typing import List, Tuple, Callable, Set, Dict, Any, Optional
 import uuid
 
+registered_single_qubit_blocks: List[str] = []
+
+def register_single_qubit_block() -> str:
+    import uuid
+    from qsharp_generator.functions import indent
+
+    gates = ["H", "X", "Y", "Z", "S", "T", "I", "Rx", "Ry", "Rz", "R1"]
+    instructions = []
+    for _ in range(random.randint(2, 4)):
+        gate = random.choice(gates)
+        if gate in ["Rx", "Ry", "Rz", "R1"]:
+            angle = round(random.uniform(0, 2 * math.pi), 6)
+            instructions.append(f"{gate}({angle}, q);")
+        else:
+            instructions.append(f"{gate}(q);")
+
+    body = indent(instructions, level=2)
+    name = f"MySingleBlock_{uuid.uuid4().hex[:8]}"
+    op_text = f"    operation {name}(q : Qubit) : Unit is Adj + Ctl {{\n{body}\n    }}"
+    registered_single_qubit_blocks.append(op_text)
+    return name
+
 def generate_random_complexpolar_vector(num_qubits):
     """
     Generates a normalized list of ComplexPolar values in Q# syntax.
@@ -57,27 +79,27 @@ def indent(lines, level=1, spaces_per_level=4):
     return "\n".join(f"{indent_str}{line}" for line in lines)
 
 
-def generate_single_qubit_block() -> Tuple[str, str]:
-    """
-    Generate a custom single-qubit gate block with a unique UUID-based name.
+# def generate_single_qubit_block() -> Tuple[str, str]:
+#     """
+#     Generate a custom single-qubit gate block with a unique UUID-based name.
 
-    Returns:
-        Tuple[str, str]: (operation name, Q# operation definition string)
-    """
-    gates = ["H", "X", "Y", "Z", "S", "T", "I", "Rx", "Ry", "Rz", "R1"]
-    instructions = []
-    for _ in range(random.randint(2, 4)):
-        gate = random.choice(gates)
-        if gate in ["Rx", "Ry", "Rz", "R1"]:
-            angle = round(random.uniform(0, 2 * math.pi), 6)
-            instructions.append(f"{gate}({angle}, q);")
-        else:
-            instructions.append(f"{gate}(q);")
+#     Returns:
+#         Tuple[str, str]: (operation name, Q# operation definition string)
+#     """
+#     gates = ["H", "X", "Y", "Z", "S", "T", "I", "Rx", "Ry", "Rz", "R1"]
+#     instructions = []
+#     for _ in range(random.randint(2, 4)):
+#         gate = random.choice(gates)
+#         if gate in ["Rx", "Ry", "Rz", "R1"]:
+#             angle = round(random.uniform(0, 2 * math.pi), 6)
+#             instructions.append(f"{gate}({angle}, q);")
+#         else:
+#             instructions.append(f"{gate}(q);")
 
-    body = indent(instructions, level=2)
-    uid = uuid.uuid4().hex[:8]
-    name = f"MySingleBlock_{uid}"
-    return name, f"    operation {name}(q : Qubit) : Unit is Adj + Ctl {{\n{body}\n    }}"
+#     body = indent(instructions, level=2)
+#     uid = uuid.uuid4().hex[:8]
+#     name = f"MySingleBlock_{uid}"
+#     return name, f"    operation {name}(q : Qubit) : Unit is Adj + Ctl {{\n{body}\n    }}"
 
 def add_measure_all(qubit_num: int) -> List[str]:
     return [f"let r{i} = M(q[{i}]);" for i in range(qubit_num)]

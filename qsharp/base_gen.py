@@ -1,7 +1,7 @@
 import os
 import random
 import math
-from qsharp_generator.functions import indent
+from qsharp_generator.functions import indent, registered_single_qubit_blocks
 from qsharp_generator.custom_blocks import (
     generate_random_gate_block,
 )
@@ -14,19 +14,7 @@ class QSharpGenerator:
         self.depth_per_block = depth_per_block
         self.include_deadcode = include_deadcode
         self.measure_instructions = []
-        self.generated_single_gate_blocks = []
-        self.generated_single_gate_block_names = set()
         self.single_block_counter = 0
-
-    def register_single_qubit_block(self) -> str:
-        from qsharp_generator.functions import generate_single_qubit_block
-
-        while True:
-            name, text = generate_single_qubit_block()
-            if name not in self.generated_single_gate_block_names:
-                self.generated_single_gate_block_names.add(name)
-                self.generated_single_gate_blocks.append(text)
-                return name
 
     def generate_qsharp_code(self, namespace_name="Main"):
         from qsharp_generator.functions import add_measure_all
@@ -70,7 +58,6 @@ class QSharpGenerator:
                     target_register=target_expr,
                     target_indices=target_indices,
                     depth=self.depth_per_block,
-                    register_block=lambda: self.register_single_qubit_block(),
                 )
                 block = props["call"]
                 body = indent(block.split("\n"), level=2)
@@ -79,7 +66,6 @@ class QSharpGenerator:
                     call_type=call_type,
                     target_indices=target,
                     depth=self.depth_per_block,
-                    register_block=lambda: self.register_single_qubit_block(),
                 )
                 extra_single_blocks.extend(extra_ops)
                 body = indent(block, level=2)
@@ -127,7 +113,7 @@ class QSharpGenerator:
         return (
             f"namespace {namespace_name} {{\n"
             f"{header}\n\n"
-            f"{chr(10).join(self.generated_single_gate_blocks)}\n\n"
+            f"{chr(10).join(registered_single_qubit_blocks)}\n\n"
             f"{chr(10).join(block_ops)}\n\n"
             f"{test_circuit_op}"
             f"}}"
