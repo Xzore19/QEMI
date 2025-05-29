@@ -5,7 +5,7 @@ from qsharp_generator.functions import indent, registered_single_qubit_blocks
 from qsharp_generator.custom_blocks import (
     generate_random_gate_block,
 )
-from qsharp_generator.deadcode import make_fixed_apply_if_equalle_block
+from qsharp_generator.deadcode import make_fixed_apply_if_relation_block
 from qsharp_generator.custom_ctl import generate_random_control_block
 
 class QSharpGenerator:
@@ -55,10 +55,11 @@ class QSharpGenerator:
             if idx == 0 and self.include_deadcode:
                 target_indices = target
                 target_expr = "q"
-                props = make_fixed_apply_if_equalle_block(
+                props = make_fixed_apply_if_relation_block(
                     target_register=target_expr,
                     target_indices=target_indices,
                     depth=self.depth_per_block,
+                    control_op_name=None
                 )
                 block = props["call"]
                 body = indent(block.split("\n"), level=2)
