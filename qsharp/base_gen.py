@@ -4,7 +4,6 @@ import math
 from qsharp_generator.functions import indent
 from qsharp_generator.custom_blocks import (
     generate_random_gate_block,
-    make_apply_if_equalle_block,
 )
 from qsharp_generator.deadcode import make_fixed_apply_if_equalle_block
 
@@ -17,12 +16,6 @@ class QSharpGenerator:
         self.measure_instructions = []
         self.generated_single_gate_blocks = []
         self.generated_single_gate_block_names = set()
-        self.required_imports = set()
-        self.builtin_block_names = [
-            "ApplyQFT",
-            "ApproximatelyPreparePureStateCP",
-            "ApplyIfEqualLE",
-        ]
         self.single_block_counter = 0
 
     def register_single_qubit_block(self) -> str:
@@ -39,7 +32,6 @@ class QSharpGenerator:
         from qsharp_generator.functions import add_measure_all
 
         self.measure_instructions = add_measure_all(self.qubit_num)
-        self.required_imports = set()
         call_types = random.choices(["plain", "adjoint", "controlled"], k=self.num_blocks)
         block_ops = []
         test_body = []
@@ -71,16 +63,6 @@ class QSharpGenerator:
                 target = list(range(self.qubit_num))
                 ctrl = []
 
-            def make_if_block_adapter(available_indices):
-                return make_apply_if_equalle_block(
-                    available_indices=available_indices,
-                    depth=self.depth_per_block,
-                    builtin_block_names=self.builtin_block_names,
-                    register_block=lambda: self.register_single_qubit_block(),
-                    required_imports=self.required_imports,
-                    make_if_block_adapter=make_if_block_adapter,
-                )
-
             if idx == 0 and self.include_deadcode:
                 target_indices = target
                 target_expr = "q"
@@ -88,23 +70,16 @@ class QSharpGenerator:
                     target_register=target_expr,
                     target_indices=target_indices,
                     depth=self.depth_per_block,
-                    builtin_block_names=self.builtin_block_names,
                     register_block=lambda: self.register_single_qubit_block(),
-                    required_imports=self.required_imports,
-                    make_if_block_adapter=make_if_block_adapter
                 )
                 block = props["call"]
-                self.required_imports.add(props["import"])
                 body = indent(block.split("\n"), level=2)
             else:
                 used_indices, block, extra_ops = generate_random_gate_block(
                     call_type=call_type,
                     target_indices=target,
                     depth=self.depth_per_block,
-                    builtin_block_names=self.builtin_block_names,
                     register_block=lambda: self.register_single_qubit_block(),
-                    required_imports=self.required_imports,
-                    make_apply_if_equalle_block=make_if_block_adapter
                 )
                 extra_single_blocks.extend(extra_ops)
                 body = indent(block, level=2)
@@ -136,8 +111,10 @@ class QSharpGenerator:
             "Std.Canon",
             "Std.Convert",
             "Std.Diagnostics",
+            "Std.Arithmetic",
+            "Std.StatePreparation",
         ]
-        all_imports = sorted(set(default_imports).union(self.required_imports))
+        all_imports = sorted(set(default_imports))
         header = "\n" + "\n".join(f"    open {lib};" for lib in all_imports)
 
         test_circuit_op = (

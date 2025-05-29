@@ -4,6 +4,12 @@ import uuid
 from typing import List, Tuple, Callable, Set, Dict, Any, Optional
 from qsharp_generator.functions import indent, generate_random_complexpolar_vector, get_apply_to_each_call
 
+BUILTIN_BLOCK_NAMES = [
+    "ApplyQFT",
+    "ApproximatelyPreparePureStateCP",
+    "ApplyIfEqualLE",
+]
+
 def make_random_stateprep_block(num_qubits: int, call_type: str = "plain") -> dict:
     MAX_QUBIT_FOR_STATEPREP = 6
     if num_qubits < 1 or num_qubits > MAX_QUBIT_FOR_STATEPREP:
@@ -46,10 +52,7 @@ def generate_random_gate_block(
     call_type: str,
     target_indices: List[int],
     depth: int,
-    builtin_block_names: List[str],
     register_block: Callable[[], str],
-    required_imports: Set[str],
-    make_apply_if_equalle_block: Callable[[List[int]], Optional[Dict[str, Any]]],
 ) -> Tuple[Set[int], List[str], List[str]]:
     single_no_param = ["H", "X", "Y", "Z", "S", "T", "I"]
     single_with_param = ["Rx", "Ry", "Rz", "R1"]
@@ -66,14 +69,18 @@ def generate_random_gate_block(
 
     for _ in range(depth):
         if random.random() < 0.2:
-            name = random.choice(builtin_block_names)
+            name = random.choice(BUILTIN_BLOCK_NAMES)
 
             if name == "ApplyQFT":
                 props = make_apply_qft_props(call_type)
             elif name == "ApproximatelyPreparePureStateCP":
                 props = make_random_stateprep_block(len(target_indices), call_type)
             elif name == "ApplyIfEqualLE":
-                props = make_apply_if_equalle_block(target_indices)
+                props = make_apply_if_equalle_block(
+                    available_indices=target_indices,
+                    depth=depth,
+                    register_block=register_block
+                )
                 if props is None:
                     instructions.append("I(q[0]);")
                     continue
@@ -86,7 +93,6 @@ def generate_random_gate_block(
                 continue
 
             instructions.append(props["call"])
-            required_imports.add(props["import"])
             used_indices.update(range(len(target_indices)))
             continue
 
@@ -134,13 +140,10 @@ def generate_random_gate_block(
 def make_apply_if_equalle_block(
     available_indices: List[int],
     depth: int,
-    builtin_block_names: List[str],
     register_block: Callable[[], str],
-    required_imports: Set[str],
-    make_if_block_adapter,
 ) -> Optional[Dict[str, Any]]:
     from qsharp_generator.custom_blocks import generate_random_gate_block
-    required_imports.add("Std.Arithmetic")
+    from qsharp_generator.functions import indent
 
     N = len(available_indices)
     if N < 3:
@@ -167,14 +170,12 @@ def make_apply_if_equalle_block(
     target_len = random.randint(1, len(remaining))
     target_indices = sorted(random.sample(remaining, target_len))
 
+    # ✅ 这里不再传入 adapter，不能递归嵌套
     _, instructions, _ = generate_random_gate_block(
         call_type="adj+ctl",
         target_indices=list(range(len(target_indices))),
         depth=depth,
-        builtin_block_names=builtin_block_names,
         register_block=register_block,
-        required_imports=required_imports,
-        make_apply_if_equalle_block=make_if_block_adapter
     )
 
     body = indent(instructions, level=2)
