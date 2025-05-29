@@ -7,6 +7,7 @@ from qsharp_generator.functions import indent
 CONTROL_BLOCK_REGISTRY = [
     "APPLY_IF_LE",
     "APPLY_IF_L",
+    "FOR_LOOP",
 ]
 
 APPLY_IF_LE_REGISTRY = [
@@ -165,6 +166,39 @@ def make_apply_if_relation_l_block(
         "controlled": True,
     }
 
+def make_for_loop_block(
+    available_indices: List[int],
+    depth: int,
+) -> Optional[Dict[str, Any]]:
+    if not available_indices:
+        return None
+
+    local_indices = list(range(len(available_indices)))
+    body = make_nested_or_fallback_body(local_indices, depth)
+
+    uuid_tag = uuid.uuid4().hex[:8]
+    inline_op_name = f"__ForLoopBody_{uuid_tag}"
+
+    inline_op = (
+        f"operation {inline_op_name}(q : Qubit[]) : Unit is Adj + Ctl {{\n"
+        f"{body}\n"
+        f"}}"
+    )
+
+    call = (
+        f"{inline_op}\n"
+        f"for i in 1..3 {{\n"
+        f"    {inline_op_name}(q);\n"
+        f"}}"
+    )
+
+    return {
+        "import": None,
+        "call": call,
+        "adjoint": True,
+        "controlled": True,
+    }
+
 def generate_random_control_block(
     available_indices: List[int],
     depth: int,
@@ -179,4 +213,8 @@ def generate_random_control_block(
         if len(available_indices) < 2:
             return None
         return make_apply_if_relation_l_block(available_indices, depth)
+    if block == "FOR_LOOP":
+        if depth - 1 <= 0:
+            return None
+        return make_for_loop_block(available_indices, depth - 1)
     return None

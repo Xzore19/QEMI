@@ -9,52 +9,67 @@ namespace Main_fuzzing {
     open Std.Measurement;
     open Std.StatePreparation;
 
-    operation MySingleBlock_4da4c4b0(q : Qubit) : Unit is Adj + Ctl {
-        T(q);
-        H(q);
+    operation MySingleBlock_8f7cbeb4(q : Qubit) : Unit is Adj + Ctl {
+        S(q);
+        Rz(0.794571, q);
+        Ry(4.626353, q);
     }
-    operation MySingleBlock_a1960e33(q : Qubit) : Unit is Adj + Ctl {
-        R1(1.438987, q);
-        Ry(0.451851, q);
+    operation MySingleBlock_6190629e(q : Qubit) : Unit is Adj + Ctl {
+        X(q);
+        Z(q);
+        S(q);
+        Ry(5.941228, q);
     }
 
-    operation ApplyRandomBlock0(q : Qubit[]) : Unit is Adj {
+    operation ApplyRandomBlock0(q : Qubit[]) : Unit is Adj + Ctl {
     }
-    operation ApplyRandomBlock1(q : Qubit[]) : Unit is Adj + Ctl {
-        operation __InlineApplyIfRelationLE_cce7f546(q : Qubit[]) : Unit is Adj + Ctl {
-            operation __InlineApplyIfRelationLE_ed1a0846(q : Qubit[]) : Unit is Adj + Ctl {
-                    X(q[1]);
-                    ApplyToEachCA(MySingleBlock_4da4c4b0, q);
-                    H(q[0]);
-                    SWAP(q[1], q[0]);
-                    Rzz(5.040434, q[1], q[0]);
-                    Z(q[0]);
-                    SWAP(q[1], q[0]);
-                    Rzz(0.645123, q[1], q[0]);
+    operation ApplyRandomBlock1(q : Qubit[]) : Unit {
+        operation __InlineApplyIfRelationLE_8d652798(q : Qubit[]) : Unit is Adj + Ctl {
+            operation __ForLoopBody_a3cb8bfe(q : Qubit[]) : Unit is Adj + Ctl {
+                operation __InlineApplyIfRelationLE_0f4be706(q : Qubit[]) : Unit is Adj + Ctl {
+                        Rz(1.336761, q[0]);
+                        R1(4.761427, q[0]);
+                        ApproximatelyPreparePureStateCP(
+                    1e-6,
+                    [
+                        ComplexPolar(0.661092, 5.872935),
+                        ComplexPolar(0.750304, 5.164368)
+                    ],
+                    q
+                );
+                        Rz(6.169969, q[0]);
+                        Z(q[0]);
+                }
+                let x = [q[0], q[2], q[5]];
+                let y = [q[1], q[4], q[7]];
+                let target = [q[6]];
+                ApplyIfGreaterLE(__InlineApplyIfRelationLE_0f4be706, x, y, target);
             }
-            let x = [q[1]];
-            let y = [q[2]];
-            let target = [q[3], q[4]];
-            ApplyIfGreaterOrEqualLE(__InlineApplyIfRelationLE_ed1a0846, x, y, target);
+            for i in 1..3 {
+                __ForLoopBody_a3cb8bfe(q);
+            }
         }
-        let x = [q[0]];
-        let y = [q[1]];
-        let target = [q[3], q[4], q[5], q[6], q[7]];
-        ApplyIfEqualLE(__InlineApplyIfRelationLE_cce7f546, x, y, target);
+        let x = [q[7], q[11]];
+        let y = [q[8], q[10]];
+        let target = [q[0], q[1], q[2], q[3], q[4], q[5], q[6], q[9]];
+        ApplyIfGreaterLE(__InlineApplyIfRelationLE_8d652798, x, y, target);
     }
-    operation ApplyRandomBlock2(q : Qubit[]) : Unit is Adj + Ctl {
-        Rx(3.123363, q[6]);
-        Rx(4.41275, q[6]);
-        R1(1.249646, q[2]);
-        ApplyToEachCA(MySingleBlock_a1960e33, q);
-        T(q[8]);
+    operation ApplyRandomBlock2(q : Qubit[]) : Unit {
+        S(q[9]);
+        Ryy(4.42995, q[1], q[7]);
+        I(q[4]);
+        CCNOT(q[8], q[9], q[10]);
+        Rxx(5.264461, q[1], q[7]);
+        T(q[6]);
+        Rx(1.267843, q[2]);
+        I(q[5]);
     }
 
     operation TestCircuit() : Result[] {
         use q = Qubit[12] {
-            Adjoint ApplyRandomBlock0(q);
-            Controlled ApplyRandomBlock1([q[1], q[2], q[5], q[11]], [q[0], q[3], q[4], q[6], q[7], q[8], q[9], q[10]]);
-            Controlled ApplyRandomBlock2([q[2], q[11]], [q[0], q[1], q[3], q[4], q[5], q[6], q[7], q[8], q[9], q[10]]);
+            Controlled ApplyRandomBlock0([q[0], q[4], q[5], q[7], q[8], q[10], q[11]], [q[1], q[2], q[3], q[6], q[9]]);
+            ApplyRandomBlock1(q);
+            ApplyRandomBlock2(q);
             let r0 = M(q[0]);
             let r1 = M(q[1]);
             let r2 = M(q[2]);
