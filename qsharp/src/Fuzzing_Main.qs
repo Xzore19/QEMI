@@ -7,76 +7,66 @@ namespace Main_fuzzing {
     open Std.Intrinsic;
     open Std.Math;
     open Std.Measurement;
-    open Std.StatePreparation;
 
-    operation MySingleBlock_13e16aab(q : Qubit) : Unit is Adj + Ctl {
-        I(q);
-        R1(5.210234, q);
-        Rz(5.603679, q);
-        X(q);
-    }
-    operation MySingleBlock_781d64ae(q : Qubit) : Unit is Adj + Ctl {
-        R1(3.328709, q);
+    operation MySingleBlock_680f443f(q : Qubit) : Unit is Adj + Ctl {
         Z(q);
-        Ry(2.677822, q);
+        S(q);
+    }
+    operation MySingleBlock_592d9e63(q : Qubit) : Unit is Adj + Ctl {
+        X(q);
+        Y(q);
         H(q);
+        R1(5.74405, q);
     }
-    operation MySingleBlock_e406b308(q : Qubit) : Unit is Adj + Ctl {
-        T(q);
-        Y(q);
-    }
-    operation MySingleBlock_d45bc802(q : Qubit) : Unit is Adj + Ctl {
-        H(q);
-        Y(q);
-        R1(5.557385, q);
-    }
-    operation MySingleBlock_fe0c6a74(q : Qubit) : Unit is Adj + Ctl {
-        Y(q);
-        Y(q);
+    operation MySingleBlock_9afdc7d2(q : Qubit) : Unit is Adj + Ctl {
+        R1(1.982221, q);
         X(q);
     }
-    operation MySingleBlock_cfd4aee5(q : Qubit) : Unit is Adj + Ctl {
+    operation MySingleBlock_f0986940(q : Qubit) : Unit is Adj + Ctl {
+        H(q);
+        S(q);
+        Rz(0.533194, q);
+        Z(q);
+    }
+    operation MySingleBlock_35a728f7(q : Qubit) : Unit is Adj + Ctl {
+        H(q);
         X(q);
+    }
+    operation MySingleBlock_75acf1b4(q : Qubit) : Unit is Adj + Ctl {
         I(q);
-        Rx(5.174124, q);
-    }
-    operation MySingleBlock_04c16f35(q : Qubit) : Unit is Adj + Ctl {
-        Rz(3.378324, q);
+        H(q);
+        Ry(4.219457, q);
         S(q);
     }
 
     operation ApplyRandomBlock0(q : Qubit[]) : Unit is Adj + Ctl {
     }
     operation ApplyRandomBlock1(q : Qubit[]) : Unit is Adj + Ctl {
-        S(q[0]);
-        ApplyToEachCA(MySingleBlock_cfd4aee5, q);
-        I(q[0]);
-        R1(1.989895, q[1]);
-        I(q[0]);
-        ApplyToEachCA(MySingleBlock_04c16f35, q);
+        Ry(1.766329, q[0]);
+        Rz(2.474117, q[3]);
+        Ry(1.132424, q[3]);
+        ApplyQFT(q);
+        ApplyQFT(q);
+        X(q[4]);
+        SWAP(q[1], q[2]);
+        ApplyToEachCA(MySingleBlock_9afdc7d2, q);
     }
-    operation ApplyRandomBlock2(q : Qubit[]) : Unit is Adj + Ctl {
-        I(q[0]);
-        S(q[0]);
-        R1(4.354572, q[0]);
-        R1(0.733273, q[0]);
-        R1(1.338921, q[0]);
-        T(q[0]);
-        ApproximatelyPreparePureStateCP(
-    1e-6,
-    [
-        ComplexPolar(0.756781, 6.270964),
-        ComplexPolar(0.653668, 0.87321)
-    ],
-    q
-);
+    operation ApplyRandomBlock2(q : Qubit[]) : Unit {
+        Y(q[4]);
+        ApplyToEach(MySingleBlock_f0986940, q);
+        Rzz(0.420355, q[3], q[2]);
+        T(q[2]);
+        X(q[9]);
+        ApplyQFT(q);
+        ApplyToEach(MySingleBlock_35a728f7, q);
+        ApplyToEach(MySingleBlock_75acf1b4, q);
     }
 
     operation TestCircuit() : Result[] {
         use q = Qubit[12] {
-            Controlled ApplyRandomBlock0([q[0], q[3]], [q[1], q[2], q[4], q[5], q[6], q[7], q[8], q[9], q[10], q[11]]);
-            Controlled ApplyRandomBlock1([q[0], q[1], q[2], q[3], q[4], q[5], q[7], q[9], q[10], q[11]], [q[6], q[8]]);
-            Controlled ApplyRandomBlock2([q[0], q[1], q[2], q[3], q[4], q[5], q[6], q[7], q[8], q[10], q[11]], [q[9]]);
+            Controlled ApplyRandomBlock0([q[0], q[2]], [q[1], q[3], q[4], q[5], q[6], q[7], q[8], q[9], q[10], q[11]]);
+            Controlled ApplyRandomBlock1([q[1], q[6], q[9], q[10], q[11]], [q[0], q[2], q[3], q[4], q[5], q[7], q[8]]);
+            ApplyRandomBlock2(q);
             let r0 = M(q[0]);
             let r1 = M(q[1]);
             let r2 = M(q[2]);

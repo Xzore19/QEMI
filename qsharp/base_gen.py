@@ -93,11 +93,7 @@ class QSharpGenerator:
                     required_imports=self.required_imports,
                     make_if_block_adapter=make_if_block_adapter
                 )
-                block = (
-                    "// --- DEADCODE START ---\n"
-                    + props["call"] +
-                    "\n// --- DEADCODE END ---"
-                )
+                block = props["call"]
                 self.required_imports.add(props["import"])
                 body = indent(block.split("\n"), level=2)
             else:
