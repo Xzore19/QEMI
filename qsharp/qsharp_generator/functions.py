@@ -54,7 +54,7 @@ def get_apply_to_each_call(block_name: str, call_type: str) -> str:
         str: The formatted ApplyToEachX call.
     """
     if call_type == "controlled":
-        return f"ApplyToEachCA({block_name}, q);"
+        return f"ApplyToEachC({block_name}, q);"
     elif call_type == "adjoint":
         return f"ApplyToEachA({block_name}, q);"
     elif call_type == "plain":

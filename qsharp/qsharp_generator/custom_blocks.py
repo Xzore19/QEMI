@@ -48,8 +48,8 @@ def make_apply_to_each_props(block_name: str, call_type: str) -> Dict[str, Any]:
     return {
         "import": "Std.Canon",
         "call": get_apply_to_each_call(block_name, call_type),
-        "adjoint": True,
-        "controlled": call_type in ("controlled", "adj+ctl"),
+        "adjoint": call_type in ("adj", "adj+ctl"),
+        "controlled": call_type in ("ctl", "adj+ctl"),
     }
 
 def generate_unique_inline_name() -> str:

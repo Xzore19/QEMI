@@ -40,7 +40,7 @@ class QSharpGenerator:
                 "adj+ctl": "is Adj + Ctl",
             }[call_type]
 
-            if call_type == "controlled":
+            if call_type == "controlled" or "adj+ctl":
                 available = list(range(self.qubit_num))
                 num_ctrl = random.randint(1, self.qubit_num - 1)
                 ctrl = sorted(random.sample(available, num_ctrl))
