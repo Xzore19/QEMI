@@ -50,6 +50,9 @@ def make_infinite_loop_block(
     if not available_indices:
         return None
 
+    if "adj" in call_type:
+        return None
+
     local_indices = list(range(len(available_indices)))
     body = make_nested_or_fallback_body(local_indices, depth, call_type)
 

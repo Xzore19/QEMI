@@ -35,15 +35,17 @@ def make_nested_or_fallback_body(
     from qsharp_generator.custom_blocks import generate_random_gate_block
     from qsharp_generator.functions import indent
 
+    # ✅ 用局部 index list 替代全局 target_indices 传下去
+    local_indices = list(range(len(target_indices)))
+
     if random.random() < 1:
-        # print(f"[DEBUG] calling nested block with call_type: {call_type}")
-        maybe_nested = generate_random_control_block(target_indices, depth, call_type)
+        maybe_nested = generate_random_control_block(local_indices, depth, call_type)
         if maybe_nested is not None:
             return indent(maybe_nested["call"].splitlines(), level=1)
 
     _, instructions, _ = generate_random_gate_block(
         call_type=call_type,
-        target_indices=list(range(len(target_indices))),
+        target_indices=local_indices,
         depth=depth,
     )
     return indent(instructions, level=2)
@@ -66,41 +68,37 @@ def make_apply_if_relation_le_block(
         return None
 
     cmp_len = random.randint(1, max_cmp_len)
-    x_indices = sorted(local_indices[:cmp_len])
-    y_indices = sorted(local_indices[cmp_len:2 * cmp_len])
+    x_local = sorted(local_indices[:cmp_len])
+    y_local = sorted(local_indices[cmp_len:2 * cmp_len])
     remaining = local_indices[2 * cmp_len:]
     if not remaining:
         return None
-
-    target_len = random.randint(1, len(remaining))
-    target_indices = sorted(random.sample(remaining, target_len))
+    target_local = sorted(random.sample(remaining, random.randint(1, len(remaining))))
 
     call_type = "adj+ctl"
-
-    body = make_nested_or_fallback_body(target_indices, depth, call_type)
-
+    body = make_nested_or_fallback_body(target_local, depth, call_type)
     uuid_tag = uuid.uuid4().hex[:8]
     inline_name = f"__InlineApplyIfRelationLE_{uuid_tag}"
     modifier = get_qsharp_modifier(call_type)
+
     inline_op = (
         f"operation {inline_name}(q : Qubit[]) : Unit{modifier} {{\n"
         f"{body}\n"
         f"}}"
     )
 
-    def to_array_str(name, indices):
+    def arr(name, indices):
         return f"let {name} = [" + ", ".join(f"q[{i}]" for i in indices) + "];"
 
-    x_decl = to_array_str("x", x_indices)
-    y_decl = to_array_str("y", y_indices)
-    target_decl = to_array_str("target", target_indices)
+    x_decl = arr("x", x_local)
+    y_decl = arr("y", y_local)
+    t_decl = arr("target", target_local)
 
-    control_op_name = random.choice(APPLY_IF_LE_REGISTRY)
-
+    op_name = random.choice(APPLY_IF_LE_REGISTRY)
     call = (
         f"{inline_op}\n"
-        f"{x_decl}\n{y_decl}\n{target_decl}\n"
-        f"{control_op_name}({inline_name}, x, y, target);"
+        f"{x_decl}\n{y_decl}\n{t_decl}\n"
+        f"{op_name}({inline_name}, x, y, target);"
     )
 
     return {
@@ -121,45 +119,41 @@ def make_apply_if_relation_l_block(
 
     local_indices = list(range(N))
     random.shuffle(local_indices)
+    cmp_len = random.randint(1, min(3, N - 1))
 
-    max_cmp_len = min(3, N - 1)
-    cmp_len = random.randint(1, max_cmp_len)
-
-    x_indices = sorted(local_indices[:cmp_len])
+    x_local = sorted(local_indices[:cmp_len])
     remaining = local_indices[cmp_len:]
     if not remaining:
         return None
 
-    target_len = random.randint(1, len(remaining))
-    target_indices = sorted(random.sample(remaining, target_len))
+    target_local = sorted(random.sample(remaining, random.randint(1, len(remaining))))
 
     call_type = "adj+ctl"
-
-    body = make_nested_or_fallback_body(target_indices, depth, call_type)
-
+    body = make_nested_or_fallback_body(target_local, depth, call_type)
     uuid_tag = uuid.uuid4().hex[:8]
     inline_name = f"__InlineApplyIfRelationL_{uuid_tag}"
     modifier = get_qsharp_modifier(call_type)
+
     inline_op = (
         f"operation {inline_name}(q : Qubit[]) : Unit{modifier} {{\n"
         f"{body}\n"
         f"}}"
     )
 
-    def to_array_str(name, indices):
+    bit_string = [random.choice([0, 1]) for _ in range(cmp_len)]
+    const_val = int("".join(str(b) for b in reversed(bit_string)), 2)
+
+    def arr(name, indices):
         return f"let {name} = [" + ", ".join(f"q[{i}]" for i in indices) + "];"
 
-    x_decl = to_array_str("x", x_indices)
-    bit_string = [random.choice([0, 1]) for _ in range(cmp_len)]
-    c_value = int("".join(str(b) for b in reversed(bit_string)), 2)
-    target_decl = to_array_str("target", target_indices)
+    x_decl = arr("x", x_local)
+    t_decl = arr("target", target_local)
 
-    control_op_name = random.choice(APPLY_IF_L_REGISTRY)
-
+    op_name = random.choice(APPLY_IF_L_REGISTRY)
     call = (
         f"{inline_op}\n"
-        f"{x_decl}\n{target_decl}\n"
-        f"{control_op_name}({inline_name}, {c_value}L, x, target);"
+        f"{x_decl}\n{t_decl}\n"
+        f"{op_name}({inline_name}, {const_val}L, x, target);"
     )
 
     return {
@@ -177,13 +171,35 @@ def make_for_loop_block(
     if not available_indices:
         return None
 
-    local_indices = list(range(len(available_indices)))
-    # print(f"[DEBUG] calling nested block with call_type: {call_type}")
-    body = make_nested_or_fallback_body(local_indices, depth, call_type)
+    N = len(available_indices)
+    local_indices = list(range(N))
+    inline_op_name = f"__ForLoopBody_{uuid.uuid4().hex[:8]}"
 
-    uuid_tag = uuid.uuid4().hex[:8]
-    inline_op_name = f"__ForLoopBody_{uuid_tag}"
+    # 默认修饰符
     modifier = get_qsharp_modifier(call_type)
+
+    use_controlled = False
+    if call_type in ("controlled", "adj+ctl") and N >= 2 and random.random() < 0.5:
+        use_controlled = True
+        num_ctrl = random.randint(1, N // 2)
+        ctrl = sorted(random.sample(local_indices, num_ctrl))
+        target = sorted([i for i in local_indices if i not in ctrl])
+        if not target:
+            return None
+
+        # ✅ 只将“目标 qubit”传进去生成嵌套体
+        body = make_nested_or_fallback_body(target, depth, call_type)
+
+        ctrl_str = ", ".join(f"q[{available_indices[i]}]" for i in ctrl)
+        tgt_str = ", ".join(f"q[{available_indices[i]}]" for i in target)
+
+        prefix = "Controlled Adjoint " if call_type == "adj+ctl" else "Controlled "
+        loop_body = f"{prefix}{inline_op_name}([{ctrl_str}], [{tgt_str}]);"
+    else:
+        # 降级为普通/Adjoint 调用
+        body = make_nested_or_fallback_body(local_indices, depth, call_type)
+        loop_body = f"{'Adjoint ' if call_type == 'adjoint' else ''}{inline_op_name}(q);"
+
     inline_op = (
         f"operation {inline_op_name}(q : Qubit[]) : Unit{modifier} {{\n"
         f"{body}\n"
@@ -193,15 +209,15 @@ def make_for_loop_block(
     call = (
         f"{inline_op}\n"
         f"for i in 1..3 {{\n"
-        f"    {inline_op_name}(q);\n"
+        f"    {loop_body}\n"
         f"}}"
     )
 
     return {
         "import": None,
         "call": call,
-        "adjoint": call_type in ("adj", "adj+ctl"),
-        "controlled": call_type in ("ctl", "adj+ctl"),
+        "adjoint": call_type in ("adjoint", "adj", "adj+ctl"),
+        "controlled": use_controlled,
     }
 
 def generate_random_control_block(
@@ -210,8 +226,8 @@ def generate_random_control_block(
     call_type: str,
 ) -> Optional[Dict[str, Any]]:
     block = random.choice(CONTROL_BLOCK_REGISTRY)
-    
     # print(f"Generating control block: {block} with depth {depth} and call type {call_type}")
+    available_indices = list(range(len(available_indices)))
 
     if block == "APPLY_IF_LE":
         if len(available_indices) < 3:
