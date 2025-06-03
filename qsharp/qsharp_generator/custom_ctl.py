@@ -2,7 +2,7 @@ import random
 import uuid
 from typing import List, Optional, Dict, Any
 from qsharp_generator.custom_blocks import generate_random_gate_block
-from qsharp_generator.functions import indent, get_qsharp_modifier
+from qsharp_generator.functions import indent, get_qsharp_modifier, register_random_flag_block
 
 CONTROL_BLOCK_REGISTRY = [
     "APPLY_IF_LE",
@@ -317,15 +317,16 @@ def make_if_else_block(
         call_if = f"{if_op}(q);"
         call_else = f"{else_op}(q);"
 
+    flag_func, _ = register_random_flag_block()
+
     block = (
         f"{if_op_def}\n\n"
         f"{else_op_def}\n\n"
-        f"mutable flag = true;\n"
-        f"if flag {{\n    {call_if}\n}} else {{\n    {call_else}\n}}"
+        f"if {flag_func}() {{\n    {call_if}\n}} else {{\n    {call_else}\n}}"
     )
 
     return {
-        "import": None,
+        "import": "Std.Intrinsic",  # 添加 import，确保 Measure/Reset 可用
         "call": block,
         "adjoint": call_type in ("adjoint", "adj+ctl"),
         "controlled": call_type in ("controlled", "adj+ctl"),
@@ -337,16 +338,16 @@ def generate_random_control_block(
     depth: int,
     call_type: str,
 ) -> Optional[Dict[str, Any]]:
-    # block = random.choice(CONTROL_BLOCK_REGISTRY)
-    block = "IFELSE"  # For testing purposes, always use IFELSE
+    block = random.choice(CONTROL_BLOCK_REGISTRY)
+    # block = "IFELSE"  # For testing purposes, always use IFELSE
     # print(f"Generating control block: {block} with depth {depth} and call type {call_type}")
     available_indices = list(range(len(available_indices)))
-    if call_type in ("plain"):
-        block = random.choice(CONTROL_BLOCK_REGISTRY)
-    elif call_type in ("controlled", "adj+ctl"):
-        block = random.choice(CONTROL_BLOCK_REGISTRY[:-1])  # Exclude IFELSE
-    else:
-        block = random.choice(CONTROL_BLOCK_REGISTRY[:-1])
+    # if call_type in ("plain"):
+    #     block = random.choice(CONTROL_BLOCK_REGISTRY)
+    # elif call_type in ("controlled", "adj+ctl"):
+    #     block = random.choice(CONTROL_BLOCK_REGISTRY[:-1])  # Exclude IFELSE
+    # else:
+    #     block = random.choice(CONTROL_BLOCK_REGISTRY[:-1])
         
     if block == "APPLY_IF_LE":
         if len(available_indices) < 3:

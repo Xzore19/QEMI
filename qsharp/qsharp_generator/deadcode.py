@@ -2,7 +2,7 @@ import uuid
 from typing import List, Dict, Any
 import random
 from qsharp_generator.custom_blocks import generate_random_gate_block
-from qsharp_generator.functions import indent, get_qsharp_modifier
+from qsharp_generator.functions import indent, get_qsharp_modifier, register_random_flag_block
 from qsharp_generator.custom_ctl import make_nested_or_fallback_body
 from qsharp_generator.illegal_block import make_nested_or_illegal_or_fallback_body
 
@@ -162,6 +162,58 @@ def make_fixed_if_else_deadcode_block(
     inline_name = f"__InlineIfElseDeadcode_{uuid.uuid4().hex[:8]}"
     modifier = get_qsharp_modifier(call_type)
 
+    if random.random() < 0.5:
+        dead_body = make_nested_or_fallback_body(local_indices, depth, call_type)
+        if not dead_body:
+            return None
+
+        else_body = make_nested_or_fallback_body(local_indices, depth, call_type)
+        if not else_body:
+            return None
+
+        flag_func_name, value = register_random_flag_block()  # 返回 Bool 的经典表达式函数
+
+        modifier = get_qsharp_modifier(call_type)
+
+        if value:
+            # ✅ flag_func 返回 True：deadcode 放在 else
+            inline_op_lines = [
+                f"operation {inline_name}(q : Qubit[]) : Unit{modifier} {{",
+                f"    if {flag_func_name}() {{"
+            ] + indent(else_body.splitlines(), level=2).splitlines() + [
+                "    } else {",
+                "        // --- DEADCODE START ---"
+            ] + indent(dead_body.splitlines(), level=2).splitlines() + [
+                "        // --- DEADCODE END ---",
+                "    }",
+                "}"
+            ]
+        else:
+            # ✅ flag_func 返回 False：deadcode 放在 if
+            inline_op_lines = [
+                f"operation {inline_name}(q : Qubit[]) : Unit{modifier} {{",
+                f"    if {flag_func_name}() {{",
+                "        // --- DEADCODE START ---"
+            ] + indent(dead_body.splitlines(), level=2).splitlines() + [
+                "        // --- DEADCODE END ---",
+                "    } else {"
+            ] + indent(else_body.splitlines(), level=2).splitlines() + [
+                "    }",
+                "}"
+            ]          
+
+        full_code = (
+            "\n".join(inline_op_lines) +
+            f"\n\n{inline_name}(q);"
+        )
+
+        return {
+            "import": None,
+            "call": full_code,
+            "adjoint": call_type in ("adjoint", "adj+ctl"),
+            "controlled": call_type in ("controlled", "adj+ctl"),
+        }
+
     if call_type == "plain":
         # ✅ plain：用 Measure + if 判断
         dead_body = make_nested_or_fallback_body(local_indices, depth, call_type)
@@ -233,10 +285,49 @@ def make_fixed_if_else_deadcode_block(
         )
     
     else:
-        return make_fixed_apply_if_relation_block(
-            target_indices=target_indices,
-            depth=depth,
-            call_type=call_type,
+        # ✅ 新增：使用经典布尔表达式控制 deadcode 的分支
+        dead_body = make_nested_or_fallback_body(local_indices, depth, call_type)
+        if not dead_body:
+            return None
+
+        else_body = make_nested_or_fallback_body(local_indices, depth, call_type)
+        if not else_body:
+            return None
+
+        flag_func_name, value = register_random_flag_block()  # 返回 Bool 的经典表达式函数
+
+        modifier = get_qsharp_modifier(call_type)
+
+        if value:
+            # ✅ flag_func 返回 True：deadcode 放在 else
+            inline_op_lines = [
+                f"operation {inline_name}(q : Qubit[]) : Unit{modifier} {{",
+                f"    if {flag_func_name}() {{"
+            ] + indent(else_body.splitlines(), level=2).splitlines() + [
+                "    } else {",
+                "        // --- DEADCODE START ---"
+            ] + indent(dead_body.splitlines(), level=2).splitlines() + [
+                "        // --- DEADCODE END ---",
+                "    }",
+                "}"
+            ]
+        else:
+            # ✅ flag_func 返回 False：deadcode 放在 if
+            inline_op_lines = [
+                f"operation {inline_name}(q : Qubit[]) : Unit{modifier} {{",
+                f"    if {flag_func_name}() {{",
+                "        // --- DEADCODE START ---"
+            ] + indent(dead_body.splitlines(), level=2).splitlines() + [
+                "        // --- DEADCODE END ---",
+                "    } else {"
+            ] + indent(else_body.splitlines(), level=2).splitlines() + [
+                "    }",
+                "}"
+            ]     
+
+        full_code = (
+            "\n".join(inline_op_lines) +
+            f"\n\n{inline_name}(q);"
         )
 
     return {
