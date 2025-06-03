@@ -1,38 +1,8 @@
 OPENQASM 3.0;
 include "stdgates.inc";
-bit[5] c1;
-bit[2] c2;
-qubit[5] q1;
-qubit[2] q2;
-swap q1[2], q1[1];
-ch q1[2], q1[0];
-y q1[4];
-t q1[0];
-swap q1[3], q1[2];
-x q2[0];
-x q2[1];
-c2[0] = measure q2[0];
-c2[1] = measure q2[1];
-while (c2 == 2) {
-  for _ in [0:-1] {
-    cswap q1[4], q1[2], q1[1];
-    swap q1[1], q1[0];
-    rz(pi/8) q1[0];
-    rx(pi/4) q1[1];
-    z q1[3];
-  }
-  c2[0] = measure q2[0];
-  c2[1] = measure q2[1];
+bit[1] c1;
+qubit[1] q1;
+for _ in [0:4] {
+  z q1[0];
 }
-reset q2[0];
-reset q2[1];
-cz q1[0], q1[3];
-ch q1[2], q1[0];
-rx(pi/2) q1[1];
-cx q1[2], q1[0];
-h q1[4];
 c1[0] = measure q1[0];
-c1[1] = measure q1[1];
-c1[2] = measure q1[2];
-c1[3] = measure q1[3];
-c1[4] = measure q1[4];
