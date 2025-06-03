@@ -233,85 +233,121 @@ def make_if_else_block(
     local_indices = list(range(N))
     uid = uuid.uuid4().hex[:8]
 
-    # 准备修饰符
     modifier = get_qsharp_modifier(call_type)
 
-    use_controlled = False
-    if call_type in ("controlled", "adj+ctl") and N >= 2:
-        use_controlled = True
-        num_ctrl = random.randint(1, N // 2)
-        ctrl = sorted(random.sample(local_indices, num_ctrl))
-        target = sorted([i for i in local_indices if i not in ctrl])
-        if not target:
+    # ✅ plain 类型：插入就地量子门 + 测量 + if 条件
+    if call_type == "plain" and N >= 3:
+        selected = sorted(random.sample(local_indices, 3))
+        used_qubits = [f"q[{available_indices[i]}]" for i in selected]
+
+        # 生成量子门
+        _, ops, _ = generate_random_gate_block(
+            call_type="plain",
+            target_indices=list(range(3)),  # 假定局部映射为 q[0], q[1], q[2]
+            depth=3,
+        )
+
+        import re
+
+        replaced_ops = []
+        for line in ops:
+            # 匹配所有 q[数字] 并替换为对应的 used_qubits 内容
+            def repl(match):
+                i = int(match.group(1))
+                return used_qubits[i]
+            line = re.sub(r"q\[(\d+)\]", repl, line)
+            replaced_ops.append(line)
+
+        # 生成测量语句
+        meas_results = []
+        for i, q in enumerate(used_qubits):
+            meas_results.append(f"let r{i} = Measure([PauliZ], [{q}]);")
+
+        # 拼接条件表达式
+        condition = " or ".join([f"r{i} == One" for i in range(3)])
+
+        # 生成两个 body
+        if depth-3 <= 0: 
+            if_body = make_nested_or_fallback_body(local_indices, depth, call_type)
+            else_body = make_nested_or_fallback_body(local_indices, depth, call_type)
+        else:
+            if_body = make_nested_or_fallback_body(local_indices, depth - 3, call_type)
+            else_body = make_nested_or_fallback_body(local_indices, depth - 3, call_type)
+        if not if_body or not else_body:
             return None
 
-        # 构造两个分支的嵌套体（只针对 target）
-        if_body = make_nested_or_fallback_body(target, depth, call_type)
-        else_body = make_nested_or_fallback_body(target, depth, call_type)
-    else:
-        target = local_indices
-        ctrl = []
-        if_body = make_nested_or_fallback_body(target, depth, call_type)
-        else_body = make_nested_or_fallback_body(target, depth, call_type)
+        block_lines = (
+            ["// --- RANDOM FLAG BASED IF ---"]
+            + replaced_ops
+            + meas_results
+            + [f"if {condition} {{"]
+            + indent(if_body.splitlines(), 1).splitlines()
+            + ["} else {"]
+            + indent(else_body.splitlines(), 1).splitlines()
+            + ["}"]
+        )
+        block = "\n".join(block_lines)
 
+        return {
+            "import": "Std.Intrinsic",
+            "call": block,
+            "adjoint": False,
+            "controlled": False,
+        }
+
+    # ✅ 非 plain 情况：继续使用经典布尔 flag
+    if_body = make_nested_or_fallback_body(local_indices, depth, call_type)
+    else_body = make_nested_or_fallback_body(local_indices, depth, call_type)
     if not if_body or not else_body:
         return None
 
-    # operation 名称
     if_op = f"__IfBody_{uid}"
     else_op = f"__ElseBody_{uid}"
 
-    # 生成两个子 operation（只接受 target qubit）
     def build_inline(name: str, body: str) -> str:
-        return f"operation {name}(q : Qubit[]) : Unit{modifier} {{\n{indent(body.splitlines(), 1)}\n}}"
+        return f"operation {name}(q : Qubit[]) : Unit{modifier} {{\n" + indent(body.splitlines(), 1) + "\n}"
 
     if_op_def = build_inline(if_op, if_body)
     else_op_def = build_inline(else_op, else_body)
 
-    # 生成调用
-    if use_controlled:
-        ctrl_str = ", ".join(f"q[{available_indices[i]}]" for i in ctrl)
-        tgt_str = ", ".join(f"q[{available_indices[i]}]" for i in target)
-        prefix = "Controlled Adjoint " if call_type == "adj+ctl" else "Controlled "
-        call_if = f"{prefix}{if_op}([{ctrl_str}], [{tgt_str}]);"
-        call_else = f"{prefix}{else_op}([{ctrl_str}], [{tgt_str}]);"
+    if call_type == "adjoint":
+        call_if = f"Adjoint {if_op}(q);"
+        call_else = f"Adjoint {else_op}(q);"
     else:
-        if call_type == "adjoint":
-            call_if = f"Adjoint {if_op}(q);"
-            call_else = f"Adjoint {else_op}(q);"
-        else:
-            call_if = f"{if_op}(q);"
-            call_else = f"{else_op}(q);"
+        call_if = f"{if_op}(q);"
+        call_else = f"{else_op}(q);"
 
-    # 生成 if 结构（注意 mutable flag = true 是经典控制流）
-    full_block = (
+    block = (
         f"{if_op_def}\n\n"
         f"{else_op_def}\n\n"
         f"mutable flag = true;\n"
-        f"if flag {{\n"
-        f"    {call_if}\n"
-        f"}} else {{\n"
-        f"    {call_else}\n"
-        f"}}"
+        f"if flag {{\n    {call_if}\n}} else {{\n    {call_else}\n}}"
     )
 
     return {
         "import": None,
-        "call": full_block,
+        "call": block,
         "adjoint": call_type in ("adjoint", "adj+ctl"),
-        "controlled": use_controlled,
+        "controlled": call_type in ("controlled", "adj+ctl"),
     }
+
 
 def generate_random_control_block(
     available_indices: List[int],
     depth: int,
     call_type: str,
 ) -> Optional[Dict[str, Any]]:
-    block = random.choice(CONTROL_BLOCK_REGISTRY)
-    # block = "IFELSE"  # For testing purposes, always use IFELSE
+    # block = random.choice(CONTROL_BLOCK_REGISTRY)
+    block = "IFELSE"  # For testing purposes, always use IFELSE
     # print(f"Generating control block: {block} with depth {depth} and call type {call_type}")
     available_indices = list(range(len(available_indices)))
-
+    if call_type in ("plain"):
+        block = random.choice(CONTROL_BLOCK_REGISTRY)
+    elif call_type in ("controlled", "adj+ctl"):
+        block = random.choice(CONTROL_BLOCK_REGISTRY[:-1])  # Exclude IFELSE
+    else:
+        block = random.choice(CONTROL_BLOCK_REGISTRY[:-1])
+        
     if block == "APPLY_IF_LE":
         if len(available_indices) < 3:
             return None
