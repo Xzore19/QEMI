@@ -639,10 +639,10 @@ qc = qc.decompose(reps=10)\n
             fuzzing_file = os.path.join(directory, f"fuzzing_{next_index}.py")
 
             with open(truth_file, "w") as file:
-                file.write(self.code)
+                file.write(self.code_without_exec)
 
             with open(fuzzing_file, "w") as file_f:
-                file_f.write(self.fuzzing_code)
+                file_f.write(self.fuzzing_code_without_exec)
 
         elif (except1 != None and except2 != None):
             pass
@@ -667,10 +667,10 @@ qc = qc.decompose(reps=10)\n
             fuzzing_file = os.path.join(directory, f"fuzzing_{next_index}.py")
 
             with open(truth_file, "w") as file:
-                file.write(self.code)
+                file.write(self.code_without_exec)
 
             with open(fuzzing_file, "w") as file_f:
-                file_f.write(self.fuzzing_code)
+                file_f.write(self.fuzzing_code_without_exec)
 
     def check_code(self):
         # 检查truth代码和fuzzing代码
