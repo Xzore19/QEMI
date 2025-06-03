@@ -2,6 +2,7 @@ import qsharp
 from collections import Counter
 from scipy.stats import chi2_contingency
 import time
+from qsharp import StateDump
 
 qsharp.init(project_root=".")
 
