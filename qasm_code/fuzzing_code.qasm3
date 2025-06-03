@@ -5,34 +5,70 @@ gate ccz _gate_q_0, _gate_q_1, _gate_q_2 {
   ccx _gate_q_0, _gate_q_1, _gate_q_2;
   h _gate_q_2;
 }
-bit[5] c1;
-qubit[5] q1;
-ccx q1[4], q1[2], q1[1];
-cry(pi/2) q1[2], q1[0];
-cz q1[0], q1[1];
-cp(pi/8) q1[1], q1[3];
-x q1[2];
-c1[3] = measure q1[3];
-if (c1[3]) {
-  rz(pi/8) q1[2];
-  rx(pi/4) q1[2];
-  z q1[0];
-  ch q1[2], q1[0];
-  cswap q1[4], q1[3], q1[0];
-} else {
-  crz(pi/2) q1[2], q1[3];
-  ccx q1[3], q1[1], q1[0];
-  rz(pi/8) q1[1];
-  ch q1[3], q1[1];
-  rx(pi/2) q1[0];
+bit[5] c6;
+bit[2] c7;
+bit[2] c8;
+bit[2] c9;
+qubit[5] q6;
+qubit[2] q7;
+qubit[2] q8;
+qubit[2] q9;
+y q6[4];
+t q6[1];
+swap q6[4], q6[0];
+x q6[4];
+h q6[4];
+x q7[0];
+x q7[1];
+c7[0] = measure q7[0];
+c7[1] = measure q7[1];
+while (c7 == 3) {
+  c7[0] = measure q7[0];
+  c7[1] = measure q7[1];
+  x q8[0];
+  x q8[1];
+  c8[0] = measure q8[0];
+  c8[1] = measure q8[1];
+  if (c8 == 3) {
+    ch q6[4], q6[3];
+    cx q6[4], q6[3];
+    x q6[2];
+    p(pi/4) q6[1];
+    ch q6[3], q6[2];
+  } else {
+    cry(pi/4) q6[1], q6[4];
+    cry(pi/4) q6[0], q6[2];
+    cx q6[3], q6[1];
+    swap q6[4], q6[1];
+    swap q6[2], q6[0];
+  }
+  reset q8[0];
+  reset q8[1];
+  break;
+  x q9[0];
+  x q9[1];
+  c9[0] = measure q9[0];
+  c9[1] = measure q9[1];
+  if (c9 == 3) {
+  } else {
+    cx q6[4], q6[0];
+    z q6[2];
+    crz(pi/8) q6[4], q6[0];
+    ccz q6[4], q6[3], q6[1];
+    cry(pi/4) q6[0], q6[4];
+  }
+  reset q9[0];
+  reset q9[1];
 }
-ccx q1[4], q1[2], q1[1];
-ccz q1[4], q1[1], q1[0];
-h q1[2];
-cswap q1[4], q1[3], q1[1];
-ccx q1[4], q1[2], q1[0];
-c1[0] = measure q1[0];
-c1[1] = measure q1[1];
-c1[2] = measure q1[2];
-c1[3] = measure q1[3];
-c1[4] = measure q1[4];
+reset q9[0];
+reset q9[1];
+rx(pi/4) q6[2];
+ccz q6[3], q6[2], q6[1];
+t q6[3];
+cx q6[2], q6[1];
+ch q6[4], q6[0];
+c6[0] = measure q6[0];
+c6[1] = measure q6[1];
+c6[2] = measure q6[2];
+c6[3] = measure q6[3];
+c6[4] = measure q6[4];

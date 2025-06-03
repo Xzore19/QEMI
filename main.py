@@ -78,7 +78,10 @@ if __name__ == "__main__":
             for con in control:
                 for i in tqdm(range(100), desc="Processing"):
                     a = QiskitGenerator(qubit_num = 5, measure_num = 1, gate_num_upper = 5, measure_times = 10000, transplie = tran, backend="aer", use_pass= pas, fuzz_type=con)
-                    a.run()
+                    # a.run()
+
+                    a.qasm_convertor()
+                    a.qasm_run()
 
                     # 释放内存，防止因为循环的内存崩溃报错
                     del a

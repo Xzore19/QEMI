@@ -3,7 +3,7 @@ from qiskit.qasm3 import loads
 from qiskit_aer import Aer
 
 class QasmExecution:
-    def __init__(self, file, simulator):
+    def __init__(self, file, simulator="Qiskit"):
         # 对目标的qasm文件调用不同语言的模拟器
         self.file = file
         if simulator == "Qiskit":
@@ -32,4 +32,4 @@ class QasmExecution:
         counts = result.get_counts()
 
         # 打印测量结果
-        print("Measurement Results:", counts)
+        return counts

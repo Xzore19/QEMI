@@ -1,0 +1,123 @@
+
+=== Iteration 1 ===
+[base_gen.py SUCCESS]
+[exeqs.py ERROR]
+Traceback (most recent call last):
+  File "C:\Users\Xiaszore\PycharmProjects\EMI\qsharp\exeqs.py", line 6, in <module>
+    qsharp.init(project_root=".")
+    ^^^^^^^^^^^
+AttributeError: module 'qsharp' has no attribute 'init'
+[Time elapsed: 0.49 seconds]
+
+=== Iteration 2 ===
+[base_gen.py SUCCESS]
+[exeqs.py ERROR]
+Traceback (most recent call last):
+  File "C:\Users\Xiaszore\PycharmProjects\EMI\qsharp\exeqs.py", line 6, in <module>
+    qsharp.init(project_root=".")
+    ^^^^^^^^^^^
+AttributeError: module 'qsharp' has no attribute 'init'
+[Time elapsed: 0.48 seconds]
+
+=== Iteration 3 ===
+[base_gen.py SUCCESS]
+[exeqs.py ERROR]
+Traceback (most recent call last):
+  File "C:\Users\Xiaszore\PycharmProjects\EMI\qsharp\exeqs.py", line 6, in <module>
+    qsharp.init(project_root=".")
+    ^^^^^^^^^^^
+AttributeError: module 'qsharp' has no attribute 'init'
+[Time elapsed: 0.49 seconds]
+
+=== Iteration 4 ===
+[base_gen.py SUCCESS]
+[exeqs.py ERROR]
+Traceback (most recent call last):
+  File "C:\Users\Xiaszore\PycharmProjects\EMI\qsharp\exeqs.py", line 6, in <module>
+    qsharp.init(project_root=".")
+    ^^^^^^^^^^^
+AttributeError: module 'qsharp' has no attribute 'init'
+[Time elapsed: 0.49 seconds]
+
+=== Iteration 5 ===
+[base_gen.py SUCCESS]
+[exeqs.py ERROR]
+Traceback (most recent call last):
+  File "C:\Users\Xiaszore\PycharmProjects\EMI\qsharp\exeqs.py", line 6, in <module>
+    qsharp.init(project_root=".")
+    ^^^^^^^^^^^
+AttributeError: module 'qsharp' has no attribute 'init'
+[Time elapsed: 0.48 seconds]
+
+=== Iteration 6 ===
+[base_gen.py SUCCESS]
+[exeqs.py ERROR]
+Traceback (most recent call last):
+  File "C:\Users\Xiaszore\PycharmProjects\EMI\qsharp\exeqs.py", line 6, in <module>
+    qsharp.init(project_root=".")
+    ^^^^^^^^^^^
+AttributeError: module 'qsharp' has no attribute 'init'
+[Time elapsed: 0.49 seconds]
+
+=== Iteration 7 ===
+[base_gen.py SUCCESS]
+[exeqs.py ERROR]
+Traceback (most recent call last):
+  File "C:\Users\Xiaszore\PycharmProjects\EMI\qsharp\exeqs.py", line 6, in <module>
+    qsharp.init(project_root=".")
+    ^^^^^^^^^^^
+AttributeError: module 'qsharp' has no attribute 'init'
+[Time elapsed: 0.50 seconds]
+
+=== Iteration 8 ===
+[base_gen.py SUCCESS]
+[exeqs.py ERROR]
+Traceback (most recent call last):
+  File "C:\Users\Xiaszore\PycharmProjects\EMI\qsharp\exeqs.py", line 6, in <module>
+    qsharp.init(project_root=".")
+    ^^^^^^^^^^^
+AttributeError: module 'qsharp' has no attribute 'init'
+[Time elapsed: 0.50 seconds]
+
+=== Iteration 9 ===
+[base_gen.py SUCCESS]
+[exeqs.py ERROR]
+Traceback (most recent call last):
+  File "C:\Users\Xiaszore\PycharmProjects\EMI\qsharp\exeqs.py", line 6, in <module>
+    qsharp.init(project_root=".")
+    ^^^^^^^^^^^
+AttributeError: module 'qsharp' has no attribute 'init'
+[Time elapsed: 0.48 seconds]
+
+=== Iteration 10 ===
+[base_gen.py SUCCESS]
+[exeqs.py ERROR]
+Traceback (most recent call last):
+  File "C:\Users\Xiaszore\PycharmProjects\EMI\qsharp\exeqs.py", line 6, in <module>
+    qsharp.init(project_root=".")
+    ^^^^^^^^^^^
+AttributeError: module 'qsharp' has no attribute 'init'
+[Time elapsed: 0.47 seconds]
+
+=== Iteration 11 ===
+[base_gen.py SUCCESS]
+[exeqs.py ERROR]
+Traceback (most recent call last):
+  File "C:\Users\Xiaszore\PycharmProjects\EMI\qsharp\exeqs.py", line 6, in <module>
+    qsharp.init(project_root=".")
+    ^^^^^^^^^^^
+AttributeError: module 'qsharp' has no attribute 'init'
+[Time elapsed: 0.49 seconds]
+
+=== Iteration 12 ===
+[base_gen.py SUCCESS]
+[exeqs.py ERROR]
+Traceback (most recent call last):
+  File "C:\Users\Xiaszore\PycharmProjects\EMI\qsharp\exeqs.py", line 6, in <module>
+    qsharp.init(project_root=".")
+    ^^^^^^^^^^^
+AttributeError: module 'qsharp' has no attribute 'init'
+[Time elapsed: 0.48 seconds]
+
+=== Iteration 13 ===
+[base_gen.py SUCCESS]

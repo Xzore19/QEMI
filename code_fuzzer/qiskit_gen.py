@@ -15,6 +15,7 @@ from qiskit.transpiler import PassManager, generate_preset_pass_manager
 from code_fuzzer.dead_code_fuzzer import DeadCodeFuzzer
 from code_fuzzer.result_analysis import probability_checker
 from qiskit_api import generate_random_append_statement
+from code_fuzzer.qasm_execution import QasmExecution
 
 opt_passes = {"Optimize1qGates": Optimize1qGates(), "Optimize1qGatesDecomposition": Optimize1qGatesDecomposition(),
               "Collect1qRuns": Collect1qRuns(), "Collect2qBlocks": Collect2qBlocks(),
@@ -198,7 +199,9 @@ class QiskitGenerator:
             dead_code, unfuzz = dcf.while_dead(qc=self.qc, qreg=self.qreg, cond_reg=self.cond_creg, qnum=self.qnum, gate_list=while_gate)
 
             self.code += unfuzz
+            self.code_without_exec += unfuzz
             self.fuzzing_code += dead_code
+            self.fuzzing_code_without_exec += dead_code
 
         elif fuzz_type == "while_break":
             dcf = DeadCodeFuzzer(qubit_num=self.cnum)
@@ -208,8 +211,9 @@ class QiskitGenerator:
             dead_code, unfuzz = dcf.while_break(qc=self.qc, qreg=self.qreg, cond_reg=self.cond_creg, qnum=self.qnum, gate_list=while_gate, dead_list=while_gate2)
 
             self.code += unfuzz
+            self.code_without_exec += unfuzz
             self.fuzzing_code += dead_code
-
+            self.fuzzing_code_without_exec += dead_code
 
 
         elif fuzz_type == "if_test_dead":
@@ -218,7 +222,9 @@ class QiskitGenerator:
             dead_code, unfuzz = dcf.if_test_dead(qc=self.qc, qreg=self.qreg, qnum=self.qnum, cond_reg=self.cond_creg, gate_list=if_gate)
 
             self.code += unfuzz
+            self.code_without_exec += unfuzz
             self.fuzzing_code += dead_code
+            self.fuzzing_code_without_exec += dead_code
 
         elif fuzz_type == "if_test_else":
             dcf = DeadCodeFuzzer(qubit_num=self.cnum)
@@ -227,7 +233,9 @@ class QiskitGenerator:
             dead_code, unfuzz = dcf.if_test_else(qc=self.qc, qreg=self.qreg, qnum=self.qnum, cond_reg=self.cond_creg, gate_list=if_gate, dead_list=else_gate)
 
             self.code += unfuzz
+            self.code_without_exec += unfuzz
             self.fuzzing_code += dead_code
+            self.fuzzing_code_without_exec += dead_code
 
         elif fuzz_type == "switch_dead":
             dcf = DeadCodeFuzzer(qubit_num=self.cnum)
@@ -236,7 +244,9 @@ class QiskitGenerator:
 
             dead_code, unfuzz = dcf.switch_dead(qc=self.qc, gate_list=gate_list, dead_list=dead_list)
             self.code += unfuzz
+            self.code_without_exec += unfuzz
             self.fuzzing_code += dead_code
+            self.fuzzing_code_without_exec += dead_code
 
         elif fuzz_type == "nest":
             dc_list = ["fb", "fz", "fc", "wd", "wb", "itd", "ite", "sd"]
@@ -265,7 +275,9 @@ class QiskitGenerator:
             dead_code, unfuzz = self.dcf_code(dc=dc1, dcf=dcf, gate_list= dc2_code, dead_list=dc3_code)
 
             self.code += unfuzz
+            self.code_without_exec += unfuzz
             self.fuzzing_code += dead_code
+            self.fuzzing_code_without_exec += dead_code
 
         elif fuzz_type == "nest_dead":
             dc_list = ["fb", "fz", "fc", "wd", "wb", "itd", "ite","sd"]
@@ -293,7 +305,9 @@ class QiskitGenerator:
             _, unfuzz = self.dcf_code(dc=dc1, dcf=dcf, gate_list=dc2_unfuzz, dead_list=dc3_unfuzz)
 
             self.code += unfuzz
+            self.code_without_exec += unfuzz
             self.fuzzing_code += dead_code
+            self.fuzzing_code_without_exec += dead_code
 
         ##################################################################################################
 
@@ -393,7 +407,7 @@ qc = qc.assign_parameters({p: 0.5 for p in qc.parameters})
         # 随机量子门操作的构建
         gate_code = ""
         for i in range(self.gate_num_upper):
-            flag = random.uniform(0, 1)
+            flag = random.uniform(0.8, 1)
             if flag > 0.75:
                 gate_code += "\t" * indent + gate_generator(qubits_num=self.qnum, cir_name=self.qc) + "\n"
             else:
@@ -557,6 +571,8 @@ qc = qc.decompose(reps=10)\n
     def qasm_convertor(self):
         # 解析 Qiskit 代码并获取 QuantumCircuit
         qc = self.extract_qc_from_code(self.code_without_exec)
+        # print("++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++")
+        # print(self.code_without_exec)
 
         if qc:
             # 转换为 OpenQASM 3.0
@@ -567,6 +583,7 @@ qc = qc.decompose(reps=10)\n
         qasm_file = "qasm_code/code.qasm3"
         with open(qasm_file, "w") as file:
             file.write(qasm_code)
+        # print(qasm_code)
 
         fuzzing_qc = self.extract_qc_from_code(self.fuzzing_code_without_exec)
 
@@ -580,14 +597,91 @@ qc = qc.decompose(reps=10)\n
         with open(fuzzing_qasm_file, "w") as fuzzing_file:
             fuzzing_file.write(fuzzing_qasm_code)
 
+    def qasm_run(self):
+        try:
+            truth_result = QasmExecution(file="qasm_code/code.qasm3").qiskit_simulator()
+            except1 = None
+        except Exception as e1:
+            truth_result = ""
+            except1 = e1
+            print(f"truth crash:{e1}")
+
+        try:
+            fuzzing_result = QasmExecution(file="qasm_code/fuzzing_code.qasm3").qiskit_simulator()
+            except2 = None
+        except Exception as e2:
+            fuzzing_result = ""
+            except2 = e2
+            print(f"fuzzing crash:{e2}")
+
+        print("+++++++++++++ truth:", truth_result)
+        print("------------- fuzzing:", fuzzing_result)
+
+
+
+        if (except1 == None and except2 != None) or (except1 != None and except2 == ""):
+            print("Found crash!!!")
+            directory = "qasm_code/buggy_program/crash"
+
+
+            pattern = re.compile(r"(truth|fuzzing)_(\d+)\.py")
+            max_index = -1
+
+            for f in os.listdir(directory):
+                match = pattern.fullmatch(f)
+                if match:
+                    index = int(match.group(2))
+                    if index > max_index:
+                        max_index = index
+
+            next_index = max_index + 1
+            truth_file = os.path.join(directory, f"truth_{next_index}.py")
+            fuzzing_file = os.path.join(directory, f"fuzzing_{next_index}.py")
+
+            with open(truth_file, "w") as file:
+                file.write(self.code)
+
+            with open(fuzzing_file, "w") as file_f:
+                file_f.write(self.fuzzing_code)
+
+        elif (except1 != None and except2 != None):
+            pass
+
+        elif not probability_checker(eval(truth_result), eval(fuzzing_result), shot=self.measure_times,
+                                     qnum=self.qnum):
+            print("Found wrong!!!")
+            directory = "qasm_code/buggy_program/probability"
+
+            pattern = re.compile(r"(truth|fuzzing)_(\d+)\.py")
+            max_index = -1
+
+            for f in os.listdir(directory):
+                match = pattern.fullmatch(f)
+                if match:
+                    index = int(match.group(2))
+                    if index > max_index:
+                        max_index = index
+
+            next_index = max_index + 1
+            truth_file = os.path.join(directory, f"truth_{next_index}.py")
+            fuzzing_file = os.path.join(directory, f"fuzzing_{next_index}.py")
+
+            with open(truth_file, "w") as file:
+                file.write(self.code)
+
+            with open(fuzzing_file, "w") as file_f:
+                file_f.write(self.fuzzing_code)
+
     def check_code(self):
         # 检查truth代码和fuzzing代码
+        print("++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++")
         print(self.code)
         print("++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++")
-        print(self.fuzzing_code)
+        # print(self.fuzzing_code)
 
 
 if __name__ == "__main__":
-    a = QiskitGenerator(5, 1, fuzz_type="nest_dead")
-    a.check_code()
+    a = QiskitGenerator(5, 1, fuzz_type="if_test_else")
+    a.qasm_convertor()
+    # a.check_code()
     # a.run()
