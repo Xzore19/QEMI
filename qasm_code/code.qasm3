@@ -1,53 +1,19 @@
 OPENQASM 3.0;
 include "stdgates.inc";
-gate ccz _gate_q_0, _gate_q_1, _gate_q_2 {
-  h _gate_q_2;
-  ccx _gate_q_0, _gate_q_1, _gate_q_2;
-  h _gate_q_2;
-}
-bit[5] c3;
-bit[2] c4;
-bit[2] c5;
-qubit[5] q3;
-qubit[2] q4;
-qubit[2] q5;
-y q3[4];
-t q3[1];
-swap q3[4], q3[0];
-x q3[4];
-h q3[4];
-x q4[0];
-x q4[1];
-c4[0] = measure q4[0];
-c4[1] = measure q4[1];
-while (c4 == 3) {
-  c4[0] = measure q4[0];
-  c4[1] = measure q4[1];
-  x q5[0];
-  x q5[1];
-  c5[0] = measure q5[0];
-  c5[1] = measure q5[1];
-  if (c5 == 3) {
-    ch q3[4], q3[3];
-    cx q3[4], q3[3];
-    x q3[2];
-    p(pi/4) q3[1];
-    ch q3[3], q3[2];
-  } else {
-  }
-  reset q5[0];
-  reset q5[1];
-  break;
-}
-reset q4[0];
-reset q4[1];
-rx(pi/4) q3[2];
-ccz q3[3], q3[2], q3[1];
-t q3[3];
-cx q3[2], q3[1];
-ch q3[4], q3[0];
-c3[0] = measure q3[0];
-c3[1] = measure q3[1];
-c3[2] = measure q3[2];
-c3[3] = measure q3[3];
-c3[4] = measure q3[4];
+bit[5] c0;
+qubit[5] q0;
+swap q0[2], q0[1];
+ch q0[2], q0[0];
+y q0[4];
+t q0[0];
+swap q0[3], q0[2];
+cz q0[0], q0[3];
+ch q0[2], q0[0];
+rx(pi/2) q0[1];
+cx q0[2], q0[0];
+h q0[4];
+c0[0] = measure q0[0];
+c0[1] = measure q0[1];
+c0[2] = measure q0[2];
+c0[3] = measure q0[3];
+c0[4] = measure q0[4];
