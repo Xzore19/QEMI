@@ -8,6 +8,7 @@ CONTROL_BLOCK_REGISTRY = [
     "APPLY_IF_LE",
     "APPLY_IF_L",
     "FOR_LOOP",
+    "IFELSE",
 ]
 
 APPLY_IF_LE_REGISTRY = [
@@ -220,12 +221,94 @@ def make_for_loop_block(
         "controlled": use_controlled,
     }
 
+def make_if_else_block(
+    available_indices: List[int],
+    depth: int,
+    call_type: str,
+) -> Optional[Dict[str, Any]]:
+    if not available_indices:
+        return None
+
+    N = len(available_indices)
+    local_indices = list(range(N))
+    uid = uuid.uuid4().hex[:8]
+
+    # 准备修饰符
+    modifier = get_qsharp_modifier(call_type)
+
+    use_controlled = False
+    if call_type in ("controlled", "adj+ctl") and N >= 2:
+        use_controlled = True
+        num_ctrl = random.randint(1, N // 2)
+        ctrl = sorted(random.sample(local_indices, num_ctrl))
+        target = sorted([i for i in local_indices if i not in ctrl])
+        if not target:
+            return None
+
+        # 构造两个分支的嵌套体（只针对 target）
+        if_body = make_nested_or_fallback_body(target, depth, call_type)
+        else_body = make_nested_or_fallback_body(target, depth, call_type)
+    else:
+        target = local_indices
+        ctrl = []
+        if_body = make_nested_or_fallback_body(target, depth, call_type)
+        else_body = make_nested_or_fallback_body(target, depth, call_type)
+
+    if not if_body or not else_body:
+        return None
+
+    # operation 名称
+    if_op = f"__IfBody_{uid}"
+    else_op = f"__ElseBody_{uid}"
+
+    # 生成两个子 operation（只接受 target qubit）
+    def build_inline(name: str, body: str) -> str:
+        return f"operation {name}(q : Qubit[]) : Unit{modifier} {{\n{indent(body.splitlines(), 1)}\n}}"
+
+    if_op_def = build_inline(if_op, if_body)
+    else_op_def = build_inline(else_op, else_body)
+
+    # 生成调用
+    if use_controlled:
+        ctrl_str = ", ".join(f"q[{available_indices[i]}]" for i in ctrl)
+        tgt_str = ", ".join(f"q[{available_indices[i]}]" for i in target)
+        prefix = "Controlled Adjoint " if call_type == "adj+ctl" else "Controlled "
+        call_if = f"{prefix}{if_op}([{ctrl_str}], [{tgt_str}]);"
+        call_else = f"{prefix}{else_op}([{ctrl_str}], [{tgt_str}]);"
+    else:
+        if call_type == "adjoint":
+            call_if = f"Adjoint {if_op}(q);"
+            call_else = f"Adjoint {else_op}(q);"
+        else:
+            call_if = f"{if_op}(q);"
+            call_else = f"{else_op}(q);"
+
+    # 生成 if 结构（注意 mutable flag = true 是经典控制流）
+    full_block = (
+        f"{if_op_def}\n\n"
+        f"{else_op_def}\n\n"
+        f"mutable flag = true;\n"
+        f"if flag {{\n"
+        f"    {call_if}\n"
+        f"}} else {{\n"
+        f"    {call_else}\n"
+        f"}}"
+    )
+
+    return {
+        "import": None,
+        "call": full_block,
+        "adjoint": call_type in ("adjoint", "adj+ctl"),
+        "controlled": use_controlled,
+    }
+
 def generate_random_control_block(
     available_indices: List[int],
     depth: int,
     call_type: str,
 ) -> Optional[Dict[str, Any]]:
     block = random.choice(CONTROL_BLOCK_REGISTRY)
+    # block = "IFELSE"  # For testing purposes, always use IFELSE
     # print(f"Generating control block: {block} with depth {depth} and call type {call_type}")
     available_indices = list(range(len(available_indices)))
 
@@ -241,4 +324,8 @@ def generate_random_control_block(
         if depth - 1 <= 0:
             return None
         return make_for_loop_block(available_indices, depth - 1, call_type)
+    if block == "IFELSE":
+        if depth - 1 <= 0:
+            return None
+        return make_if_else_block(available_indices, depth - 1, call_type)
     return None
