@@ -1,0 +1,49 @@
+from qiskit import QuantumCircuit, QuantumRegister, ClassicalRegister, transpile, AncillaRegister 
+from qiskit_aer import Aer 
+from qiskit.providers.fake_provider import GenericBackendV2 
+from qiskit.providers.fake_provider import GenericBackendV2 
+from qiskit.circuit import Parameter, ParameterVector 
+from qiskit.circuit.library import XGate 
+from qiskit.transpiler.passes import * 
+from qiskit.circuit.library import * 
+from qiskit.transpiler import PassManager, generate_preset_pass_manager 
+from math import pi 
+import numpy as np 
+np.random.seed(42) 
+
+qreg = QuantumRegister(5) 
+creg = ClassicalRegister(5) 
+qc = QuantumCircuit(qreg, creg) 
+
+qc.swap(2, 1)
+qc.ch(2, 0)
+qc.y(4)
+qc.t(0)
+qc.swap(3, 2)
+pass
+qc.cz(0, 3)
+qc.ch(2, 0)
+qc.rx(1.5707963267948966, 1)
+qc.cx(2, 0)
+qc.h(4)
+qc.measure(qreg[0], creg[0]) 
+qc.measure(qreg[1], creg[1]) 
+qc.measure(qreg[2], creg[2]) 
+qc.measure(qreg[3], creg[3]) 
+qc.measure(qreg[4], creg[4]) 
+
+qc = qc.assign_parameters({p: 0.5 for p in qc.parameters})
+
+
+simulator = Aer.get_backend("aer_simulator") 
+
+p = PassManager(Optimize1qGates()) 
+qc = p.run(qc) 
+
+compiled_circuit = transpile(qc, backend = simulator, optimization_level = 3, routing_method = "default", layout_method = "noise_adaptive", approximation_degree = 1) 
+
+qc = qc.decompose(reps=10)
+
+job = simulator.run(compiled_circuit, shots=10000) 
+result = job.result().get_counts() 
+print(result)
