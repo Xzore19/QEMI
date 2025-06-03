@@ -11,62 +11,45 @@ namespace Main_fuzzing {
 
 
 
-    operation ApplyRandomBlock0(q : Qubit[]) : Unit {
+    operation ApplyRandomBlock0(q : Qubit[]) : Unit is Adj {
     }
     operation ApplyRandomBlock1(q : Qubit[]) : Unit is Adj {
-        operation __InlineApplyIfRelationLE_e1c4f4a5(q : Qubit[]) : Unit is Adj + Ctl {
-            operation __InlineApplyIfRelationLE_402b0e78(q : Qubit[]) : Unit is Adj + Ctl {
-                    Rx(5.623362, q[0]);
-                    R1(4.159186, q[0]);
-                    H(q[0]);
-                    ApproximatelyPreparePureStateCP(
-                1e-6,
-                [
-                    ComplexPolar(0.682788, 4.902728),
-                    ComplexPolar(0.730616, 6.099237)
-                ],
-                q
-            );
-                    Ry(0.49739, q[0]);
-                    X(q[0]);
-            }
-            let x = [q[2]];
-            let y = [q[3]];
-            let target = [q[0]];
-            ApplyIfLessOrEqualLE(__InlineApplyIfRelationLE_402b0e78, x, y, target);
-        }
-        let x = [q[0], q[1]];
-        let y = [q[2], q[7]];
-        let target = [q[3], q[5], q[8], q[10]];
-        ApplyIfLessLE(__InlineApplyIfRelationLE_e1c4f4a5, x, y, target);
+        R1(5.83606, q[8]);
+        Rz(3.681371, q[3]);
+        CCNOT(q[5], q[4], q[6]);
+        ApplyQFT(q);
+        ApplyToEachA(H, q);
+        CCNOT(q[8], q[5], q[9]);
+        Rx(1.982762, q[1]);
+        Z(q[3]);
     }
-    operation ApplyRandomBlock2(q : Qubit[]) : Unit is Adj + Ctl {
-        operation __InlineApplyIfRelationLE_7b19bbe3(q : Qubit[]) : Unit is Adj + Ctl {
-                S(q[0]);
-                Rz(0.409885, q[0]);
-                Rx(2.336522, q[0]);
-                R1(4.86142, q[0]);
-                ApproximatelyPreparePureStateCP(
-            1e-6,
-            [
-                ComplexPolar(0.831173, 3.994748),
-                ComplexPolar(0.556013, 0.279095)
-            ],
-            q
-        );
-                S(q[0]);
+    operation ApplyRandomBlock2(q : Qubit[]) : Unit is Ctl {
+        operation __InlineApplyIfRelationL_269c8b74(q : Qubit[]) : Unit is Adj + Ctl {
+            operation __ForLoopBody_6b41b03d(q : Qubit[]) : Unit is Adj + Ctl {
+                operation __ForLoopBody_8e3cadf8(q : Qubit[]) : Unit is Adj + Ctl {
+                        Z(q[0]);
+                        X(q[0]);
+                        Rz(1.498056, q[0]);
+                        S(q[0]);
+                }
+                for i in 1..3 {
+                    __ForLoopBody_8e3cadf8(q);
+                }
+            }
+            for i in 1..3 {
+                Controlled Adjoint __ForLoopBody_6b41b03d([q[0]], [q[1]]);
+            }
         }
-        let x = [q[1], q[2], q[6]];
-        let y = [q[0], q[4], q[5]];
-        let target = [q[3]];
-        ApplyIfEqualLE(__InlineApplyIfRelationLE_7b19bbe3, x, y, target);
+        let x = [q[1]];
+        let target = [q[4], q[6]];
+        ApplyIfGreaterOrEqualL(__InlineApplyIfRelationL_269c8b74, 1L, x, target);
     }
 
     operation TestCircuit() : Result[] {
         use q = Qubit[12] {
-            ApplyRandomBlock0(q);
+            Adjoint ApplyRandomBlock0(q);
             Adjoint ApplyRandomBlock1(q);
-            Controlled Adjoint ApplyRandomBlock2([q[0], q[4], q[7], q[8], q[10]], [q[1], q[2], q[3], q[5], q[6], q[9], q[11]]);
+            Controlled ApplyRandomBlock2([q[0], q[1], q[9]], [q[2], q[3], q[4], q[5], q[6], q[7], q[8], q[10], q[11]]);
             let r0 = M(q[0]);
             let r1 = M(q[1]);
             let r2 = M(q[2]);
