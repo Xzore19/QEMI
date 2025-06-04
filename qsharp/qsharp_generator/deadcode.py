@@ -23,12 +23,42 @@ def make_fixed_apply_if_relation_block(
     target_indices: List[int],
     depth: int,
     call_type: str = "adj+ctl",
-) -> Dict[str, Any]:
+) -> Dict[str, Any]:    
 
     call_type = "adj+ctl"
-    local_indices = list(range(len(target_indices)))
-    body = make_nested_or_fallback_body(local_indices, depth, call_type)
-    
+    modifier = get_qsharp_modifier(call_type)
+    N = len(target_indices)
+    local_indices = list(range(N))
+    prefix = None
+    lines = []
+    use_controlled = False
+
+    if call_type in ("controlled", "adj+ctl") and N >= 2 and random.random() < 0.5:
+        use_controlled = True
+        num_ctrl = random.randint(1, N // 2)
+        ctrl = sorted(random.sample(local_indices, num_ctrl))
+        target = sorted([i for i in local_indices if i not in ctrl])
+        if not target:
+            return None
+
+        body = make_nested_or_fallback_body(target, depth, call_type)
+
+        ctrl_str = ", ".join(f"q[{local_indices[i]}]" for i in ctrl)
+        tgt_str = ", ".join(f"q[{local_indices[i]}]" for i in target)
+
+        lines += [f"let target = [{tgt_str}]; "]
+
+        prefix = "Controlled Adjoint " if call_type == "adj+ctl" else "Controlled "
+        # loop_body = f"{prefix}{control_op_name}([{ctrl_str}], [{tgt_str}]);"
+    else:
+        body = make_nested_or_fallback_body(local_indices, depth, call_type)
+        lines += [f"let target = q; "]
+        prefix = "Adjoint " if call_type == "adjoint" else ""
+        # loop_body = f"{'Adjoint ' if call_type == 'adjoint' else ''}{control_op_name}(q);"
+
+    # call_type = "adj+ctl"
+    # local_indices = list(range(len(target_indices)))
+    # body = make_nested_or_fallback_body(local_indices, depth, call_type)    
     inline_name = f"__InlineApplyIfRelation_{uuid.uuid4().hex[:8]}"
     modifier = get_qsharp_modifier(call_type)
     inline_op = (
@@ -37,7 +67,7 @@ def make_fixed_apply_if_relation_block(
         f"}}"
     )
 
-    lines = [inline_op]
+    lines += [inline_op]
     control_op_name = random.choice(APPLY_IF_OPS)
 
     # 具体构造控制输入以确保 "deadcode 条件永远不满足"
@@ -45,10 +75,12 @@ def make_fixed_apply_if_relation_block(
         # 11 != 10
         lines += [
             "use x = Qubit[2];", "X(x[0]);", "X(x[1]);",  # x = 3
-            "use y = Qubit[2];", "X(y[0]);",              # y = 2
-            f"let target = q;",
-            f"{control_op_name}({inline_name}, x, y, target);",
-            "X(x[0]);", "X(x[1]);", "X(y[0]);"
+            "use y = Qubit[2];", "X(y[0]);", ]
+        if use_controlled:
+            lines += [f"{prefix}{control_op_name}([{ctrl_str}], ({inline_name}, x, y, target));"]
+        else:
+            lines += [f"{prefix}{control_op_name}({inline_name}, x, y, target);",]
+        lines += ["X(x[0]);", "X(x[1]);", "X(y[0]);"
         ]
 
     elif control_op_name == "ApplyIfGreaterLE":
@@ -57,9 +89,12 @@ def make_fixed_apply_if_relation_block(
             "use x = Qubit[2];",              # x = 1 (01)
             "X(x[0]);",                       
             "use y = Qubit[2];",              # y = 2 (10)
-            "X(y[1]);",
-            f"let target = q;",
-            f"{control_op_name}({inline_name}, x, y, target);",
+            "X(y[1]);",]
+        if use_controlled:
+            lines += [f"{prefix}{control_op_name}([{ctrl_str}], ({inline_name}, x, y, target));"]
+        else:
+            lines += [f"{prefix}{control_op_name}({inline_name}, x, y, target);",]
+        lines += [
             "X(x[0]);", "X(y[1]);"
         ]
 
@@ -67,9 +102,12 @@ def make_fixed_apply_if_relation_block(
         # 1 >= 2 → false
         lines += [
             "use x = Qubit[2];", "X(x[0]);",             # x = 1
-            "use y = Qubit[2];", "X(y[1]);",             # y = 2
-            f"let target = q;",
-            f"{control_op_name}({inline_name}, x, y, target);",
+            "use y = Qubit[2];", "X(y[1]);",]             # y = 2]
+        if use_controlled:
+            lines += [f"{prefix}{control_op_name}([{ctrl_str}], ({inline_name}, x, y, target));"]
+        else:
+            lines += [f"{prefix}{control_op_name}({inline_name}, x, y, target);",]
+        lines += [
             "X(x[0]);", "X(y[1]);"
         ]
 
@@ -77,64 +115,76 @@ def make_fixed_apply_if_relation_block(
         # 2 < 1 → false
         lines += [
             "use x = Qubit[2];", "X(x[1]);",             # x = 2
-            "use y = Qubit[2];", "X(y[0]);",             # y = 1
-            f"let target = q;",
-            f"{control_op_name}({inline_name}, x, y, target);",
-            "X(x[1]);", "X(y[0]);"
+            "use y = Qubit[2];", "X(y[0]);",]             # y = 1]
+        if use_controlled:
+            lines += [f"{prefix}{control_op_name}([{ctrl_str}], ({inline_name}, x, y, target));"]
+        else:
+            lines += [f"{prefix}{control_op_name}({inline_name}, x, y, target);",]
+        lines += ["X(x[1]);", "X(y[0]);"
         ]
 
     elif control_op_name == "ApplyIfLessOrEqualLE":
         # 2 <= 1 → false
         lines += [
             "use x = Qubit[2];", "X(x[1]);",             # x = 2
-            "use y = Qubit[2];", "X(y[0]);",             # y = 1
-            f"let target = q;",
-            f"{control_op_name}({inline_name}, x, y, target);",
-            "X(x[1]);", "X(y[0]);"
+            "use y = Qubit[2];", "X(y[0]);",]
+        if use_controlled:
+            lines += [f"{prefix}{control_op_name}([{ctrl_str}], ({inline_name}, x, y, target));"]
+        else:
+            lines += [f"{prefix}{control_op_name}({inline_name}, x, y, target);",]
+        lines += ["X(x[1]);", "X(y[0]);"
         ]
 
     elif control_op_name == "ApplyIfEqualL":
         # 0 != 3
         lines += [
-            "use x = Qubit[2];", "X(x[0]);", "X(x[1]);",  # x = 3
-            f"let target = q;",
-            f"{control_op_name}({inline_name}, 0L, x, target);",
-            "X(x[0]);", "X(x[1]);"
+            "use x = Qubit[2];", "X(x[0]);", "X(x[1]);",  ]
+        if use_controlled:
+            lines += [f"{prefix}{control_op_name}([{ctrl_str}], ({inline_name}, 0L, x, target));"]
+        else:
+            lines += [f"{prefix}{control_op_name}({inline_name}, 0L, x, target);",]
+        lines += ["X(x[0]);", "X(x[1]);"
         ]
 
     elif control_op_name == "ApplyIfGreaterL":
         # 0 > 3 → false
         lines += [
-            "use x = Qubit[2];", "X(x[0]);", "X(x[1]);",
-            f"let target = q;",
-            f"{control_op_name}({inline_name}, 0L, x, target);",
-            "X(x[0]);", "X(x[1]);"
+            "use x = Qubit[2];", "X(x[0]);", "X(x[1]);",]
+        if use_controlled:
+            lines += [f"{prefix}{control_op_name}([{ctrl_str}], ({inline_name}, 0L, x, target));"]
+        else:
+            lines += [f"{prefix}{control_op_name}({inline_name}, 0L, x, target);",]
+        lines += ["X(x[0]);", "X(x[1]);"
         ]
 
     elif control_op_name == "ApplyIfGreaterOrEqualL":
         # 0 >= 3 → false
         lines += [
-            "use x = Qubit[2];", "X(x[0]);", "X(x[1]);",
-            f"let target = q;",
-            f"{control_op_name}({inline_name}, 0L, x, target);",
-            "X(x[0]);", "X(x[1]);"
+            "use x = Qubit[2];", "X(x[0]);", "X(x[1]);",]
+        if use_controlled:
+            lines += [f"{prefix}{control_op_name}([{ctrl_str}], ({inline_name}, 0L, x, target));"]
+        else:
+            lines += [f"{prefix}{control_op_name}({inline_name}, 0L, x, target);",]
+        lines += ["X(x[0]);", "X(x[1]);"
         ]
 
     elif control_op_name == "ApplyIfLessL":
         # 0 < 0 → false
         lines += [
-            "use x = Qubit[2];",                        # x = 0
-            f"let target = q;",
-            f"{control_op_name}({inline_name}, 0L, x, target);"
-        ]
+            "use x = Qubit[2];",]
+        if use_controlled:
+            lines += [f"{prefix}{control_op_name}([{ctrl_str}], ({inline_name}, 0L, x, target));"]
+        else:
+            lines += [f"{prefix}{control_op_name}({inline_name}, 0L, x, target);",]
 
     elif control_op_name == "ApplyIfLessOrEqualL":
         # 0 <= -1 → false
         lines += [
-            "use x = Qubit[2];",                        # x = 0
-            f"let target = q;",
-            f"{control_op_name}({inline_name}, -1L, x, target);"
-        ]
+            "use x = Qubit[2];", ]
+        if use_controlled:
+            lines += [f"{prefix}{control_op_name}([{ctrl_str}], ({inline_name}, 0L, x, target));"]
+        else:
+            lines += [f"{prefix}{control_op_name}({inline_name}, -1L, x, target);",]
 
     else:
         raise ValueError(f"Unsupported control op: {control_op_name}")
@@ -335,4 +385,65 @@ def make_fixed_if_else_deadcode_block(
         "call": full_code,
         "adjoint": call_type in ("adjoint", "adj+ctl"),
         "controlled": call_type in ("controlled", "adj+ctl"),
+    }
+
+def make_fixed_for_loop_zero_block(
+    target_indices: List[int],
+    depth: int,
+    call_type: str = "adj+ctl",
+) -> Dict[str, Any]:
+    import uuid
+    from qsharp_generator.functions import get_qsharp_modifier, indent
+    from qsharp_generator.custom_ctl import make_nested_or_fallback_body
+
+    if not target_indices:
+        return None
+
+    N = len(target_indices)
+    local_indices = list(range(N))
+    inline_op_name = f"__ForLoopZeroBody_{uuid.uuid4().hex[:8]}"
+
+    modifier = get_qsharp_modifier(call_type)
+
+    use_controlled = False
+    if call_type in ("controlled", "adj+ctl") and N >= 2 and random.random() < 0.5:
+        use_controlled = True
+        num_ctrl = random.randint(1, N // 2)
+        ctrl = sorted(random.sample(local_indices, num_ctrl))
+        target = sorted([i for i in local_indices if i not in ctrl])
+        if not target:
+            return None
+
+        body = make_nested_or_fallback_body(target, depth, call_type)
+
+        ctrl_str = ", ".join(f"q[{target_indices[i]}]" for i in ctrl)
+        tgt_str = ", ".join(f"q[{target_indices[i]}]" for i in target)
+
+        prefix = "Controlled Adjoint " if call_type == "adj+ctl" else "Controlled "
+        loop_body = f"{prefix}{inline_op_name}([{ctrl_str}], [{tgt_str}]);"
+    else:
+        body = make_nested_or_fallback_body(local_indices, depth, call_type)
+        loop_body = f"{'Adjoint ' if call_type == 'adjoint' else ''}{inline_op_name}(q);"
+
+    inline_op = (
+        f"operation {inline_op_name}(q : Qubit[]) : Unit{modifier} {{\n"
+        f"{body}\n"
+        f"}}"
+    )
+
+    # ✅ 构造 0 次迭代的 for 循环（不会执行 loop_body）
+    call = (
+        f"{inline_op}\n"
+        f"// --- DEADCODE START ---\n"
+        f"for i in 1..0 {{\n"  # Q# 1.16 合法，但不会进入循环体
+        f"    {loop_body}\n"
+        f"}}\n"
+        f"// --- DEADCODE END ---"
+    )
+
+    return {
+        "import": None,
+        "call": call,
+        "adjoint": call_type in ("adjoint", "adj", "adj+ctl"),
+        "controlled": use_controlled,
     }
