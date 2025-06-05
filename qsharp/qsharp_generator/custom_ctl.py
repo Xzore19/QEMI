@@ -11,6 +11,11 @@ CONTROL_BLOCK_REGISTRY = [
     "IFELSE",
 ]
 
+CONTROL_BLOCK_REGISTRY_P = [
+    "REPEAT_UNTIL",  
+    "WHILE_LOOP",  
+]
+
 APPLY_IF_LE_REGISTRY = [
     "ApplyIfEqualLE",
     "ApplyIfGreaterLE",
@@ -333,21 +338,170 @@ def make_if_else_block(
     }
 
 
+def make_repeat_until_block(
+    available_indices: List[int],
+    depth: int,
+    call_type: str,
+) -> Optional[Dict[str, Any]]:
+    if not available_indices:
+        return None
+
+    N = len(available_indices)
+    local_indices = list(range(N))
+    inline_op_name = f"__RepeatBody_{uuid.uuid4().hex[:8]}"
+    fixup_op_name = f"__FixupBody_{uuid.uuid4().hex[:8]}"
+
+    modifier = get_qsharp_modifier(call_type)
+    use_controlled = False
+
+    # 尝试构造 controlled 调用
+    if call_type in ("controlled", "adj+ctl") and N >= 2 and random.random() < 0.5:
+        use_controlled = True
+        num_ctrl = random.randint(1, N // 2)
+        ctrl = sorted(random.sample(local_indices, num_ctrl))
+        target = sorted([i for i in local_indices if i not in ctrl])
+        if not target:
+            return None
+
+        repeat_body = make_nested_or_fallback_body(target, depth, call_type)
+        fixup_body = make_nested_or_fallback_body(target, depth, call_type)  # fixup 使用浅层深度
+
+        ctrl_str = ", ".join(f"q[{available_indices[i]}]" for i in ctrl)
+        tgt_str = ", ".join(f"q[{available_indices[i]}]" for i in target)
+
+        prefix = "Controlled Adjoint " if call_type == "adj+ctl" else "Controlled "
+        repeat_call = f"{prefix}{inline_op_name}([{ctrl_str}], [{tgt_str}]);"
+        fixup_call = f"{prefix}{fixup_op_name}([{ctrl_str}], [{tgt_str}]);"
+    else:
+        # 非受控调用
+        repeat_body = make_nested_or_fallback_body(local_indices, depth, call_type)
+        fixup_body = make_nested_or_fallback_body(local_indices, depth, call_type)
+
+        prefix = "Adjoint " if call_type == "adjoint" else ""
+        repeat_call = f"{prefix}{inline_op_name}(q);"
+        fixup_call = f"{prefix}{fixup_op_name}(q);"
+
+    # 构造内联 operation 定义
+    inline_repeat_op = (
+        f"operation {inline_op_name}(q : Qubit[]) : Unit{modifier} {{\n"
+        f"{repeat_body}\n"
+        f"}}"
+    )
+    inline_fixup_op = (
+        f"operation {fixup_op_name}(q : Qubit[]) : Unit{modifier} {{\n"
+        f"{fixup_body}\n"
+        f"}}"
+    )
+
+    # ✅ 用一个新的 qubit 控制退出条件
+    logic = [
+        "use flag = Qubit();",
+        "mutable result = One;",
+        "repeat {",
+        "    X(flag);",                # 改变测量结果
+        f"    {repeat_call}",
+        "    set result = M(flag);",
+        "} until (result == Zero) fixup {",
+        f"    {fixup_call}",
+        "}"
+    ]
+
+    call = (
+        f"{inline_repeat_op}\n"
+        f"{inline_fixup_op}\n"
+        + "\n".join(logic)
+    )
+
+    return {
+        "import": None,
+        "call": call,
+        "adjoint": call_type in ("adjoint", "adj", "adj+ctl"),
+        "controlled": use_controlled,
+    }
+
+def make_while_loop_block(
+    available_indices: List[int],
+    depth: int,
+    call_type: str,
+) -> Optional[Dict[str, Any]]:
+    if not available_indices:
+        return None
+
+    import uuid
+    from qsharp_generator.functions import get_qsharp_modifier, indent
+    from qsharp_generator.custom_ctl import make_nested_or_fallback_body
+
+    N = len(available_indices)
+    local_indices = list(range(N))
+    inline_op_name = f"__WhileBody_{uuid.uuid4().hex[:8]}"
+    modifier = get_qsharp_modifier(call_type)
+
+    use_controlled = False
+
+    if call_type in ("controlled", "adj+ctl") and N >= 2 and random.random() < 0.5:
+        use_controlled = True
+        num_ctrl = random.randint(1, N // 2)
+        ctrl = sorted(random.sample(local_indices, num_ctrl))
+        target = sorted([i for i in local_indices if i not in ctrl])
+        if not target:
+            return None
+
+        loop_body = make_nested_or_fallback_body(target, depth, call_type)
+        ctrl_str = ", ".join(f"q[{available_indices[i]}]" for i in ctrl)
+        tgt_str = ", ".join(f"q[{available_indices[i]}]" for i in target)
+        prefix = "Controlled Adjoint " if call_type == "adj+ctl" else "Controlled "
+        loop_call = f"{prefix}{inline_op_name}([{ctrl_str}], [{tgt_str}]);"
+    else:
+        loop_body = make_nested_or_fallback_body(local_indices, depth, call_type)
+        prefix = "Adjoint " if call_type == "adjoint" else ""
+        loop_call = f"{prefix}{inline_op_name}(q);"
+
+    # inline body op
+    inline_op = (
+        f"operation {inline_op_name}(q : Qubit[]) : Unit{modifier} {{\n"
+        f"{loop_body}\n"
+        f"}}"
+    )
+
+    # condition 逻辑：用一个 fresh flag qubit
+    logic = [
+        "use flag = Qubit();",
+        "mutable result = Zero;",
+        "X(flag);",
+        "set result = M(flag);",
+        "while (result == One) {",
+        f"    {loop_call}",
+        "    X(flag);",
+        "    set result = M(flag);",
+        "}"
+    ]
+
+    call = (
+        f"{inline_op}\n"
+        + "\n".join(logic)
+    )
+
+    return {
+        "import": None,
+        "call": call,
+        "adjoint": call_type in ("adjoint", "adj", "adj+ctl"),
+        "controlled": use_controlled,
+    }
+
 def generate_random_control_block(
     available_indices: List[int],
     depth: int,
     call_type: str,
 ) -> Optional[Dict[str, Any]]:
-    block = random.choice(CONTROL_BLOCK_REGISTRY)
-    # block = "IFELSE"  # For testing purposes, always use IFELSE
-    # print(f"Generating control block: {block} with depth {depth} and call type {call_type}")
+    if call_type == "plain":
+        # 仅在 plain 模式下使用 REPEAT_UNTIL
+        block = random.choice(CONTROL_BLOCK_REGISTRY + CONTROL_BLOCK_REGISTRY_P)
+    else:
+        # 在其他模式下仅使用前四种
+        block = random.choice(CONTROL_BLOCK_REGISTRY)
+    # block = "REPEAT_UNTIL"  # For testing purposes, always use IFELSE
     available_indices = list(range(len(available_indices)))
-    # if call_type in ("plain"):
-    #     block = random.choice(CONTROL_BLOCK_REGISTRY)
-    # elif call_type in ("controlled", "adj+ctl"):
-    #     block = random.choice(CONTROL_BLOCK_REGISTRY[:-1])  # Exclude IFELSE
-    # else:
-    #     block = random.choice(CONTROL_BLOCK_REGISTRY[:-1])
+    # block = "WHILE_LOOP"  # For testing purposes, always use WHILE_LOOP
         
     if block == "APPLY_IF_LE":
         if len(available_indices) < 3:
@@ -365,4 +519,12 @@ def generate_random_control_block(
         if depth - 1 <= 0:
             return None
         return make_if_else_block(available_indices, depth - 1, call_type)
+    if block == "REPEAT_UNTIL":
+        if depth - 3 <= 0:
+            return None
+        return make_repeat_until_block(available_indices, depth - 3, call_type)
+    if block == "WHILE_LOOP":
+        if depth - 3 <= 0:
+            return None
+        return make_while_loop_block(available_indices, depth - 3, call_type)
     return None

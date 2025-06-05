@@ -1,10 +1,21 @@
 import uuid
-from typing import List, Dict, Any
+from typing import List, Dict, Any, Optional
 import random
 from qsharp_generator.custom_blocks import generate_random_gate_block
 from qsharp_generator.functions import indent, get_qsharp_modifier, register_random_flag_block
 from qsharp_generator.custom_ctl import make_nested_or_fallback_body
 from qsharp_generator.illegal_block import make_nested_or_illegal_or_fallback_body
+
+DEADCODE_BLOCK_REGISTRY = [
+    "FOR_LOOP_ZERO",
+    "IF_FALSE",
+    "APPLY_IF"
+]
+
+DEADCODE_BLOCK_REGISTRY_P = [
+    "REPEAT_UNTIL_DEADCODE",
+    "WHILE_FALSE"
+]
 
 APPLY_IF_OPS = [
     "ApplyIfEqualL",
@@ -447,3 +458,183 @@ def make_fixed_for_loop_zero_block(
         "adjoint": call_type in ("adjoint", "adj", "adj+ctl"),
         "controlled": use_controlled,
     }
+
+def make_fixed_repeat_until_block(
+    target_indices: List[int],
+    depth: int,
+    call_type: str = "adj+ctl",
+) -> Dict[str, Any]:
+    import uuid
+    from qsharp_generator.functions import get_qsharp_modifier, indent
+    from qsharp_generator.custom_ctl import make_nested_or_fallback_body
+    from qsharp_generator.functions import register_random_flag_block
+
+    if not target_indices:
+        return None
+
+    N = len(target_indices)
+    local_indices = list(range(N))
+    inline_op_name = f"__RepeatBody_{uuid.uuid4().hex[:8]}"
+    modifier = get_qsharp_modifier(call_type)
+
+    use_controlled = False
+    if call_type in ("controlled", "adj+ctl") and N >= 2 and random.random() < 0.5:
+        use_controlled = True
+        num_ctrl = random.randint(1, N // 2)
+        ctrl = sorted(random.sample(local_indices, num_ctrl))
+        target = sorted([i for i in local_indices if i not in ctrl])
+        if not target:
+            return None
+
+        body = make_nested_or_fallback_body(target, depth, call_type)
+        ctrl_str = ", ".join(f"q[{target_indices[i]}]" for i in ctrl)
+        tgt_str = ", ".join(f"q[{target_indices[i]}]" for i in target)
+        prefix = "Controlled Adjoint " if call_type == "adj+ctl" else "Controlled "
+        repeat_call = f"{prefix}{inline_op_name}([{ctrl_str}], [{tgt_str}]);"
+        fixup_body = make_nested_or_fallback_body(target, depth, call_type)
+    else:
+        body = make_nested_or_fallback_body(local_indices, depth, call_type)
+        repeat_call = f"{'Adjoint ' if call_type == 'adjoint' else ''}{inline_op_name}(q);"
+        fixup_body = make_nested_or_fallback_body(local_indices, depth, call_type)
+
+    inline_op = (
+        f"operation {inline_op_name}(q : Qubit[]) : Unit{modifier} {{\n"
+        f"{body}\n"
+        f"}}"
+    )
+
+    # ✅ 注册 flag 函数，直到其返回值为 True ⇒ fixup 永远不会执行
+    while True:
+        flag_func_name, flag_value = register_random_flag_block()
+        if flag_value:
+            break
+
+    fixup_body = indent(fixup_body.splitlines(), 1)
+    fixup_block = (
+        "    // --- DEADCODE START ---\n"
+        + fixup_body +
+        "\n    // --- DEADCODE END ---"
+    )
+
+    # ✅ 拼接完整 repeat-until-fixup 结构（fixup 是 deadcode）
+    call = (
+        f"{inline_op}\n"
+        f"repeat {{\n"
+        f"    {repeat_call}\n"
+        f"}} until ({flag_func_name}()) fixup {{\n"
+        f"{fixup_block}\n"
+        f"}}"
+    )
+
+    return {
+        "import": None,
+        "call": call,
+        "adjoint": call_type in ("adjoint", "adj", "adj+ctl"),
+        "controlled": use_controlled,
+    }
+
+def make_fixed_while_false_block(
+    target_indices: List[int],
+    depth: int,
+    call_type: str = "adj+ctl",
+) -> Dict[str, Any]:
+    import uuid
+    from qsharp_generator.functions import get_qsharp_modifier, indent
+    from qsharp_generator.custom_ctl import make_nested_or_fallback_body
+    from qsharp_generator.functions import register_random_flag_block
+
+    if not target_indices:
+        return None
+
+    N = len(target_indices)
+    local_indices = list(range(N))
+    inline_op_name = f"__WhileBody_{uuid.uuid4().hex[:8]}"
+    modifier = get_qsharp_modifier(call_type)
+
+    use_controlled = False
+    if call_type in ("controlled", "adj+ctl") and N >= 2 and random.random() < 0.5:
+        use_controlled = True
+        num_ctrl = random.randint(1, N // 2)
+        ctrl = sorted(random.sample(local_indices, num_ctrl))
+        target = sorted([i for i in local_indices if i not in ctrl])
+        if not target:
+            return None
+
+        body = make_nested_or_fallback_body(target, depth, call_type)
+        ctrl_str = ", ".join(f"q[{target_indices[i]}]" for i in ctrl)
+        tgt_str = ", ".join(f"q[{target_indices[i]}]" for i in target)
+        prefix = "Controlled Adjoint " if call_type == "adj+ctl" else "Controlled "
+        loop_body = f"{prefix}{inline_op_name}([{ctrl_str}], [{tgt_str}]);"
+    else:
+        body = make_nested_or_fallback_body(local_indices, depth, call_type)
+        loop_body = f"{'Adjoint ' if call_type == 'adjoint' else ''}{inline_op_name}(q);"
+
+    inline_op = (
+        f"operation {inline_op_name}(q : Qubit[]) : Unit{modifier} {{\n"
+        f"{body}\n"
+        f"}}"
+    )
+
+    # ✅ 注册一个总返回 False 的布尔函数作为 while 条件
+    while True:
+        flag_func_name, flag_value = register_random_flag_block()
+        if not flag_value:
+            break  # 只接受返回 False 的函数
+
+    # ✅ 构造 while 条件永远不满足的死循环结构
+    call = (
+        f"{inline_op}\n"
+        f"// --- DEADCODE START ---\n"
+        f"while ({flag_func_name}()) {{\n"
+        f"    {loop_body}\n"
+        f"}}\n"
+        f"// --- DEADCODE END ---"
+    )
+
+    return {
+        "import": None,
+        "call": call,
+        "adjoint": call_type in ("adjoint", "adj", "adj+ctl"),
+        "controlled": use_controlled,
+    }
+
+
+def generate_fixed_deadcode_block(
+    available_indices: List[int],
+    depth: int,
+    call_type: str,
+) -> Optional[Dict[str, Any]]:
+    # 可选的 deadcode 控制结构类型
+    if call_type == "plain":
+        block = random.choice(DEADCODE_BLOCK_REGISTRY+ DEADCODE_BLOCK_REGISTRY_P)
+    else:
+        block = random.choice(DEADCODE_BLOCK_REGISTRY)
+
+    available_indices = list(range(len(available_indices)))
+
+    if block == "FOR_LOOP_ZERO":
+        if len(available_indices) < 1 or depth <= 0:
+            return None
+        return make_fixed_for_loop_zero_block(available_indices, depth, call_type)
+
+    if block == "REPEAT_UNTIL_DEADCODE":
+        if len(available_indices) < 1 or depth <= 2:
+            return None
+        return make_fixed_repeat_until_block(available_indices, depth, call_type)
+
+    if block == "IF_FALSE":
+        if len(available_indices) < 1 or depth <= 0:
+            return None
+        return make_fixed_if_else_deadcode_block(available_indices, depth, call_type)
+    
+    if block == "APPLY_IF":
+        if len(available_indices) < 1 or depth <= 0:
+            return None
+        return make_fixed_apply_if_relation_block(available_indices, depth, call_type)
+    
+    if block == "WHILE_FALSE":
+        if len(available_indices) < 1 or depth <= 0:
+            return None
+        return make_fixed_while_false_block(available_indices, depth, call_type)
+
+    return None
