@@ -94,7 +94,7 @@ def get_qsharp_modifier(call_type: str) -> str:
     else:
         return ""
 
-def register_random_flag_block() -> Tuple[str, bool]:
+def register_random_flag_block_type_1() -> Tuple[str, bool]:
     uid = uuid.uuid4().hex[:8]
     func_name = f"__RandomFlag_{uid}"
     
@@ -132,3 +132,48 @@ def register_random_flag_block() -> Tuple[str, bool]:
     # 注册
     registered_random_flag_blocks.append(func_def)
     return func_name, value
+
+def register_random_flag_block_type_2() -> Tuple[str, bool]:
+    uid = uuid.uuid4().hex[:8]
+    func_name = f"__RandomFlag_{uid}"
+    
+    # 构造若干 ResultAsBool 表达式（固定输入 Zero 或 One）
+    expr_pool = [
+        ("false", False),
+        ("true", True),
+        ("not false", True),
+        ("not true", False),
+    ]
+
+    # 随机生成布尔变量赋值
+    var_defs = []
+    var_names = []
+    values = []
+    for i in range(4):
+        var = f"b{i}"
+        expr, val = random.choice(expr_pool)
+        var_defs.append(f"    let {var} = {expr};")
+        var_names.append(var)
+        values.append(val)
+
+    # 随机组合布尔表达式
+    expr = f"({var_names[0]} and {var_names[1]}) or ({var_names[2]} and not {var_names[3]})"
+    value = (values[0] and values[1]) or (values[2] and not values[3])
+
+    # 最终函数定义
+    func_def = (
+        f"function {func_name}() : Bool {{\n"
+        + "\n".join(var_defs) + "\n"
+        + f"    return {expr};\n"
+        + "}"
+    )
+  
+    # 注册
+    registered_random_flag_blocks.append(func_def)
+    return func_name, value
+
+def register_random_flag_block() -> Tuple[str, bool]:
+    if random.random() < 0.5:
+        return register_random_flag_block_type_1()
+    else:
+        return register_random_flag_block_type_2()
