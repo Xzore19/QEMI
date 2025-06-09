@@ -9,161 +9,71 @@ namespace Main_fuzzing {
     open Std.Measurement;
     open Std.StatePreparation;
 
+    operation MySingleBlock_3f47f687(q : Qubit) : Unit is Adj + Ctl {
+        I(q);
+        T(q);
+        Rz(4.452677, q);
+    }
+    operation MySingleBlock_28c70887(q : Qubit) : Unit is Adj + Ctl {
+        H(q);
+        T(q);
+    }
 
 
-function __RandomFlag_22333fb3() : Bool {
-    let b0 = not ResultAsBool(One);
-    let b1 = ResultAsBool(Zero);
-    let b2 = ResultAsBool(One);
-    let b3 = ResultAsBool(One);
-    return (b0 and b1) or (b2 and not b3);
-}
-function __RandomFlag_b80e6636() : Bool {
-    let b0 = not false;
-    let b1 = not true;
-    let b2 = not true;
-    let b3 = not true;
-    return (b0 and b1) or (b2 and not b3);
-}
-function __RandomFlag_94bb3228() : Bool {
-    let b0 = not ResultAsBool(Zero);
-    let b1 = ResultAsBool(Zero);
-    let b2 = ResultAsBool(One);
-    let b3 = not ResultAsBool(Zero);
-    return (b0 and b1) or (b2 and not b3);
-}
-function __RandomFlag_352c1bb7() : Bool {
-    let b0 = ResultAsBool(One);
-    let b1 = ResultAsBool(Zero);
-    let b2 = not ResultAsBool(Zero);
-    let b3 = not ResultAsBool(Zero);
-    return (b0 and b1) or (b2 and not b3);
-}
-function __RandomFlag_ca13b3ad() : Bool {
-    let b0 = not true;
-    let b1 = not false;
-    let b2 = true;
-    let b3 = not false;
-    return (b0 and b1) or (b2 and not b3);
-}
-function __RandomFlag_f87573f8() : Bool {
-    let b0 = not false;
-    let b1 = not true;
-    let b2 = false;
-    let b3 = not true;
-    return (b0 and b1) or (b2 and not b3);
-}
-function __RandomFlag_8fbad987() : Bool {
-    let b0 = not true;
-    let b1 = not true;
-    let b2 = not false;
-    let b3 = true;
-    return (b0 and b1) or (b2 and not b3);
-}
-function __RandomFlag_16f3152b() : Bool {
-    let b0 = not false;
-    let b1 = false;
-    let b2 = true;
-    let b3 = true;
-    return (b0 and b1) or (b2 and not b3);
-}
-function __RandomFlag_9ad67635() : Bool {
-    let b0 = not ResultAsBool(One);
-    let b1 = ResultAsBool(Zero);
-    let b2 = ResultAsBool(One);
-    let b3 = not ResultAsBool(One);
-    return (b0 and b1) or (b2 and not b3);
-}
 
-    operation ApplyRandomBlock0(q : Qubit[]) : Unit {
-        operation __RepeatBody_53c5caf9(q : Qubit[]) : Unit {
-            operation __WhileBody_fea67271(q : Qubit[]) : Unit {
-                operation __WhileBody_35da3f78(q : Qubit[]) : Unit {
-                        R1(4.705544, q[2]);
-                        Rzz(4.12544, q[3], q[11]);
-                }
-                use flag = Qubit();
-                mutable result = Zero;
-                X(flag);
-                set result = M(flag);
-                while (result == One) {
-                    __WhileBody_35da3f78(q);
-                    X(flag);
-                    set result = M(flag);
-                }
-            }
-            use flag = Qubit();
-            mutable result = Zero;
-            X(flag);
-            set result = M(flag);
-            while (result == One) {
-                __WhileBody_fea67271(q);
-                X(flag);
-                set result = M(flag);
-            }
-        }
-        repeat {
-            __RepeatBody_53c5caf9(q);
-        } until (__RandomFlag_9ad67635()) fixup {
+    operation ApplyRandomBlock0(q : Qubit[]) : Unit is Ctl {
+        operation __ForLoopZeroBody_d3e7b378(q : Qubit[]) : Unit is Ctl {
+                Z(q[1]);
+                Rx(1.060509, q[2]);
+                CCNOT(q[8], q[1], q[4]);
+                CCNOT(q[8], q[6], q[3]);
+                Rz(2.049668, q[5]);
+                Ryy(3.901787, q[8], q[2]);
+                ApplyToEachC(H, q);
+                Rzz(2.124982, q[3], q[8]);
         }
     }
-    operation ApplyRandomBlock1(q : Qubit[]) : Unit {
-        operation __WhileBody_e1756cd3(q : Qubit[]) : Unit {
-            operation __WhileBody_726ec51c(q : Qubit[]) : Unit {
-                    H(q[2]);
-                    Ry(0.10754, q[10]);
-            }
-            use flag = Qubit();
-            mutable result = Zero;
-            X(flag);
-            set result = M(flag);
-            while (result == One) {
-                __WhileBody_726ec51c(q);
-                X(flag);
-                set result = M(flag);
-            }
+    operation ApplyRandomBlock1(q : Qubit[]) : Unit is Ctl {
+        operation __InlineApplyIfRelationL_8d01be60(q : Qubit[]) : Unit is Adj + Ctl {
+                I(q[0]);
+                H(q[0]);
+                I(q[0]);
+                S(q[0]);
         }
-        use flag = Qubit();
-        mutable result = Zero;
-        X(flag);
-        set result = M(flag);
-        while (result == One) {
-            __WhileBody_e1756cd3(q);
-            X(flag);
-            set result = M(flag);
-        }
+        let x = [q[5]];
+        let target = [q[0]];
+        ApplyIfGreaterOrEqualL(__InlineApplyIfRelationL_8d01be60, 0L, x, target);
     }
     operation ApplyRandomBlock2(q : Qubit[]) : Unit {
-        operation __WhileBody_71b91ce2(q : Qubit[]) : Unit {
-            operation __WhileBody_0ae9562e(q : Qubit[]) : Unit {
-                    Ry(4.425204, q[3]);
-                    X(q[3]);
-            }
-            use flag = Qubit();
-            mutable result = Zero;
-            X(flag);
-            set result = M(flag);
-            while (result == One) {
-                __WhileBody_0ae9562e(q);
-                X(flag);
-                set result = M(flag);
-            }
+        operation __RepeatBody_8290c3a6(q : Qubit[]) : Unit {
+                Rz(5.398128, q[5]);
+                R1(3.037001, q[4]);
+                CCNOT(q[10], q[11], q[7]);
+                ApplyToEach(MySingleBlock_3f47f687, q);
+                CZ(q[10], q[9]);
+        }
+        operation __FixupBody_e014cdbd(q : Qubit[]) : Unit {
+                X(q[3]);
+                SWAP(q[1], q[3]);
+                Rz(2.375044, q[7]);
+                ApplyToEach(MySingleBlock_28c70887, q);
+                Z(q[0]);
         }
         use flag = Qubit();
-        mutable result = Zero;
-        X(flag);
-        set result = M(flag);
-        while (result == One) {
-            __WhileBody_71b91ce2(q);
+        mutable result = One;
+        repeat {
             X(flag);
+            __RepeatBody_8290c3a6(q);
             set result = M(flag);
+        } until (result == Zero) fixup {
+            __FixupBody_e014cdbd(q);
         }
     }
 
     operation TestCircuit() : Result[] {
         use q = Qubit[12] {
-            ApplyRandomBlock0(q);
-            ApplyRandomBlock1(q);
+            Controlled ApplyRandomBlock0([q[2], q[6]], [q[0], q[1], q[3], q[4], q[5], q[7], q[8], q[9], q[10], q[11]]);
+            Controlled ApplyRandomBlock1([q[0], q[1], q[3], q[4], q[5], q[11]], [q[2], q[6], q[7], q[8], q[9], q[10]]);
             ApplyRandomBlock2(q);
             let r0 = M(q[0]);
             let r1 = M(q[1]);

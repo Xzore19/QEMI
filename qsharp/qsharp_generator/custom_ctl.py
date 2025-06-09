@@ -44,7 +44,7 @@ def make_nested_or_fallback_body(
     # ✅ 用局部 index list 替代全局 target_indices 传下去
     local_indices = list(range(len(target_indices)))
 
-    if random.random() < 1:
+    if random.random() < 0:
         maybe_nested = generate_random_control_block(local_indices, depth, call_type)
         if maybe_nested is not None:
             return indent(maybe_nested["call"].splitlines(), level=1)
