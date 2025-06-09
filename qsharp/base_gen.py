@@ -1,7 +1,7 @@
 import os
 import random
 import math
-from qsharp_generator.functions import indent, registered_single_qubit_blocks, registered_random_flag_blocks
+from qsharp_generator.functions import indent, registered_single_qubit_blocks, registered_random_flag_blocks, registered_oracle_blocks
 from qsharp_generator.custom_blocks import (
     generate_random_gate_block,
 )
@@ -141,6 +141,7 @@ class QSharpGenerator:
             f"{header}\n\n"
             f"{chr(10).join(registered_single_qubit_blocks)}\n\n"
             f"{chr(10).join(registered_random_flag_blocks)}\n\n" 
+            f"{chr(10).join(registered_oracle_blocks)}\n\n" 
             f"{chr(10).join(block_ops)}\n\n"
             f"{test_circuit_op}"
             f"}}"

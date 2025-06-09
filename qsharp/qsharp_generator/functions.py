@@ -5,6 +5,7 @@ import uuid
 
 registered_single_qubit_blocks: List[str] = []
 registered_random_flag_blocks: List[str] = []
+registered_oracle_blocks: List[str] = []
 
 def register_single_qubit_block() -> str:
     import uuid
