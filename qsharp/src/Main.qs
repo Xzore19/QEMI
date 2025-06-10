@@ -12,113 +12,136 @@ namespace Main {
 
 
 
-operation __RandomFlag_104b42f8(q : Qubit[]) : Bool {
-    return CheckZero(q[10]);
-}
-function __RandomFlag_7793eb59() : Bool {
-    let b0 = true;
-    let b1 = true;
-    let b2 = not false;
-    let b3 = false;
+function __RandomFlag_6d24ef69() : Bool {
+    let b0 = not ResultAsBool(Zero);
+    let b1 = ResultAsBool(One);
+    let b2 = not ResultAsBool(One);
+    let b3 = not ResultAsBool(Zero);
     return Xor(Xor(b0, b1), Xor(b2, b3));
 }
+function __RandomFlag_a173ef94() : Bool {
+    let b0 = not true;
+    let b1 = not false;
+    let b2 = not true;
+    let b3 = not false;
+    return (b0 and b1) or (b2 and not b3);
+}
 
 
 
-    operation ApplyRandomBlock0(q : Qubit[]) : Unit {
-        operation __InlineIfElseDeadcode_2d01a5b0(q : Qubit[]) : Unit {
-            if __RandomFlag_7793eb59() {
-                    operation __WhileBody_242f1413(q : Qubit[]) : Unit {
-                        operation __InlineApplyIfRelationL_edcc1718(q : Qubit[]) : Unit is Adj + Ctl {
-                            operation __InlineApplyIfRelationLE_ba6d3b99(q : Qubit[]) : Unit is Adj + Ctl {
-                                    ApplyXorInPlaceL(IntAsBigInt(1), [q[0]]);
-                                    ReflectAboutInteger(1, [q[0]]);
-                            }
-                            let x = [q[1], q[3]];
-                            let y = [q[0], q[2]];
-                            let target = [q[4]];
-                            ApplyIfGreaterOrEqualLE(__InlineApplyIfRelationLE_ba6d3b99, x, y, target);
+    operation ApplyRandomBlock0(q : Qubit[]) : Unit is Ctl {
+        // --- DEADCODE START ---
+        let target = [q[1], q[2], q[3], q[4], q[5], q[6], q[7]]; 
+        operation __InlineApplyIfRelation_0a176d8b(q : Qubit[]) : Unit is Adj + Ctl {
+            operation __IfBody_1f7d1b37(q : Qubit[]) : Unit is Adj + Ctl {
+                    operation __IfBody_413f521a(q : Qubit[]) : Unit is Adj + Ctl {
+                                operation __GenBlock_b00b0ac2(q : Qubit[]) : Unit is Adj + Ctl {
+                        
+                            IncByLEUsingAddLE(LookAheadDKRSAddLE, RippleCarryCGAddLE, [q[0], q[3]], [q[1], q[2]]);
+                            FourierTDIncByLE([q[0], q[3]], [q[1], q[2]]);
+                            IncByI(2, [q[1], q[3]]);
+                            IncByLEUsingAddLE(LookAheadDKRSAddLE, RippleCarryCGAddLE, [q[1]], [q[3]]);
                         }
-                        let x = [q[6]];
-                        let target = [q[4], q[5], q[7], q[8], q[10]];
-                        ApplyIfLessL(__InlineApplyIfRelationL_edcc1718, 0L, x, target);
+                                Controlled Adjoint __GenBlock_b00b0ac2([q[0], q[1], q[3]], [q[2], q[4], q[5], q[6]]);
                     }
-                    use flag = Qubit();
-                    mutable result = Zero;
-                    X(flag);
-                    set result = M(flag);
-                    while (result == One) {
-                        __WhileBody_242f1413(q);
-                        X(flag);
-                        set result = M(flag);
+                    
+                    operation __ElseBody_413f521a(q : Qubit[]) : Unit is Adj + Ctl {
+                            operation __ForLoopBody_6e922f68(q : Qubit[]) : Unit is Adj + Ctl {
+                                operation __InlineApplyIfRelationLE_d35baace(q : Qubit[]) : Unit is Adj + Ctl {
+                                        operation __GenBlock_543b5e05(q : Qubit[]) : Unit is Adj + Ctl {
+                                
+                                    IncByIUsingIncByLE(RippleCarryTTKIncByLE, 0, [q[0]]);
+                                }
+                                        __GenBlock_543b5e05(q);
+                                }
+                                let x = [q[1], q[2]];
+                                let y = [q[3], q[5]];
+                                let target = [q[0], q[6]];
+                                ApplyIfLessOrEqualLE(__InlineApplyIfRelationLE_d35baace, x, y, target);
+                            }
+                            for i in 1..3 {
+                                __ForLoopBody_6e922f68(q);
+                            }
                     }
+                    
+                    if __RandomFlag_6d24ef69() {
+                        __IfBody_413f521a(q);
+                    } else {
+                        __ElseBody_413f521a(q);
+                    }
+            }
+            
+            operation __ElseBody_1f7d1b37(q : Qubit[]) : Unit is Adj + Ctl {
+                        operation __GenBlock_2506e061(q : Qubit[]) : Unit is Adj + Ctl {
+                
+                    IncByL(IntAsBigInt(23), [q[0], q[1], q[2], q[3], q[4]]);
+                    ReflectAboutInteger(6, [q[0], q[3], q[4]]);
+                    FourierTDIncByLE([q[0], q[3]], [q[2], q[4]]);
+                    FourierTDIncByLE([q[0]], [q[2]]);
+                    MAJ(q[0], q[3], q[1]);
+                    ReflectAboutInteger(0, [q[1]]);
+                }
+                        Controlled Adjoint __GenBlock_2506e061([q[1], q[3]], [q[0], q[2], q[4], q[5], q[6]]);
+            }
+            
+            if __RandomFlag_a173ef94() {
+                __IfBody_1f7d1b37(q);
             } else {
-                // --- DEADCODE START ---
-                        SwapReverseRegister([q[0], q[2], q[4], q[5], q[6], q[7], q[9]]);
-                        ReflectAboutInteger(72, [q[0], q[1], q[2], q[3], q[5], q[6], q[8], q[9], q[10], q[11]]);
-                        IncByLUsingIncByLE(RippleCarryCGIncByLE, IntAsBigInt(0), [q[11]]);
-                        FourierTDIncByLE([q[0], q[4]], [q[5], q[11]]);
-                        IncByL(IntAsBigInt(165), [q[0], q[1], q[2], q[3], q[4], q[5], q[6], q[7], q[8], q[9], q[10], q[11]]);
-                        IncByLUsingIncByLE(RippleCarryCGIncByLE, IntAsBigInt(2890), [q[0], q[1], q[2], q[3], q[4], q[5], q[6], q[7], q[8], q[9], q[10], q[11]]);
-                        ResetAll([q[2], q[3], q[6]]);
-                RippleCarryCGAddLE([q[4], q[7], q[8], q[10]], [q[0], q[5], q[9], q[11]], [q[1], q[2], q[3], q[6]]);
-                        IncByLUsingIncByLE(RippleCarryCGIncByLE, IntAsBigInt(332), [q[1], q[2], q[3], q[4], q[5], q[7], q[8], q[9], q[10]]);
-                // --- DEADCODE END ---
+                __ElseBody_1f7d1b37(q);
             }
         }
+        use x = Qubit[2];
+        X(x[0]);
+        X(x[1]);
+        Controlled Adjoint ApplyIfGreaterOrEqualL([q[0], q[8]], (__InlineApplyIfRelation_0a176d8b, 0L, x, target));
+        X(x[0]);
+        X(x[1]);
+        // --- DEADCODE END ---
+    }
+    operation ApplyRandomBlock1(q : Qubit[]) : Unit is Adj {
+        operation __InlineApplyIfRelationLE_d2b8c18d(q : Qubit[]) : Unit is Adj + Ctl {
+                operation __GenBlock_4da8785f(q : Qubit[]) : Unit is Adj + Ctl {
         
-        __InlineIfElseDeadcode_2d01a5b0(q);
+            IncByLUsingIncByLE(RippleCarryTTKIncByLE, IntAsBigInt(7), [q[0], q[1], q[3]]);
+            ReflectAboutInteger(1, [q[3], q[5], q[6]]);
+            IncByLUsingIncByLE(RippleCarryTTKIncByLE, IntAsBigInt(0), [q[1], q[2], q[4]]);
+            MAJ(q[1], q[6], q[4]);
+            FourierTDIncByLE([q[3], q[4], q[6]], [q[0], q[1], q[5]]);
+            IncByL(IntAsBigInt(5), [q[0], q[1], q[2], q[5]]);
+            RippleCarryTTKIncByLE([q[1], q[2], q[6]], [q[3], q[4], q[5]]);
+            IncByL(IntAsBigInt(113), [q[0], q[1], q[2], q[3], q[4], q[5], q[6]]);
+        }
+                __GenBlock_4da8785f(q);
+        }
+        let x = [q[7]];
+        let y = [q[0]];
+        let target = [q[2], q[3], q[4], q[5], q[9], q[10], q[11]];
+        ApplyIfEqualLE(__InlineApplyIfRelationLE_d2b8c18d, x, y, target);
     }
-    operation ApplyRandomBlock1(q : Qubit[]) : Unit {
-        operation __WhileBody_8ed1bb2a(q : Qubit[]) : Unit {
-                MAJ(q[7], q[11], q[10]);
-                IncByIUsingIncByLE(RippleCarryCGIncByLE, 0, [q[2]]);
-                ResetAll([q[3], q[5]]);
-        RippleCarryCGAddLE([q[4], q[7], q[10]], [q[2], q[9], q[11]], [q[1], q[3], q[5]]);
-                MAJ(q[9], q[7], q[5]);
-                IncByLEUsingAddLE(LookAheadDKRSAddLE, RippleCarryCGAddLE, [q[0], q[2], q[8], q[10]], [q[1], q[6], q[7], q[9]]);
+    operation ApplyRandomBlock2(q : Qubit[]) : Unit is Ctl {
+        operation __ForLoopBody_af994a33(q : Qubit[]) : Unit is Ctl {
+                operation __GenBlock_e31cb310(q : Qubit[]) : Unit is Ctl {
+        
+            IncByL(IntAsBigInt(4), [q[1], q[2], q[6]]);
+            IncByLEUsingAddLE(LookAheadDKRSAddLE, RippleCarryCGAddLE, [q[0], q[1], q[3]], [q[2], q[5], q[6]]);
+            IncByI(0, [q[0], q[1], q[4], q[5], q[6]]);
+            IncByLUsingIncByLE(RippleCarryTTKIncByLE, IntAsBigInt(1), [q[0], q[1], q[2], q[3], q[5]]);
+            IncByLUsingIncByLE(RippleCarryTTKIncByLE, IntAsBigInt(19), [q[0], q[1], q[2], q[3], q[5]]);
+            IncByLE([q[0]], [q[1], q[4]]);
+            IncByLEUsingAddLE(LookAheadDKRSAddLE, RippleCarryCGAddLE, [q[3], q[5]], [q[2], q[6]]);
         }
-        use flag = Qubit();
-        mutable result = Zero;
-        X(flag);
-        set result = M(flag);
-        while (result == One) {
-            __WhileBody_8ed1bb2a(q);
-            X(flag);
-            set result = M(flag);
+                Controlled __GenBlock_e31cb310([q[3], q[4]], [q[0], q[1], q[2], q[5], q[6], q[7], q[8]]);
         }
-    }
-    operation ApplyRandomBlock2(q : Qubit[]) : Unit {
-        operation __RepeatBody_9dcb5f9b(q : Qubit[]) : Unit {
-                ApplyXorInPlace(1, [q[0]]);
-                IncByIUsingIncByLE(RippleCarryCGIncByLE, 0, [q[1], q[3]]);
-                RippleCarryCGIncByLE([q[5], q[6]], [q[4], q[11]]);
-                IncByLUsingIncByLE(RippleCarryCGIncByLE, IntAsBigInt(0), [q[2]]);
-                IncByLE([q[6]], [q[3], q[4], q[5], q[10]]);
-        }
-        operation __FixupBody_4f95045c(q : Qubit[]) : Unit {
-                IncByI(277, [q[0], q[1], q[3], q[4], q[5], q[6], q[7], q[8], q[11]]);
-                IncByI(2, [q[1], q[7]]);
-                ApplyXorInPlace(2, [q[3], q[5], q[7]]);
-                IncByL(IntAsBigInt(185), [q[1], q[2], q[4], q[5], q[6], q[7], q[9], q[11]]);
-                IncByLUsingIncByLE(RippleCarryCGIncByLE, IntAsBigInt(12), [q[1], q[5], q[7], q[9]]);
-        }
-        use flag = Qubit();
-        mutable result = One;
-        repeat {
-            X(flag);
-            __RepeatBody_9dcb5f9b(q);
-            set result = M(flag);
-        } until (result == Zero) fixup {
-            __FixupBody_4f95045c(q);
+        for i in 1..3 {
+            __ForLoopBody_af994a33(q);
         }
     }
 
     operation TestCircuit() : Result[] {
         use q = Qubit[12] {
-            ApplyRandomBlock0(q);
-            ApplyRandomBlock1(q);
-            ApplyRandomBlock2(q);
+            Controlled ApplyRandomBlock0([q[3], q[5], q[11]], [q[0], q[1], q[2], q[4], q[6], q[7], q[8], q[9], q[10]]);
+            Adjoint ApplyRandomBlock1(q);
+            Controlled ApplyRandomBlock2([q[4], q[9], q[10]], [q[0], q[1], q[2], q[3], q[5], q[6], q[7], q[8], q[11]]);
             let r0 = M(q[0]);
             let r1 = M(q[1]);
             let r2 = M(q[2]);

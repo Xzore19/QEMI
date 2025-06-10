@@ -658,35 +658,6 @@ def make_incby_block(op_type: str, call_type: str, num_qubits: int = 5) -> Dict[
         "controlled": True,
     }
 
-def make_apply_xor_inplace_block(op_type: str, call_type: str, num_qubits: int = 5) -> Dict[str, Any]:
-    import random
-
-    if num_qubits < 1:
-        raise ValueError(f"{op_type} 需要至少 1 个 qubit")
-
-    n = random.randint(1, num_qubits)
-    indices = sorted(random.sample(range(num_qubits), n))
-    reg_str = "[" + ", ".join(f"q[{i}]" for i in indices) + "]"
-    value = random.randint(1, 2**n - 1)  # 至少一个 bit 是 1
-
-    if op_type == "ApplyXorInPlace":
-        call_stmt = f"ApplyXorInPlace({value}, {reg_str});"
-        import_stmt = "Std.Canon"
-
-    elif op_type == "ApplyXorInPlaceL":
-        call_stmt = f"ApplyXorInPlaceL(IntAsBigInt({value}), {reg_str});"
-        import_stmt = "Std.Canon"
-
-    else:
-        raise ValueError(f"未知 XOR 操作类型: {op_type}")
-
-    return {
-        "import": import_stmt,
-        "call": call_stmt,
-        "adjoint": True,
-        "controlled": True,
-    }
-
 BUILTIN_QUANTUM_OPERATIONS = {
     # "ApplyQFT": {
     #     "adjoint": True,
@@ -808,16 +779,6 @@ BUILTIN_QUANTUM_OPERATIONS = {
         "controlled": True,
         "generator": lambda call_type, num_qubits: make_incby_block("IncByLEUsingAddLE", call_type, num_qubits),
     },
-    "ApplyXorInPlace": {
-        "adjoint": True,
-        "controlled": True,
-        "generator": lambda call_type, num_qubits: make_apply_xor_inplace_block("ApplyXorInPlace", call_type, num_qubits),
-    },
-    "ApplyXorInPlaceL": {
-        "adjoint": True,
-        "controlled": True,
-        "generator": lambda call_type, num_qubits: make_apply_xor_inplace_block("ApplyXorInPlaceL", call_type, num_qubits),
-    },
 }
 
 MIN_QUBITS_REQUIRED = {
@@ -850,13 +811,30 @@ def generate_random_gate_block(
     extra_ops = []
 
     MAX_RETRIES = 100
-    i = 0
     attempts = 0
 
+    available_indices = list(range(len(target_indices)))
+
+    # 提前决定是否加前缀修饰符
+    use_prefix = random.random() < 0.5
+    control_indices = []
+    data_indices = available_indices  # 默认全部 qubit 都参与
+
+    if use_prefix and call_type in ("controlled", "ctl", "adj+ctl") and len(available_indices) >= 2:
+        num_controls = random.randint(1, len(available_indices) // 2)
+        control_indices = sorted(random.sample(available_indices, num_controls))
+        data_indices = [i for i in available_indices if i not in control_indices]
+
+        if not data_indices:
+            # fallback，无法拆分控制位/受控位
+            use_prefix = False
+            control_indices = []
+            data_indices = available_indices
+
+    i = 0
     while i < depth and attempts < MAX_RETRIES:
         attempts += 1
 
-        # 20% 概率使用内建模块
         if random.random() < 1:
             name = random.choice(list(BUILTIN_QUANTUM_OPERATIONS.keys()))
             props = BUILTIN_QUANTUM_OPERATIONS[name]
@@ -868,21 +846,18 @@ def generate_random_gate_block(
             if call_type in ("controlled", "ctl") and not props.get("controlled"):
                 continue
 
-            if len(target_indices) < MIN_QUBITS_REQUIRED.get(name, 1):
+            if len(data_indices) < MIN_QUBITS_REQUIRED.get(name, 1):
                 continue
 
-            # ✅ 统一调用内建模块的生成器
             if name == "ApplyToEach":
                 block_name = register_single_qubit_block()
                 op_props = props["generator"](block_name, call_type)
                 extra_ops.append(block_name)
-            # elif name == "ApproximatelyPreparePureStateCP":
-            #     op_props = props["generator"](len(target_indices), call_type)
             else:
-                op_props = props["generator"](call_type, len(target_indices))  # 例如 ApplyQFT, ApplyOperationPowerA
+                op_props = props["generator"](call_type, len(data_indices))
 
             instructions.append(op_props["call"])
-            used_indices.update(range(len(target_indices)))
+            used_indices.update([target_indices[i] for i in data_indices])
             i += 1
             continue
 
@@ -890,7 +865,6 @@ def generate_random_gate_block(
         props = SUPPORTED_GATES[gate_type]
         arity = props["arity"]
 
-        # 类型检查
         if call_type == "adj+ctl" and not (props["adjoint"] and props["controlled"]):
             continue
         if call_type in ("controlled", "ctl") and not props["controlled"]:
@@ -898,84 +872,106 @@ def generate_random_gate_block(
         if call_type in ("adjoint", "adj") and not props["adjoint"]:
             continue
 
-        # ---------- 特殊门 ----------
+        if arity != "var" and len(data_indices) < arity:
+            continue
+
+        def qstr(indices):
+            return ", ".join(f"q[{i}]" for i in indices)
+
         if gate_type == "Exp":
-            qubit_count = random.randint(1, min(3, len(target_indices)))
-            if len(target_indices) < qubit_count:
-                continue
-            selected = random.sample(range(len(target_indices)), qubit_count)
-            used_indices.update(selected)
-            pauli_labels = [random.choice(["PauliX", "PauliY", "PauliZ"]) for _ in range(qubit_count)]
+            qubit_count = random.randint(1, min(3, len(data_indices)))
+            selected = random.sample(data_indices, qubit_count)
+            pauli_labels = [random.choice(["PauliX", "PauliY", "PauliZ"]) for _ in selected]
             theta = round(random.uniform(0, 2 * math.pi), 6)
-            paulis_str = "[" + ", ".join(pauli_labels) + "]"
-            qubits_str = "[" + ", ".join(f"q[{i}]" for i in selected) + "]"
-            instructions.append(f"Exp({paulis_str}, {theta}, {qubits_str});")
+            instructions.append(f"Exp([{', '.join(pauli_labels)}], {theta}, [{qstr(selected)}]);")
+            used_indices.update([target_indices[i] for i in selected])
             i += 1
             continue
 
         elif gate_type == "ApplyPauli":
-            qubit_count = random.randint(1, min(3, len(target_indices)))
-            if len(target_indices) < qubit_count:
-                continue
-            selected = random.sample(range(len(target_indices)), qubit_count)
-            used_indices.update(selected)
-            paulis = [random.choice(["PauliX", "PauliY", "PauliZ"]) for _ in range(qubit_count)]
-            paulis_str = "[" + ", ".join(paulis) + "]"
-            qubits_str = "[" + ", ".join(f"q[{i}]" for i in selected) + "]"
-            instructions.append(f"ApplyPauli({paulis_str}, {qubits_str});")
+            qubit_count = random.randint(1, min(3, len(data_indices)))
+            selected = random.sample(data_indices, qubit_count)
+            paulis = [random.choice(["PauliX", "PauliY", "PauliZ"]) for _ in selected]
+            instructions.append(f"ApplyPauli([{', '.join(paulis)}], [{qstr(selected)}]);")
+            used_indices.update([target_indices[i] for i in selected])
             i += 1
             continue
 
         elif gate_type == "ResetAll":
-            qubit_count = random.randint(1, len(target_indices))
-            selected = random.sample(range(len(target_indices)), qubit_count)
-            used_indices.update(selected)
-            qargs = "[" + ", ".join(f"q[{i}]" for i in selected) + "]"
-            instructions.append(f"ResetAll({qargs});")
+            qubit_count = random.randint(1, len(data_indices))
+            selected = random.sample(data_indices, qubit_count)
+            instructions.append(f"ResetAll([{qstr(selected)}]);")
+            used_indices.update([target_indices[i] for i in selected])
             i += 1
             continue
 
         elif gate_type == "ApplyCNOTChain":
-            qubit_count = random.randint(1, len(target_indices))  # ✅ 允许单 qubit
-            selected = random.sample(range(len(target_indices)), qubit_count)
-            used_indices.update(selected)
-            qargs = "[" + ", ".join(f"q[{i}]" for i in selected) + "]"
-            instructions.append(f"ApplyCNOTChain({qargs});")
+            qubit_count = random.randint(1, len(data_indices))
+            selected = random.sample(data_indices, qubit_count)
+            instructions.append(f"ApplyCNOTChain([{qstr(selected)}]);")
+            used_indices.update([target_indices[i] for i in selected])
             i += 1
             continue
-        # ---------- END 特殊门 ----------
 
-        if arity != "var" and len(target_indices) < arity:
-            continue
+        if arity == "var":
+            selected = random.sample(data_indices, 1)
+        else:
+            selected = random.sample(data_indices, arity)
 
-        qubits = random.sample(range(len(target_indices)), arity if arity != "var" else 1)
-        used_indices.update(qubits)
-        qubit_args = ", ".join(f"q[{i}]" for i in qubits)
+        qubit_args = qstr(selected)
+        used_indices.update([target_indices[i] for i in selected])
 
         if gate_type in ["Rx", "Ry", "Rz", "R1", "Rxx", "Ryy", "Rzz"]:
             angle = round(random.uniform(0, 2 * math.pi), 6)
             instructions.append(f"{gate_type}({angle}, {qubit_args});")
-
         elif gate_type == "R1Frac":
-            q = qubits[0]
             numerator = random.randint(1, 15)
             power = random.randint(1, 10)
-            instructions.append(f"R1Frac({numerator}, {power}, q[{q}]);")
-
+            instructions.append(f"R1Frac({numerator}, {power}, q[{selected[0]}]);")
         elif gate_type == "RFrac":
-            q = qubits[0]
             pauli = random.choice(["PauliX", "PauliY", "PauliZ"])
             numerator = random.randint(1, 15)
             power = random.randint(1, 10)
-            instructions.append(f"RFrac({pauli}, {numerator}, {power}, q[{q}]);")
+            instructions.append(f"RFrac({pauli}, {numerator}, {power}, q[{selected[0]}]);")
         elif gate_type == "ApplyP":
-            q = qubits[0]
             pauli = random.choice(["PauliX", "PauliY", "PauliZ"])
-            instructions.append(f"ApplyP({pauli}, q[{q}]);")
-
+            instructions.append(f"ApplyP({pauli}, q[{selected[0]}]);")
         else:
             instructions.append(f"{gate_type}({qubit_args});")
 
         i += 1
 
+    if not instructions:
+        raise RuntimeError("未能生成有效操作块")
+
+    uid = uuid.uuid4().hex[:8]
+    op_name = f"__GenBlock_{uid}"
+    body = "\n    " + "\n    ".join(instructions)
+
+    if call_type == "adjoint":
+        sig = ": Unit is Adj"
+    elif call_type in ("controlled", "ctl"):
+        sig = ": Unit is Ctl"
+    elif call_type == "adj+ctl":
+        sig = ": Unit is Adj + Ctl"
+    else:
+        sig = ": Unit"
+
+    inline_op = f"operation {op_name}(q : Qubit[]) {sig} {{\n{body}\n}}"
+
+    if use_prefix and control_indices:
+        controls_str = "[" + ", ".join(f"q[{i}]" for i in control_indices) + "]"
+        targets_str = "[" + ", ".join(f"q[{i}]" for i in data_indices) + "]"
+
+        if call_type in ("controlled", "ctl"):
+            call_stmt = f"Controlled {op_name}({controls_str}, {targets_str});"
+        else:
+            call_stmt = f"Controlled Adjoint {op_name}({controls_str}, {targets_str});"
+    else:
+        call_stmt = f"{op_name}(q);"
+
+    instructions = [inline_op, call_stmt]
+    extra_ops = []
+
     return used_indices, instructions, extra_ops
+
