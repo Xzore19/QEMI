@@ -250,17 +250,23 @@ def make_apply_pauli_from_int_props(call_type: str, max_qubits: int = 5) -> Dict
         "controlled": True,
     }
 
-def make_add_le_props(call_type: str = "adjoint", max_qubits: int = 6) -> Dict[str, Any]:
+def make_add_block_by_type(op_name: str, call_type: str = "plain", num_qubits: int = 9) -> Dict[str, Any]:
     import random
 
-    indices = list(range(max_qubits))
+    if call_type != "plain":
+        raise ValueError(f"{op_name} 仅允许在 plain 模式中生成（因使用 ResetAll）")
+
+    if num_qubits < 3:
+        raise ValueError(f"{op_name} 至少需要 3 个 qubit")
+
+    indices = list(range(num_qubits))
     random.shuffle(indices)
 
-    max_n = max_qubits // 3
+    max_n = num_qubits // 3
     n = random.randint(1, max_n)
 
     if len(indices) < 3 * n:
-        raise ValueError("qubit 数不足，无法生成非重叠的三组寄存器。")
+        raise ValueError("qubit 数不足，无法分配非重叠的三组寄存器")
 
     xs_indices = sorted(indices[:n])
     ys_indices = sorted(indices[n:2*n])
@@ -270,15 +276,76 @@ def make_add_le_props(call_type: str = "adjoint", max_qubits: int = 6) -> Dict[s
     ys = [f"q[{i}]" for i in ys_indices]
     zs = [f"q[{i}]" for i in zs_indices]
 
-    reset_stmt = f"ResetAll([{', '.join(zs)}]);"
-    add_stmt = f"AddLE([{', '.join(xs)}], [{', '.join(ys)}], [{', '.join(zs)}]);"
+    reset_stmt = f"ResetAll([{', '.join(zs[1:])}]);" if len(zs) > 1 else ""
+    call_stmt = f"{op_name}([{', '.join(xs)}], [{', '.join(ys)}], [{', '.join(zs)}]);"
 
     return {
         "import": "Std.Arithmetic",
-        "call": f"{reset_stmt}\n{add_stmt}",
+        "call": (reset_stmt + "\n" if reset_stmt else "") + call_stmt,
         "adjoint": False,
         "controlled": False,
     }
+
+def make_ripple_carry_cg_incbyle_props(call_type: str = "plain", num_qubits: int = 9) -> Dict[str, Any]:
+    import random
+
+    if num_qubits < 2:
+        raise ValueError("RippleCarryCGIncByLE 至少需要 2 个 qubit")
+
+    indices = list(range(num_qubits))
+    random.shuffle(indices)
+
+    # 为保证 xs ≤ ys，预留最少长度
+    max_ys_len = num_qubits // 2
+    ys_len = random.randint(1, max_ys_len)
+    xs_len = random.randint(1, ys_len)
+
+    total_needed = xs_len + ys_len
+    if len(indices) < total_needed:
+        raise ValueError("可用 qubit 数不足以生成 RippleCarryCGIncByLE")
+
+    xs_indices = sorted(indices[:xs_len])
+    ys_indices = sorted(indices[xs_len:xs_len + ys_len])
+
+    xs = [f"q[{i}]" for i in xs_indices]
+    ys = [f"q[{i}]" for i in ys_indices]
+
+    return {
+        "import": "Std.Arithmetic",
+        "call": f"RippleCarryCGIncByLE([{', '.join(xs)}], [{', '.join(ys)}]);",
+        "adjoint": True,
+        "controlled": True,
+    }
+
+# def make_add_le_props(call_type: str = "adjoint", max_qubits: int = 6) -> Dict[str, Any]:
+#     import random
+
+#     indices = list(range(max_qubits))
+#     random.shuffle(indices)
+
+#     max_n = max_qubits // 3
+#     n = random.randint(1, max_n)
+
+#     if len(indices) < 3 * n:
+#         raise ValueError("qubit 数不足，无法生成非重叠的三组寄存器。")
+
+#     xs_indices = sorted(indices[:n])
+#     ys_indices = sorted(indices[n:2*n])
+#     zs_indices = sorted(indices[2*n:3*n])
+
+#     xs = [f"q[{i}]" for i in xs_indices]
+#     ys = [f"q[{i}]" for i in ys_indices]
+#     zs = [f"q[{i}]" for i in zs_indices]
+
+#     reset_stmt = f"ResetAll([{', '.join(zs)}]);"
+#     add_stmt = f"AddLE([{', '.join(xs)}], [{', '.join(ys)}], [{', '.join(zs)}]);"
+
+#     return {
+#         "import": "Std.Arithmetic",
+#         "call": f"{reset_stmt}\n{add_stmt}",
+#         "adjoint": False,
+#         "controlled": False,
+#     }
 
 def make_fourier_tdinc_by_le_props(call_type: str = "plain", max_qubits: int = 6) -> Dict[str, Any]:
     import random
@@ -330,42 +397,79 @@ def make_maj_props(call_type: str = "plain", max_qubits: int = 3) -> Dict[str, A
         "controlled": True,
     }
 
-def make_lookahead_dkrs_addle_props(call_type: str = "plain", max_qubits: int = 9) -> Dict[str, Any]:
-    import random
+# def make_lookahead_dkrs_addle_props(call_type: str = "plain", max_qubits: int = 9) -> Dict[str, Any]:
+#     import random
 
-    if call_type != "plain":
-        raise ValueError("LookAheadDKRSAddLE 仅允许在 plain 模式中生成（因含 Reset）。")
+#     if call_type != "plain":
+#         raise ValueError("LookAheadDKRSAddLE 仅允许在 plain 模式中生成（因含 Reset）。")
 
-    if max_qubits < 3:
-        raise ValueError("LookAheadDKRSAddLE 至少需要 3 个 qubit。")
+#     if max_qubits < 3:
+#         raise ValueError("LookAheadDKRSAddLE 至少需要 3 个 qubit。")
 
-    indices = list(range(max_qubits))
-    random.shuffle(indices)
+#     indices = list(range(max_qubits))
+#     random.shuffle(indices)
 
-    max_n = max_qubits // 3
-    n = random.randint(1, max_n)
+#     max_n = max_qubits // 3
+#     n = random.randint(1, max_n)
 
-    if len(indices) < 3 * n:
-        raise ValueError("qubit 数不足，无法生成非重叠的三组寄存器。")
+#     if len(indices) < 3 * n:
+#         raise ValueError("qubit 数不足，无法生成非重叠的三组寄存器。")
 
-    xs_indices = sorted(indices[:n])
-    ys_indices = sorted(indices[n:2*n])
-    zs_indices = sorted(indices[2*n:3*n])
+#     xs_indices = sorted(indices[:n])
+#     ys_indices = sorted(indices[n:2*n])
+#     zs_indices = sorted(indices[2*n:3*n])
 
-    xs = [f"q[{i}]" for i in xs_indices]
-    ys = [f"q[{i}]" for i in ys_indices]
-    zs = [f"q[{i}]" for i in zs_indices]
+#     xs = [f"q[{i}]" for i in xs_indices]
+#     ys = [f"q[{i}]" for i in ys_indices]
+#     zs = [f"q[{i}]" for i in zs_indices]
 
-    # ResetAll zs[1:]（除了 carry-in 位 zs[0]）
-    reset_stmt = f"ResetAll([{', '.join(zs[1:])}]);" if len(zs) > 1 else ""
-    call_stmt = f"LookAheadDKRSAddLE([{', '.join(xs)}], [{', '.join(ys)}], [{', '.join(zs)}]);"
+#     # ResetAll zs[1:]（除了 carry-in 位 zs[0]）
+#     reset_stmt = f"ResetAll([{', '.join(zs[1:])}]);" if len(zs) > 1 else ""
+#     call_stmt = f"LookAheadDKRSAddLE([{', '.join(xs)}], [{', '.join(ys)}], [{', '.join(zs)}]);"
 
-    return {
-        "import": "Std.Arithmetic",
-        "call": (reset_stmt + "\n" if reset_stmt else "") + call_stmt,
-        "adjoint": False,
-        "controlled": False,
-    }
+#     return {
+#         "import": "Std.Arithmetic",
+#         "call": (reset_stmt + "\n" if reset_stmt else "") + call_stmt,
+#         "adjoint": False,
+#         "controlled": False,
+#     }
+
+# def make_ripple_carry_cg_addle_props(call_type: str = "plain", num_qubits: int = 9) -> Dict[str, Any]:
+#     import random
+
+#     if call_type != "plain":
+#         raise ValueError("RippleCarryCGAddLE 仅允许在 plain 模式中生成（因使用 ResetAll）")
+
+#     if num_qubits < 3:
+#         raise ValueError("RippleCarryCGAddLE 至少需要 3 个 qubit")
+
+#     indices = list(range(num_qubits))
+#     random.shuffle(indices)
+
+#     max_n = num_qubits // 3
+#     n = random.randint(1, max_n)
+
+#     if len(indices) < 3 * n:
+#         raise ValueError("无法为 xs, ys, zs 分配非重叠的 qubit 子集")
+
+#     xs_indices = sorted(indices[:n])
+#     ys_indices = sorted(indices[n:2*n])
+#     zs_indices = sorted(indices[2*n:3*n])
+
+#     xs = [f"q[{i}]" for i in xs_indices]
+#     ys = [f"q[{i}]" for i in ys_indices]
+#     zs = [f"q[{i}]" for i in zs_indices]
+
+#     # Reset zs[1:] 保留 zs[0] 可为 carry-in
+#     reset_stmt = f"ResetAll([{', '.join(zs[1:])}]);" if len(zs) > 1 else ""
+#     call_stmt = f"RippleCarryCGAddLE([{', '.join(xs)}], [{', '.join(ys)}], [{', '.join(zs)}]);"
+
+#     return {
+#         "import": "Std.Arithmetic",
+#         "call": (reset_stmt + "\n" if reset_stmt else "") + call_stmt,
+#         "adjoint": False,
+#         "controlled": False,
+#     }
 
 def make_reflect_about_integer_props(call_type: str = "plain", max_qubits: int = 5) -> Dict[str, Any]:
     import random
@@ -434,6 +538,126 @@ def make_relabel_props(call_type: str = "plain", num_qubits: int = 5) -> Dict[st
         "controlled": False,
     }
 
+def make_ripple_carry_ttk_incbyle_props(call_type: str = "plain", num_qubits: int = 9) -> Dict[str, Any]:
+    import random
+
+    if num_qubits < 2:
+        raise ValueError("RippleCarryTTKIncByLE 至少需要 2 个 qubit")
+
+    indices = list(range(num_qubits))
+    random.shuffle(indices)
+
+    max_ys_len = num_qubits // 2
+    ys_len = random.randint(1, max_ys_len)
+    xs_len = random.randint(1, min(ys_len, max_ys_len))
+
+    if xs_len + ys_len > num_qubits:
+        raise ValueError("可用 qubit 数不足以生成 RippleCarryTTKIncByLE")
+
+    xs_indices = sorted(indices[:xs_len])
+    ys_indices = sorted(indices[xs_len:xs_len + ys_len])
+
+    xs = [f"q[{i}]" for i in xs_indices]
+    ys = [f"q[{i}]" for i in ys_indices]
+
+    return {
+        "import": "Std.Arithmetic",
+        "call": f"RippleCarryTTKIncByLE([{', '.join(xs)}], [{', '.join(ys)}]);",
+        "adjoint": True,
+        "controlled": True,
+    }
+
+def make_incby_block(op_type: str, call_type: str, num_qubits: int = 5) -> Dict[str, Any]:
+    import random
+
+    if num_qubits < 1:
+        raise ValueError(f"{op_type} 需要至少 1 个 qubit")
+
+    SAFE_INCBY_ADDERS = {
+        "plain": "RippleCarryCGIncByLE",
+        "adjoint": "RippleCarryCGIncByLE",
+        "controlled": "RippleCarryTTKIncByLE",  # CG 不支持 controlled
+        "adj+ctl": "RippleCarryTTKIncByLE",     # CG 不支持 controlled+adjoint
+    }
+
+    import_stmt = "Std.Arithmetic"
+    extra_import = ""
+
+    # 通用 ys 构造
+    def random_qubit_list(n):
+        return sorted(random.sample(range(num_qubits), n))
+
+    if op_type in ("IncByI", "IncByL", "IncByIUsingIncByLE", "IncByLUsingIncByLE"):
+        max_len = num_qubits
+        n = random.randint(1, max_len)
+        ys_indices = random_qubit_list(n)
+        ys_str = "[" + ", ".join(f"q[{i}]" for i in ys_indices) + "]"
+        max_val = 2 ** n - 1
+        c = random.randint(0, max_val)
+
+        if op_type == "IncByI":
+            call = f"IncByI({c}, {ys_str});"
+
+        elif op_type == "IncByL":
+            extra_import = "Microsoft.Quantum.Math"
+            call = f"IncByL(IntAsBigInt({c}), {ys_str});"
+
+        elif op_type == "IncByIUsingIncByLE":
+            adder = SAFE_INCBY_ADDERS[call_type]
+            call = f"IncByIUsingIncByLE({adder}, {c}, {ys_str});"
+
+        elif op_type == "IncByLUsingIncByLE":
+            adder = SAFE_INCBY_ADDERS[call_type]
+            extra_import = "Microsoft.Quantum.Math"
+            call = f"IncByLUsingIncByLE({adder}, IntAsBigInt({c}), {ys_str});"
+
+    elif op_type == "IncByLE":
+        max_len = num_qubits // 2
+        ys_len = random.randint(1, max_len)
+        xs_len = random.randint(1, ys_len)
+
+        total = xs_len + ys_len
+        if total > num_qubits:
+            raise ValueError("qubit 不足以分配 xs 和 ys")
+
+        indices = random.sample(range(num_qubits), total)
+        xs_indices = sorted(indices[:xs_len])
+        ys_indices = sorted(indices[xs_len:])
+
+        xs_str = "[" + ", ".join(f"q[{i}]" for i in xs_indices) + "]"
+        ys_str = "[" + ", ".join(f"q[{i}]" for i in ys_indices) + "]"
+        call = f"IncByLE({xs_str}, {ys_str});"
+
+    elif op_type == "IncByLEUsingAddLE":
+        max_len = num_qubits // 2
+        n = random.randint(1, max_len)
+
+        if 2 * n > num_qubits:
+            raise ValueError("qubit 不足以分配等长 xs 与 ys")
+
+        indices = random.sample(range(num_qubits), 2 * n)
+        xs_indices = sorted(indices[:n])
+        ys_indices = sorted(indices[n:])
+
+        xs_str = "[" + ", ".join(f"q[{i}]" for i in xs_indices) + "]"
+        ys_str = "[" + ", ".join(f"q[{i}]" for i in ys_indices) + "]"
+
+        call = f"IncByLEUsingAddLE(LookAheadDKRSAddLE, RippleCarryCGAddLE, {xs_str}, {ys_str});"
+
+    else:
+        raise ValueError(f"未知 IncBy 操作类型: {op_type}")
+
+    all_imports = [import_stmt]
+    if extra_import:
+        all_imports.append(extra_import)
+
+    return {
+        "import": "\n".join(all_imports),
+        "call": call,
+        "adjoint": True,
+        "controlled": True,
+    }
+
 BUILTIN_QUANTUM_OPERATIONS = {
     # "ApplyQFT": {
     #     "adjoint": True,
@@ -478,7 +702,7 @@ BUILTIN_QUANTUM_OPERATIONS = {
     "AddLE": {
         "adjoint": False,
         "controlled": False,
-        "generator": make_add_le_props,
+        "generator": lambda ct, nq: make_add_block_by_type("AddLE", ct, nq),
     },
     "FourierTDIncByLE": {
         "adjoint": True,
@@ -493,7 +717,7 @@ BUILTIN_QUANTUM_OPERATIONS = {
     "LookAheadDKRSAddLE": {
         "adjoint": False,
         "controlled": False,
-        "generator": make_lookahead_dkrs_addle_props,
+        "generator": lambda ct, nq: make_add_block_by_type("LookAheadDKRSAddLE", ct, nq),
     },
     "ReflectAboutInteger": {
         "adjoint": True,
@@ -510,6 +734,68 @@ BUILTIN_QUANTUM_OPERATIONS = {
         "controlled": False,
         "generator": make_relabel_props,
     },
+    "RippleCarryCGAddLE": {
+        "adjoint": False,
+        "controlled": False,
+        "generator": lambda ct, nq: make_add_block_by_type("RippleCarryCGAddLE", ct, nq),
+    },
+    "RippleCarryCGIncByLE": {
+        "adjoint": True,
+        "controlled": False,
+        "generator": make_ripple_carry_cg_incbyle_props,
+    },
+    "RippleCarryTTKIncByLE": {
+        "adjoint": True,
+        "controlled": True,
+        "generator": make_ripple_carry_ttk_incbyle_props,
+    },
+    "IncByI": {
+        "adjoint": True,
+        "controlled": True,
+        "generator": lambda call_type, num_qubits: make_incby_block("IncByI", call_type, num_qubits),
+    },
+    "IncByL": {
+        "adjoint": True,
+        "controlled": True,
+        "generator": lambda call_type, num_qubits: make_incby_block("IncByL", call_type, num_qubits),
+    },
+    "IncByLE": {
+        "adjoint": True,
+        "controlled": True,
+        "generator": lambda call_type, num_qubits: make_incby_block("IncByLE", call_type, num_qubits),
+    },
+    "IncByIUsingIncByLE": {
+        "adjoint": True,
+        "controlled": True,
+        "generator": lambda call_type, num_qubits: make_incby_block("IncByIUsingIncByLE", call_type, num_qubits),
+    },
+    "IncByLUsingIncByLE": {
+        "adjoint": True,
+        "controlled": True,
+        "generator": lambda call_type, num_qubits: make_incby_block("IncByLUsingIncByLE", call_type, num_qubits),
+    },
+    "IncByLEUsingAddLE": {
+        "adjoint": True,
+        "controlled": True,
+        "generator": lambda call_type, num_qubits: make_incby_block("IncByLEUsingAddLE", call_type, num_qubits),
+    },
+}
+
+MIN_QUBITS_REQUIRED = {
+    # 三寄存器
+    "AddLE": 3,
+    "MAJ": 3,
+    "LookAheadDKRSAddLE": 3,
+    "RippleCarryCGAddLE": 3,
+
+    # 双寄存器
+    "FourierTDIncByLE": 2,
+    "SwapReverseRegister": 2,
+    "Relabel": 2,
+    "RippleCarryCGIncByLE": 2,
+    "RippleCarryTTKIncByLE": 2,
+    "IncByLE": 2,
+    "IncByLEUsingAddLE": 3,
 }
 
 def generate_random_gate_block(
@@ -543,9 +829,7 @@ def generate_random_gate_block(
             if call_type in ("controlled", "ctl") and not props.get("controlled"):
                 continue
 
-            if name in ("AddLE", "MAJ", "LookAheadDKRSAddLE") and len(target_indices) < 3:
-                continue
-            if name in ("FourierTDIncByLE", "SwapReverseRegister", "Relabel") and len(target_indices) < 2:
+            if len(target_indices) < MIN_QUBITS_REQUIRED.get(name, 1):
                 continue
 
             # ✅ 统一调用内建模块的生成器
