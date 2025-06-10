@@ -167,20 +167,23 @@ class QSharpGenerator:
             f.write(code)
 
         fuzzing_code_lines = []
+        deadcode_level = 0
         inside_deadcode = False
         for line in code.splitlines():
             if "// --- DEADCODE START ---" in line:
+                deadcode_level += 1
                 inside_deadcode = True
                 continue
             if "// --- DEADCODE END ---" in line:
+                deadcode_level = max(0, deadcode_level - 1)
                 inside_deadcode = False
                 continue
-            if not inside_deadcode:
+            if not inside_deadcode and deadcode_level == 0:
                 if line.strip().startswith("namespace Main"):
                     line = line.replace("namespace Main", "namespace Main_fuzzing")
                 fuzzing_code_lines.append(line)
 
-        with open(fuzzing_path, "w") as f:
+        with open(fuzzing_path, "w", encoding="utf-8") as f:
             f.write("\n".join(fuzzing_code_lines))
 
         print(f"Q# main saved to {main_path}")

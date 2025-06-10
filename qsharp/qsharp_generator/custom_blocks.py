@@ -5,34 +5,34 @@ from typing import List, Tuple, Callable, Set, Dict, Any, Optional
 from qsharp_generator.functions import generate_random_complexpolar_vector, get_apply_to_each_call, register_single_qubit_block
  
 SUPPORTED_GATES = {
-    # "H":     {"arity": 1, "adjoint": True,  "controlled": True},
-    # "X":     {"arity": 1, "adjoint": True,  "controlled": True},
-    # "Y":     {"arity": 1, "adjoint": True,  "controlled": True},
-    # "Z":     {"arity": 1, "adjoint": True,  "controlled": True},
-    # "S":     {"arity": 1, "adjoint": True,  "controlled": True},
-    # "SX":    {"arity": 1, "adjoint": True,  "controlled": True},
-    # "T":     {"arity": 1, "adjoint": True,  "controlled": True},
-    # "I":     {"arity": 1, "adjoint": True,  "controlled": True},
-    # "Rx":    {"arity": 1, "adjoint": True,  "controlled": True},
-    # "Ry":    {"arity": 1, "adjoint": True,  "controlled": True},
-    # "Rz":    {"arity": 1, "adjoint": True,  "controlled": True},
-    # "R1":    {"arity": 1, "adjoint": True,  "controlled": True},
-    # "CNOT":  {"arity": 2, "adjoint": True,  "controlled": True},
-    # "SWAP":  {"arity": 2, "adjoint": True,  "controlled": True},
-    # "CX":    {"arity": 2, "adjoint": True,  "controlled": True},
-    # "CY":    {"arity": 2, "adjoint": True,  "controlled": True},
-    # "CZ":    {"arity": 2, "adjoint": True,  "controlled": True},
-    # "Rxx":   {"arity": 2, "adjoint": True,  "controlled": True},
-    # "Ryy":   {"arity": 2, "adjoint": True,  "controlled": True},
-    # "Rzz":   {"arity": 2, "adjoint": True,  "controlled": True},
-    # "CCNOT": {"arity": 3, "adjoint": True,  "controlled": True},
-    # "AND":   {"arity": 3, "adjoint": True,  "controlled": False},  # 新增支持
-    # "Exp": {"arity": "var", "adjoint": True, "controlled": True},
+    "H":     {"arity": 1, "adjoint": True,  "controlled": True},
+    "X":     {"arity": 1, "adjoint": True,  "controlled": True},
+    "Y":     {"arity": 1, "adjoint": True,  "controlled": True},
+    "Z":     {"arity": 1, "adjoint": True,  "controlled": True},
+    "S":     {"arity": 1, "adjoint": True,  "controlled": True},
+    "SX":    {"arity": 1, "adjoint": True,  "controlled": True},
+    "T":     {"arity": 1, "adjoint": True,  "controlled": True},
+    "I":     {"arity": 1, "adjoint": True,  "controlled": True},
+    "Rx":    {"arity": 1, "adjoint": True,  "controlled": True},
+    "Ry":    {"arity": 1, "adjoint": True,  "controlled": True},
+    "Rz":    {"arity": 1, "adjoint": True,  "controlled": True},
+    "R1":    {"arity": 1, "adjoint": True,  "controlled": True},
+    "CNOT":  {"arity": 2, "adjoint": True,  "controlled": True},
+    "SWAP":  {"arity": 2, "adjoint": True,  "controlled": True},
+    "CX":    {"arity": 2, "adjoint": True,  "controlled": True},
+    "CY":    {"arity": 2, "adjoint": True,  "controlled": True},
+    "CZ":    {"arity": 2, "adjoint": True,  "controlled": True},
+    "Rxx":   {"arity": 2, "adjoint": True,  "controlled": True},
+    "Ryy":   {"arity": 2, "adjoint": True,  "controlled": True},
+    "Rzz":   {"arity": 2, "adjoint": True,  "controlled": True},
+    "CCNOT": {"arity": 3, "adjoint": True,  "controlled": True},
+    "AND":   {"arity": 3, "adjoint": True,  "controlled": False},  # 新增支持
+    "Exp": {"arity": "var", "adjoint": True, "controlled": True},
     "R1Frac": {"arity": 1, "adjoint": True, "controlled": True},
     "RFrac": {"arity": 1, "adjoint": True, "controlled": True},
     "Reset": {"arity": 1, "adjoint": False, "controlled": False},
     "ResetAll": {"arity": "var", "adjoint": False, "controlled": False},
-    # "ApplyP": {"arity": 1, "adjoint": True, "controlled": True},
+    "ApplyP": {"arity": 1, "adjoint": True, "controlled": True},
     "ApplyPauli": {"arity": "var", "adjoint": True, "controlled": True},
     "ApplyCNOTChain": {"arity": "var", "adjoint": True, "controlled": True},
 }
@@ -659,46 +659,46 @@ def make_incby_block(op_type: str, call_type: str, num_qubits: int = 5) -> Dict[
     }
 
 BUILTIN_QUANTUM_OPERATIONS = {
-    # "ApplyQFT": {
-    #     "adjoint": True,
-    #     "controlled": True,
-    #     "generator": make_apply_qft_props,
-    # },
-    # "ApproximatelyPreparePureStateCP": {
-    #     "adjoint": False,
-    #     "controlled": False,
-    #     "generator": make_random_stateprep_block,
-    # },
-    # "PreparePureStateD": {
-    #     "adjoint": False,
-    #     "controlled": False,
-    #     "generator": make_prepare_pure_state_d_props,
-    # },
-    # "PrepareUniformSuperposition": {
-    #     "adjoint": False,  
-    #     "controlled": False,
-    #     "generator": make_prepare_uniform_superposition_props,
-    # },
-    # "ApplyToEach": {
-    #     "adjoint": True,
-    #     "controlled": True,
-    #     "generator": make_apply_to_each_props,
-    # },
-    # "ApplyOperationPowerA": {
-    #     "adjoint": True,
-    #     "controlled": False,
-    #     "generator": make_apply_op_power_a_props, 
-    # },
-    # "ApplyPauliFromBitString": {
-    #     "adjoint": True,
-    #     "controlled": True,
-    #     "generator": make_apply_pauli_from_bitstring_props,
-    # },
-    # "ApplyPauliFromInt": {
-    #     "adjoint": True,
-    #     "controlled": True,
-    #     "generator": make_apply_pauli_from_int_props,
-    # },
+    "ApplyQFT": {
+        "adjoint": True,
+        "controlled": True,
+        "generator": make_apply_qft_props,
+    },
+    "ApproximatelyPreparePureStateCP": {
+        "adjoint": False,
+        "controlled": False,
+        "generator": make_random_stateprep_block,
+    },
+    "PreparePureStateD": {
+        "adjoint": False,
+        "controlled": False,
+        "generator": make_prepare_pure_state_d_props,
+    },
+    "PrepareUniformSuperposition": {
+        "adjoint": False,  
+        "controlled": False,
+        "generator": make_prepare_uniform_superposition_props,
+    },
+    "ApplyToEach": {
+        "adjoint": True,
+        "controlled": True,
+        "generator": make_apply_to_each_props,
+    },
+    "ApplyOperationPowerA": {
+        "adjoint": True,
+        "controlled": False,
+        "generator": make_apply_op_power_a_props, 
+    },
+    "ApplyPauliFromBitString": {
+        "adjoint": True,
+        "controlled": True,
+        "generator": make_apply_pauli_from_bitstring_props,
+    },
+    "ApplyPauliFromInt": {
+        "adjoint": True,
+        "controlled": True,
+        "generator": make_apply_pauli_from_int_props,
+    },
     "AddLE": {
         "adjoint": False,
         "controlled": False,
@@ -823,7 +823,8 @@ def generate_random_gate_block(
     if use_prefix and call_type in ("controlled", "ctl", "adj+ctl") and len(available_indices) >= 2:
         num_controls = random.randint(1, len(available_indices) // 2)
         control_indices = sorted(random.sample(available_indices, num_controls))
-        data_indices = [i for i in available_indices if i not in control_indices]
+        data_indices = list(range(len(target_indices)-num_controls))
+        new_target_indices = [i for i in available_indices if i not in control_indices]
 
         if not data_indices:
             # fallback，无法拆分控制位/受控位
@@ -835,7 +836,7 @@ def generate_random_gate_block(
     while i < depth and attempts < MAX_RETRIES:
         attempts += 1
 
-        if random.random() < 1:
+        if random.random() < 0.3:
             name = random.choice(list(BUILTIN_QUANTUM_OPERATIONS.keys()))
             props = BUILTIN_QUANTUM_OPERATIONS[name]
 
@@ -941,9 +942,6 @@ def generate_random_gate_block(
 
         i += 1
 
-    if not instructions:
-        raise RuntimeError("未能生成有效操作块")
-
     uid = uuid.uuid4().hex[:8]
     op_name = f"__GenBlock_{uid}"
     body = "\n    " + "\n    ".join(instructions)
@@ -961,7 +959,7 @@ def generate_random_gate_block(
 
     if use_prefix and control_indices:
         controls_str = "[" + ", ".join(f"q[{i}]" for i in control_indices) + "]"
-        targets_str = "[" + ", ".join(f"q[{i}]" for i in data_indices) + "]"
+        targets_str = "[" + ", ".join(f"q[{i}]" for i in new_target_indices) + "]"
 
         if call_type in ("controlled", "ctl"):
             call_stmt = f"Controlled {op_name}({controls_str}, {targets_str});"

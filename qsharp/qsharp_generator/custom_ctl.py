@@ -9,6 +9,7 @@ CONTROL_BLOCK_REGISTRY = [
     "APPLY_IF_L",
     "FOR_LOOP",
     "IFELSE",
+    "CTL_ON_CLASSICAL",
 ]
 
 CONTROL_BLOCK_REGISTRY_P = [
@@ -40,14 +41,20 @@ def make_nested_or_fallback_body(
     from qsharp_generator.custom_ctl import generate_random_control_block
     from qsharp_generator.custom_blocks import generate_random_gate_block
     from qsharp_generator.functions import indent
+    from qsharp_generator.deadcode import generate_fixed_deadcode_block
 
     # ✅ 用局部 index list 替代全局 target_indices 传下去
     local_indices = list(range(len(target_indices)))
 
-    if random.random() < 0.5:
+    if random.random() < 0.3:
         maybe_nested = generate_random_control_block(local_indices, depth - 1, call_type)
         if maybe_nested is not None:
             return indent(maybe_nested["call"].splitlines(), level=1)
+        
+    if random.random() < 0.5:
+        maybe_deadcode = generate_fixed_deadcode_block(local_indices, depth - 1, call_type)
+        if maybe_deadcode is not None:
+            return indent(maybe_deadcode["call"].splitlines(), level=1)
 
     _, instructions, _ = generate_random_gate_block(
         call_type=call_type,
@@ -337,6 +344,65 @@ def make_if_else_block(
         "controlled": call_type in ("controlled", "adj+ctl"),
     }
 
+def make_controlled_on_classical_block(
+    available_indices: List[int],
+    depth: int,
+    call_type: str,
+) -> Optional[Dict[str, Any]]:
+    if len(available_indices) < 2:
+        return None
+
+    N = len(available_indices)
+    local_indices = list(range(N))
+    inline_op_name = f"__ControlledBody_{uuid.uuid4().hex[:8]}"
+    modifier = " is Adj + Ctl"
+
+    # 控制与目标 qubit 分配
+    num_ctrl = random.randint(1, N - 1)
+    ctrl = sorted(random.sample(local_indices, num_ctrl))
+    target = sorted([i for i in local_indices if i not in ctrl])
+    if not target:
+        return None
+
+    ctrl_str = ", ".join(f"q[{available_indices[i]}]" for i in ctrl)
+    tgt_str = ", ".join(f"q[{available_indices[i]}]" for i in target)
+
+    # 嵌套 operation 体生成
+    call_type = "adj+ctl"
+    body = make_nested_or_fallback_body(target, depth, call_type)
+
+    inline_op = (
+        f"operation {inline_op_name}(q : Qubit[]) : Unit{modifier} {{\n"
+        f"{body}\n"
+        f"}}"
+    )
+
+    # 随机选择控制方式
+    if random.random() < 0.5:
+        # 使用 bitstring 控制
+        bits = [random.choice(["true", "false"]) for _ in ctrl]
+        bit_array = "[" + ", ".join(bits) + "]"
+        call = (
+            f"{inline_op}\n"
+            f"ApplyControlledOnBitString({bit_array}, {inline_op_name}, "
+            f"[{ctrl_str}], [{tgt_str}]);"
+        )
+    else:
+        # 使用 int 控制
+        max_val = 2 ** len(ctrl) - 1
+        int_state = random.randint(0, max_val)
+        call = (
+            f"{inline_op}\n"
+            f"ApplyControlledOnInt({int_state}, {inline_op_name}, "
+            f"[{ctrl_str}], [{tgt_str}]);"
+        )
+
+    return {
+        "import": None,
+        "call": call,
+        "adjoint": True,
+        "controlled": True,
+    }
 
 def make_repeat_until_block(
     available_indices: List[int],
@@ -507,6 +573,10 @@ def generate_random_control_block(
         if len(available_indices) < 3:
             return None
         return make_apply_if_relation_le_block(available_indices, depth, call_type)
+    if block == "CTL_ON_CLASSICAL":
+        if len(available_indices) < 2:
+            return None
+        return make_controlled_on_classical_block(available_indices, depth, call_type)
     if block == "APPLY_IF_L":
         if len(available_indices) < 2:
             return None

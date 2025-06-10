@@ -14,7 +14,8 @@ DEADCODE_BLOCK_REGISTRY = [
 
 DEADCODE_BLOCK_REGISTRY_P = [
     "REPEAT_UNTIL_DEADCODE",
-    "WHILE_FALSE"
+    "WHILE_FALSE",
+    "CTL_ON_CLASSICAL"
 ]
 
 APPLY_IF_OPS = [
@@ -338,11 +339,9 @@ def make_fixed_if_else_deadcode_block(
         ]
 
         full_code = (
-            "// --- DEADCODE IF-ELSE START ---\n" +
             dead_inline_op + "\n\n" +
             "\n".join(inline_op_lines) +
-            f"\n\n{inline_name}(q);" +  # ✅ 加上调用
-            "\n// --- DEADCODE IF-ELSE END ---"
+            f"\n\n{inline_name}(q);"
         )
     
     else:
@@ -598,6 +597,76 @@ def make_fixed_while_false_block(
         "controlled": use_controlled,
     }
 
+def make_bitstring_deadcode_block(
+    target_indices: List[int],
+    depth: int,
+    call_type: str = "adj+ctl"
+) -> Optional[Dict[str, Any]]:
+    local_indices = list(range(len(target_indices)))
+    dead_inline_name = f"__DeadBlock_{uuid.uuid4().hex[:8]}"
+    wrapper_inline_name = f"__InlineBitstringDeadcode_{uuid.uuid4().hex[:8]}"
+    modifier = get_qsharp_modifier(call_type)
+
+    call_type = "adj+ctl"
+    dead_body = make_nested_or_fallback_body(local_indices, depth, call_type)
+    if not dead_body:
+        return None
+
+    dead_inline_op = (
+        f"operation {dead_inline_name}(q : Qubit[]) : Unit{modifier} {{\n"
+        f"{indent(dead_body.splitlines(), level=1)}\n"
+        f"}}"
+    )
+
+    use_bitstring = random.random() < 0.5
+    ctrl_bits = [random.choice([False, True]) for _ in range(3)]
+    ctrl_init = [f"        X(ctrl[{i}]);" for i, b in enumerate(ctrl_bits) if b]
+    actual_value = "".join("1" if b else "0" for b in ctrl_bits)
+
+    if use_bitstring:
+        # 设置一个永远不匹配的目标位串
+        mismatch_bits = ["true" if not b else "false" for b in ctrl_bits]
+        bit_str = "[" + ", ".join(mismatch_bits) + "]"
+
+        call_stmt = [
+            *ctrl_init,
+            f"        ApplyControlledOnBitString({bit_str}, {dead_inline_name}, ctrl, q);"
+        ]
+    else:
+        # 控制值为实际状态 + 偏移，确保不匹配
+        actual_int = sum(2**i for i, b in enumerate(ctrl_bits) if b)
+        mismatched_int = (actual_int + random.randint(1, 7)) % 8
+        call_stmt = [
+            f"        // ctrl actual = |{actual_value}⟩ (int {actual_int}), condition = {mismatched_int}",
+            *ctrl_init,
+            f"        ApplyControlledOnInt({mismatched_int}, {dead_inline_name}, ctrl, q);"
+        ]
+
+    wrapper_inline_op_lines = [
+        f"operation {wrapper_inline_name}(q : Qubit[]) : Unit{modifier} {{",
+        "    use ctrl = Qubit[3];",
+        "    within { } apply {",
+        "        // --- DEADCODE START ---",
+        *call_stmt,
+        "        // --- DEADCODE END ---",
+        "    }",
+        "    ResetAll(ctrl);",
+        "}"
+    ]
+
+    full_code = (
+        dead_inline_op + "\n\n" +
+        "\n".join(wrapper_inline_op_lines) +
+        f"\n\n{wrapper_inline_name}(q);"
+    )
+
+    return {
+        "import": None,
+        "call": full_code,
+        "adjoint": False,
+        "controlled": False,
+    }
+
 
 def generate_fixed_deadcode_block(
     available_indices: List[int],
@@ -636,5 +705,10 @@ def generate_fixed_deadcode_block(
         if len(available_indices) < 1 or depth <= 0:
             return None
         return make_fixed_while_false_block(available_indices, depth, call_type)
+    
+    if block == "CTL_ON_CLASSICAL":
+        if len(available_indices) < 1 or depth <= 0:
+            return None
+        return make_bitstring_deadcode_block(available_indices, depth, call_type)
 
     return None
