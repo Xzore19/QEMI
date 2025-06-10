@@ -242,63 +242,57 @@ def make_if_else_block(
 
     # ✅ plain 类型：插入就地量子门 + 测量 + if 条件
     if call_type == "plain" and N >= 3:
-        selected = sorted(random.sample(local_indices, 3))
-        used_qubits = [f"q[{available_indices[i]}]" for i in selected]
+        if random.random() < 0.5:
+            # === 方式 1: 当前已有的 测量型 if ===
+            selected = sorted(random.sample(local_indices, 3))
+            used_qubits = [f"q[{available_indices[i]}]" for i in selected]
 
-        # 生成量子门
-        _, ops, _ = generate_random_gate_block(
-            call_type="plain",
-            target_indices=list(range(3)),  # 假定局部映射为 q[0], q[1], q[2]
-            depth=3,
-        )
+            _, ops, _ = generate_random_gate_block(
+                call_type="plain",
+                target_indices=list(range(3)),
+                depth=3,
+            )
 
-        import re
+            import re
+            replaced_ops = []
+            for line in ops:
+                def repl(match):
+                    i = int(match.group(1))
+                    return used_qubits[i]
+                line = re.sub(r"q\[(\d+)\]", repl, line)
+                replaced_ops.append(line)
 
-        replaced_ops = []
-        for line in ops:
-            # 匹配所有 q[数字] 并替换为对应的 used_qubits 内容
-            def repl(match):
-                i = int(match.group(1))
-                return used_qubits[i]
-            line = re.sub(r"q\[(\d+)\]", repl, line)
-            replaced_ops.append(line)
+            meas_results = [f"let r{i} = Measure([PauliZ], [{q}]);" for i, q in enumerate(used_qubits)]
+            condition = " or ".join([f"r{i} == One" for i in range(3)])
 
-        # 生成测量语句
-        meas_results = []
-        for i, q in enumerate(used_qubits):
-            meas_results.append(f"let r{i} = Measure([PauliZ], [{q}]);")
+            if depth-3 <= 0:
+                if_body = make_nested_or_fallback_body(local_indices, depth, call_type)
+                else_body = make_nested_or_fallback_body(local_indices, depth, call_type)
+            else:
+                if_body = make_nested_or_fallback_body(local_indices, depth - 3, call_type)
+                else_body = make_nested_or_fallback_body(local_indices, depth - 3, call_type)
+            if not if_body or not else_body:
+                return None
 
-        # 拼接条件表达式
-        condition = " or ".join([f"r{i} == One" for i in range(3)])
+            block_lines = (
+                ["// --- MEASUREMENT BASED IF ---"]
+                + replaced_ops + meas_results
+                + [f"if {condition} {{"] + indent(if_body.splitlines(), 1).splitlines()
+                + ["} else {"] + indent(else_body.splitlines(), 1).splitlines()
+                + ["}"]
+            )
+            block = "\n".join(block_lines)
 
-        # 生成两个 body
-        if depth-3 <= 0: 
-            if_body = make_nested_or_fallback_body(local_indices, depth, call_type)
-            else_body = make_nested_or_fallback_body(local_indices, depth, call_type)
+            return {
+                "import": "Std.Intrinsic",
+                "call": block,
+                "adjoint": False,
+                "controlled": False,
+            }
+
         else:
-            if_body = make_nested_or_fallback_body(local_indices, depth - 3, call_type)
-            else_body = make_nested_or_fallback_body(local_indices, depth - 3, call_type)
-        if not if_body or not else_body:
-            return None
-
-        block_lines = (
-            ["// --- RANDOM FLAG BASED IF ---"]
-            + replaced_ops
-            + meas_results
-            + [f"if {condition} {{"]
-            + indent(if_body.splitlines(), 1).splitlines()
-            + ["} else {"]
-            + indent(else_body.splitlines(), 1).splitlines()
-            + ["}"]
-        )
-        block = "\n".join(block_lines)
-
-        return {
-            "import": "Std.Intrinsic",
-            "call": block,
-            "adjoint": False,
-            "controlled": False,
-        }
+            # === 方式 2: 使用 register_random_flag_block 的纯布尔表达式 ===
+            pass  # 落入下面的逻辑（非-plain处理）
 
     # ✅ 非 plain 情况：继续使用经典布尔 flag
     if_body = make_nested_or_fallback_body(local_indices, depth, call_type)
@@ -322,12 +316,18 @@ def make_if_else_block(
         call_if = f"{if_op}(q);"
         call_else = f"{else_op}(q);"
 
-    flag_func, _ = register_random_flag_block()
+    flag_func, _, requires_qubits = register_random_flag_block(call_type, local_indices)
+
+    # 根据是否需要 qubit 参数决定调用形式
+    if requires_qubits:
+        flag_call = f"{flag_func}(q)"
+    else:
+        flag_call = f"{flag_func}()"
 
     block = (
         f"{if_op_def}\n\n"
         f"{else_op_def}\n\n"
-        f"if {flag_func}() {{\n    {call_if}\n}} else {{\n    {call_else}\n}}"
+        f"if {flag_call} {{\n    {call_if}\n}} else {{\n    {call_else}\n}}"
     )
 
     return {

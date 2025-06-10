@@ -658,6 +658,35 @@ def make_incby_block(op_type: str, call_type: str, num_qubits: int = 5) -> Dict[
         "controlled": True,
     }
 
+def make_apply_xor_inplace_block(op_type: str, call_type: str, num_qubits: int = 5) -> Dict[str, Any]:
+    import random
+
+    if num_qubits < 1:
+        raise ValueError(f"{op_type} 需要至少 1 个 qubit")
+
+    n = random.randint(1, num_qubits)
+    indices = sorted(random.sample(range(num_qubits), n))
+    reg_str = "[" + ", ".join(f"q[{i}]" for i in indices) + "]"
+    value = random.randint(1, 2**n - 1)  # 至少一个 bit 是 1
+
+    if op_type == "ApplyXorInPlace":
+        call_stmt = f"ApplyXorInPlace({value}, {reg_str});"
+        import_stmt = "Std.Canon"
+
+    elif op_type == "ApplyXorInPlaceL":
+        call_stmt = f"ApplyXorInPlaceL(IntAsBigInt({value}), {reg_str});"
+        import_stmt = "Std.Canon"
+
+    else:
+        raise ValueError(f"未知 XOR 操作类型: {op_type}")
+
+    return {
+        "import": import_stmt,
+        "call": call_stmt,
+        "adjoint": True,
+        "controlled": True,
+    }
+
 BUILTIN_QUANTUM_OPERATIONS = {
     # "ApplyQFT": {
     #     "adjoint": True,
@@ -778,6 +807,16 @@ BUILTIN_QUANTUM_OPERATIONS = {
         "adjoint": True,
         "controlled": True,
         "generator": lambda call_type, num_qubits: make_incby_block("IncByLEUsingAddLE", call_type, num_qubits),
+    },
+    "ApplyXorInPlace": {
+        "adjoint": True,
+        "controlled": True,
+        "generator": lambda call_type, num_qubits: make_apply_xor_inplace_block("ApplyXorInPlace", call_type, num_qubits),
+    },
+    "ApplyXorInPlaceL": {
+        "adjoint": True,
+        "controlled": True,
+        "generator": lambda call_type, num_qubits: make_apply_xor_inplace_block("ApplyXorInPlaceL", call_type, num_qubits),
     },
 }
 

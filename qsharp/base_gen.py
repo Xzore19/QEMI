@@ -21,7 +21,11 @@ class QSharpGenerator:
         from qsharp_generator.functions import add_measure_all
 
         self.measure_instructions = add_measure_all(self.qubit_num)
-        call_types = random.choices(["plain", "adjoint", "controlled", "adj+ctl"], k=self.num_blocks)
+        call_types = random.choices(
+            ["plain", "adjoint", "controlled", "adj+ctl"],
+            weights=[3, 1, 1, 1],  # plain 的权重是 3，其它是 2
+            k=self.num_blocks
+        )
         block_ops = []
         test_body = []
         extra_single_blocks = []

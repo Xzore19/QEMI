@@ -2,7 +2,7 @@ import uuid
 from typing import List, Dict, Any, Optional
 import random
 from qsharp_generator.custom_blocks import generate_random_gate_block
-from qsharp_generator.functions import indent, get_qsharp_modifier, register_random_flag_block
+from qsharp_generator.functions import indent, get_qsharp_modifier, register_random_flag_block_for_dc
 from qsharp_generator.custom_ctl import make_nested_or_fallback_body
 from qsharp_generator.illegal_block import make_nested_or_illegal_or_fallback_body
 
@@ -232,7 +232,7 @@ def make_fixed_if_else_deadcode_block(
         if not else_body:
             return None
 
-        flag_func_name, value = register_random_flag_block()  # 返回 Bool 的经典表达式函数
+        flag_func_name, value, _ = register_random_flag_block_for_dc()  # 返回 Bool 的经典表达式函数
 
         modifier = get_qsharp_modifier(call_type)
 
@@ -355,7 +355,7 @@ def make_fixed_if_else_deadcode_block(
         if not else_body:
             return None
 
-        flag_func_name, value = register_random_flag_block()  # 返回 Bool 的经典表达式函数
+        flag_func_name, value, _ = register_random_flag_block_for_dc()  # 返回 Bool 的经典表达式函数
 
         modifier = get_qsharp_modifier(call_type)
 
@@ -467,7 +467,7 @@ def make_fixed_repeat_until_block(
     import uuid
     from qsharp_generator.functions import get_qsharp_modifier, indent
     from qsharp_generator.custom_ctl import make_nested_or_fallback_body
-    from qsharp_generator.functions import register_random_flag_block
+    from qsharp_generator.functions import register_random_flag_block_for_dc
 
     if not target_indices:
         return None
@@ -505,7 +505,7 @@ def make_fixed_repeat_until_block(
 
     # ✅ 注册 flag 函数，直到其返回值为 True ⇒ fixup 永远不会执行
     while True:
-        flag_func_name, flag_value = register_random_flag_block()
+        flag_func_name, flag_value, _ = register_random_flag_block_for_dc()
         if flag_value:
             break
 
@@ -541,7 +541,7 @@ def make_fixed_while_false_block(
     import uuid
     from qsharp_generator.functions import get_qsharp_modifier, indent
     from qsharp_generator.custom_ctl import make_nested_or_fallback_body
-    from qsharp_generator.functions import register_random_flag_block
+    from qsharp_generator.functions import register_random_flag_block_for_dc
 
     if not target_indices:
         return None
@@ -577,7 +577,7 @@ def make_fixed_while_false_block(
 
     # ✅ 注册一个总返回 False 的布尔函数作为 while 条件
     while True:
-        flag_func_name, flag_value = register_random_flag_block()
+        flag_func_name, flag_value, _ = register_random_flag_block_for_dc()
         if not flag_value:
             break  # 只接受返回 False 的函数
 

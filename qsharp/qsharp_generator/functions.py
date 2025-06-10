@@ -132,7 +132,7 @@ def register_random_flag_block_type_1() -> Tuple[str, bool]:
     )
 
     registered_random_flag_blocks.append(func_def)
-    return func_name, value
+    return func_name, value, 0
 
 
 def register_random_flag_block_type_2() -> Tuple[str, bool]:
@@ -171,10 +171,51 @@ def register_random_flag_block_type_2() -> Tuple[str, bool]:
     )
 
     registered_random_flag_blocks.append(func_def)
-    return func_name, value
+    return func_name, value, 0
 
-def register_random_flag_block() -> Tuple[str, bool]:
+def register_random_flag_block_type_3(available_indices: List[int]) -> Tuple[str, bool]:
+    uid = uuid.uuid4().hex[:8]
+    func_name = f"__RandomFlag_{uid}"
+
+    if not available_indices:
+        raise ValueError("没有可用 qubit，无法生成 CheckZero/CheckAllZero flag block")
+
     if random.random() < 0.5:
+        # 生成 CheckZero(q[i])
+        qid = random.choice(available_indices)
+        expr = f"CheckZero(q[{qid}])"
+        value = True
+    else:
+        # 生成 CheckAllZero([q[i1], q[i2], ...])
+        n = random.randint(1, len(available_indices))
+        selected = sorted(random.sample(available_indices, k=n))
+        qlist = "[" + ", ".join(f"q[{i}]" for i in selected) + "]"
+        expr = f"CheckAllZero({qlist})"
+        value = True
+
+    func_def = (
+        f"operation {func_name}(q : Qubit[]) : Bool {{\n"
+        f"    return {expr};\n"
+        f"}}"
+    )
+
+    registered_random_flag_blocks.append(func_def)
+    return func_name, value, 1
+
+def register_random_flag_block_for_dc() -> Tuple[str, bool]:
+    if random.random() < 0.5:
+        return register_random_flag_block_type_1()
+    else:
+        return register_random_flag_block_type_2()
+
+def register_random_flag_block(call_type: Optional[str], available_indices: Optional[List[int]] = None) -> Tuple[str, bool]:
+    if available_indices is None:
+        available_indices = list(range(10))  # 默认最多 10 个 qubit 可选
+
+    r = random.random()
+    if call_type=="plain":
+        return register_random_flag_block_type_3(available_indices)
+    elif r < 1/2:
         return register_random_flag_block_type_1()
     else:
         return register_random_flag_block_type_2()
