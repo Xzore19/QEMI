@@ -125,6 +125,7 @@ class QSharpGenerator:
             "Std.Diagnostics",
             "Std.Arithmetic",
             "Std.StatePreparation",
+            "Std.Logical",
         ]
         all_imports = sorted(set(default_imports))
         header = "\n" + "\n".join(f"    open {lib};" for lib in all_imports)

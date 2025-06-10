@@ -98,8 +98,7 @@ def get_qsharp_modifier(call_type: str) -> str:
 def register_random_flag_block_type_1() -> Tuple[str, bool]:
     uid = uuid.uuid4().hex[:8]
     func_name = f"__RandomFlag_{uid}"
-    
-    # 构造若干 ResultAsBool 表达式（固定输入 Zero 或 One）
+
     expr_pool = [
         ("ResultAsBool(Zero)", False),
         ("ResultAsBool(One)", True),
@@ -107,7 +106,6 @@ def register_random_flag_block_type_1() -> Tuple[str, bool]:
         ("not ResultAsBool(One)", False),
     ]
 
-    # 随机生成布尔变量赋值
     var_defs = []
     var_names = []
     values = []
@@ -118,27 +116,29 @@ def register_random_flag_block_type_1() -> Tuple[str, bool]:
         var_names.append(var)
         values.append(val)
 
-    # 随机组合布尔表达式
-    expr = f"({var_names[0]} and {var_names[1]}) or ({var_names[2]} and not {var_names[3]})"
-    value = (values[0] and values[1]) or (values[2] and not values[3])
+    # 随机选择组合方式：AND-OR 表达式 或 Xor 链式组合
+    if random.random() < 0.5:
+        expr = f"({var_names[0]} and {var_names[1]}) or ({var_names[2]} and not {var_names[3]})"
+        value = (values[0] and values[1]) or (values[2] and not values[3])
+    else:
+        expr = f"Xor(Xor({var_names[0]}, {var_names[1]}), Xor({var_names[2]}, {var_names[3]}))"
+        value = values[0] ^ values[1] ^ values[2] ^ values[3]
 
-    # 最终函数定义
     func_def = (
         f"function {func_name}() : Bool {{\n"
         + "\n".join(var_defs) + "\n"
         + f"    return {expr};\n"
         + "}"
     )
-  
-    # 注册
+
     registered_random_flag_blocks.append(func_def)
     return func_name, value
+
 
 def register_random_flag_block_type_2() -> Tuple[str, bool]:
     uid = uuid.uuid4().hex[:8]
     func_name = f"__RandomFlag_{uid}"
-    
-    # 构造若干 ResultAsBool 表达式（固定输入 Zero 或 One）
+
     expr_pool = [
         ("false", False),
         ("true", True),
@@ -146,7 +146,6 @@ def register_random_flag_block_type_2() -> Tuple[str, bool]:
         ("not true", False),
     ]
 
-    # 随机生成布尔变量赋值
     var_defs = []
     var_names = []
     values = []
@@ -157,19 +156,20 @@ def register_random_flag_block_type_2() -> Tuple[str, bool]:
         var_names.append(var)
         values.append(val)
 
-    # 随机组合布尔表达式
-    expr = f"({var_names[0]} and {var_names[1]}) or ({var_names[2]} and not {var_names[3]})"
-    value = (values[0] and values[1]) or (values[2] and not values[3])
+    if random.random() < 0.5:
+        expr = f"({var_names[0]} and {var_names[1]}) or ({var_names[2]} and not {var_names[3]})"
+        value = (values[0] and values[1]) or (values[2] and not values[3])
+    else:
+        expr = f"Xor(Xor({var_names[0]}, {var_names[1]}), Xor({var_names[2]}, {var_names[3]}))"
+        value = values[0] ^ values[1] ^ values[2] ^ values[3]
 
-    # 最终函数定义
     func_def = (
         f"function {func_name}() : Bool {{\n"
         + "\n".join(var_defs) + "\n"
         + f"    return {expr};\n"
         + "}"
     )
-  
-    # 注册
+
     registered_random_flag_blocks.append(func_def)
     return func_name, value
 
