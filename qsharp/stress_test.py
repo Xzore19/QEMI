@@ -77,7 +77,7 @@ for i in tqdm(range(1, ITERATIONS + 1), desc="Stress Test Progress", unit="iter"
         # Step 1: 运行 base_gen.py
         result_gen = subprocess.run(
             ["python", "base_gen.py"],
-            capture_output=True, text=True, timeout=30
+            capture_output=True, text=True
         )
         if result_gen.returncode != 0:
             log("[base_gen.py ERROR]")
@@ -104,7 +104,7 @@ for i in tqdm(range(1, ITERATIONS + 1), desc="Stress Test Progress", unit="iter"
         # Step 3: 运行 exeqs.py
         result_exec = subprocess.run(
             ["python", "exeqs.py", "--shots", str(EXEQS_SHOTS)],
-            capture_output=True, text=True, timeout=30
+            capture_output=True, text=True
         )
         if result_exec.returncode != 0:
             log("[exeqs.py ERROR]")

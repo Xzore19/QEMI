@@ -25671,3 +25671,56 @@ Main_fuzzing Distribution (collected in 0.01s):
 Hellinger distance between Main and Main_fuzzing: 0.4500
 
 [Time elapsed: 0.80 seconds]
+
+=== Iteration 1 ===
+[base_gen.py SUCCESS]
+[EXCEPTION]
+Traceback (most recent call last):
+  File "/home/luojunjie/EMI/qsharp/stress_test.py", line 105, in <module>
+    result_exec = subprocess.run(
+        ["python", "exeqs.py", "--shots", str(EXEQS_SHOTS)],
+        capture_output=True, text=True, timeout=30
+    )
+  File "/home/luojunjie/miniconda/envs/emi/lib/python3.13/subprocess.py", line 558, in run
+    stdout, stderr = process.communicate(input, timeout=timeout)
+                     ~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/luojunjie/miniconda/envs/emi/lib/python3.13/subprocess.py", line 1221, in communicate
+    stdout, stderr = self._communicate(input, endtime, timeout)
+                     ~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/luojunjie/miniconda/envs/emi/lib/python3.13/subprocess.py", line 2131, in _communicate
+    self._check_timeout(endtime, orig_timeout, stdout, stderr)
+    ~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/luojunjie/miniconda/envs/emi/lib/python3.13/subprocess.py", line 1265, in _check_timeout
+    raise TimeoutExpired(
+    ...<2 lines>...
+            stderr=b''.join(stderr_seq) if stderr_seq else None)
+subprocess.TimeoutExpired: Command '['python', 'exeqs.py', '--shots', '10000']' timed out after 30 seconds
+
+
+=== Iteration 2 ===
+[base_gen.py SUCCESS]
+[EXCEPTION]
+Traceback (most recent call last):
+  File "/home/luojunjie/EMI/qsharp/stress_test.py", line 105, in <module>
+    result_exec = subprocess.run(
+        ["python", "exeqs.py", "--shots", str(EXEQS_SHOTS)],
+        capture_output=True, text=True, timeout=30
+    )
+  File "/home/luojunjie/miniconda/envs/emi/lib/python3.13/subprocess.py", line 558, in run
+    stdout, stderr = process.communicate(input, timeout=timeout)
+                     ~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/luojunjie/miniconda/envs/emi/lib/python3.13/subprocess.py", line 1221, in communicate
+    stdout, stderr = self._communicate(input, endtime, timeout)
+                     ~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/luojunjie/miniconda/envs/emi/lib/python3.13/subprocess.py", line 2131, in _communicate
+    self._check_timeout(endtime, orig_timeout, stdout, stderr)
+    ~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/luojunjie/miniconda/envs/emi/lib/python3.13/subprocess.py", line 1265, in _check_timeout
+    raise TimeoutExpired(
+    ...<2 lines>...
+            stderr=b''.join(stderr_seq) if stderr_seq else None)
+subprocess.TimeoutExpired: Command '['python', 'exeqs.py', '--shots', '10000']' timed out after 30 seconds
+
+
+=== Iteration 3 ===
+[base_gen.py SUCCESS]

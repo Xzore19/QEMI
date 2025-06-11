@@ -12,93 +12,112 @@ namespace Main_fuzzing {
 
 
 
-function __RandomFlag_f700addf() : Bool {
-    let b0 = ResultAsBool(Zero);
-    let b1 = ResultAsBool(Zero);
-    let b2 = ResultAsBool(Zero);
-    let b3 = ResultAsBool(Zero);
-    return (b0 and b1) or (b2 and not b3);
-}
-function __RandomFlag_271b9a90() : Bool {
-    let b0 = not false;
-    let b1 = not true;
-    let b2 = false;
-    let b3 = not false;
+function __RandomFlag_8407735b() : Bool {
+    let b0 = not ResultAsBool(Zero);
+    let b1 = ResultAsBool(One);
+    let b2 = not ResultAsBool(Zero);
+    let b3 = not ResultAsBool(One);
     return (b0 and b1) or (b2 and not b3);
 }
 
 
 
-    operation ApplyRandomBlock0(q : Qubit[]) : Unit is Adj {
-        operation __ForLoopZeroBody_81688001(q : Qubit[]) : Unit is Adj {
-            operation __ForLoopBody_7c71b9f9(q : Qubit[]) : Unit is Adj {
-                operation __IfBody_87857bf0(q : Qubit[]) : Unit is Adj {
-                            operation __GenBlock_3b2b0ca7(q : Qubit[]) : Unit is Adj {
-                    
-                        CX(q[9], q[11]);
-                        SWAP(q[10], q[2]);
-                        IncByLUsingIncByLE(RippleCarryCGIncByLE, IntAsBigInt(8), [q[0], q[1], q[2], q[4], q[8], q[11]]);
-                        RippleCarryCGIncByLE([q[0], q[3]], [q[2], q[4], q[6], q[8], q[10], q[11]]);
+    operation ApplyRandomBlock0(q : Qubit[]) : Unit is Adj + Ctl {
+    }
+    operation ApplyRandomBlock1(q : Qubit[]) : Unit is Adj + Ctl {
+        operation __ControlledBody_e43bd8a0(q : Qubit[]) : Unit is Adj + Ctl {
+            operation __InlineApplyIfRelationL_9365999c(q : Qubit[]) : Unit is Adj + Ctl {
+                operation __InlineApplyIfRelationLE_d36655d1(q : Qubit[]) : Unit is Adj + Ctl {
+                    operation __ForLoopBody_53b6da28(q : Qubit[]) : Unit is Adj + Ctl {
+                        operation __ForLoopZeroBody_6e214d4d(q : Qubit[]) : Unit is Adj + Ctl {
+                                operation __GenBlock_0f13b5dc(q : Qubit[]) : Unit is Adj + Ctl {
+                        
+                            Rx(3.203308, q[0]);
+                            IncByL(IntAsBigInt(0), [q[0]]);
+                            R1(5.531504, q[0]);
+                        }
+                                __GenBlock_0f13b5dc(q);
+                        }
                     }
-                            __GenBlock_3b2b0ca7(q);
+                    for i in 1..3 {
+                        Controlled Adjoint __ForLoopBody_53b6da28([q[2]], [q[0], q[1]]);
+                    }
                 }
-                
-                operation __ElseBody_87857bf0(q : Qubit[]) : Unit is Adj {
-                }
-                
-                if __RandomFlag_f700addf() {
-                    Adjoint __IfBody_87857bf0(q);
-                } else {
-                    Adjoint __ElseBody_87857bf0(q);
-                }
+                let x = [q[1]];
+                let y = [q[3]];
+                let target = [q[0], q[2], q[4]];
+                ApplyIfLessOrEqualLE(__InlineApplyIfRelationLE_d36655d1, x, y, target);
             }
-            for i in 1..3 {
-                Adjoint __ForLoopBody_7c71b9f9(q);
-            }
+            let x = [q[4]];
+            let target = [q[0], q[1], q[2], q[3], q[7]];
+            ApplyIfLessOrEqualL(__InlineApplyIfRelationL_9365999c, 1L, x, target);
         }
+        ApplyControlledOnBitString([true, false], __ControlledBody_e43bd8a0, [q[4], q[7]], [q[0], q[1], q[2], q[3], q[5], q[6], q[8], q[9]]);
     }
-    operation ApplyRandomBlock1(q : Qubit[]) : Unit is Ctl {
-        operation __InlineApplyIfRelationLE_3106b255(q : Qubit[]) : Unit is Adj + Ctl {
-                operation __GenBlock_53b62480(q : Qubit[]) : Unit is Adj + Ctl {
+    operation ApplyRandomBlock2(q : Qubit[]) : Unit {
+        operation __ForLoopBody_0e5a9017(q : Qubit[]) : Unit {
+                operation __GenBlock_7918bbfe(q : Qubit[]) : Unit {
         
-            R1(4.950605, q[2]);
-            SX(q[5]);
-            IncByIUsingIncByLE(RippleCarryTTKIncByLE, 2, [q[4], q[5]]);
-            CX(q[3], q[8]);
-            Exp([PauliX, PauliY, PauliX], 5.604072, [q[6], q[1], q[5]]);
-            Exp([PauliY], 4.420781, [q[1]]);
-            IncByL(IntAsBigInt(306), [q[0], q[1], q[2], q[3], q[4], q[5], q[6], q[7], q[8]]);
-            CX(q[5], q[1]);
+            MAJ(q[0], q[3], q[2]);
+            SX(q[2]);
+            ResetAll([q[2], q[10], q[4], q[0], q[11], q[3], q[1], q[9], q[8]]);
+            SWAP(q[0], q[4]);
+            SX(q[3]);
+            ReflectAboutInteger(1, [q[11]]);
+            ResetAll([q[0], q[1], q[2], q[5], q[11]]);
+        PreparePureStateD(
+            [
+                0.226344,
+                0.073033,
+                0.094796,
+                0.158057,
+                0.030186,
+                0.065853,
+                0.015837,
+                0.012286,
+                0.208705,
+                0.152761,
+                0.019662,
+                0.248581,
+                0.290438,
+                0.269376,
+                0.072565,
+                0.140338,
+                0.129738,
+                0.258909,
+                0.173105,
+                0.093581,
+                0.051909,
+                0.235488,
+                0.195470,
+                0.085517,
+                0.110290,
+                0.210573,
+                0.230066,
+                0.308343,
+                0.269169,
+                0.141415,
+                0.248678,
+                0.088346
+            ],
+            [q[0], q[1], q[2], q[5], q[11]]
+        );
         }
-                __GenBlock_53b62480(q);
+                __GenBlock_7918bbfe(q);
         }
-        let x = [q[5]];
-        let y = [q[7]];
-        let target = [q[0], q[1], q[2], q[3], q[4], q[6], q[8], q[9], q[10]];
-        ApplyIfLessOrEqualLE(__InlineApplyIfRelationLE_3106b255, x, y, target);
-    }
-    operation ApplyRandomBlock2(q : Qubit[]) : Unit is Ctl {
-        operation __InlineApplyIfRelationLE_c56a80a1(q : Qubit[]) : Unit is Adj + Ctl {
-            operation __InlineIfElseDeadcode_ec4f9d96(q : Qubit[]) : Unit is Adj + Ctl {
-                if __RandomFlag_271b9a90() {
-                } else {
-                }
-            }
-            
-            __InlineIfElseDeadcode_ec4f9d96(q);
+        for i in 1..3 {
+            __ForLoopBody_0e5a9017(q);
         }
-        let x = [q[0], q[5], q[6]];
-        let y = [q[1], q[2], q[4]];
-        let target = [q[3], q[7], q[9]];
-        ApplyIfGreaterLE(__InlineApplyIfRelationLE_c56a80a1, x, y, target);
     }
 
     operation TestCircuit() : Result[] {
         use q = Qubit[12] {
-            X(q[2]);
-            Adjoint ApplyRandomBlock0(q);
-            Controlled ApplyRandomBlock1([q[2]], [q[0], q[1], q[3], q[4], q[5], q[6], q[7], q[8], q[9], q[10], q[11]]);
-            Controlled ApplyRandomBlock2([q[7], q[9]], [q[0], q[1], q[2], q[3], q[4], q[5], q[6], q[8], q[10], q[11]]);
+            X(q[1]);
+            X(q[7]);
+            X(q[8]);
+            Controlled Adjoint ApplyRandomBlock0([q[8]], [q[0], q[1], q[2], q[3], q[4], q[5], q[6], q[7], q[9], q[10], q[11]]);
+            Controlled Adjoint ApplyRandomBlock1([q[1], q[7]], [q[0], q[2], q[3], q[4], q[5], q[6], q[8], q[9], q[10], q[11]]);
+            ApplyRandomBlock2(q);
             let r0 = M(q[0]);
             let r1 = M(q[1]);
             let r2 = M(q[2]);
