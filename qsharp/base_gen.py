@@ -26,6 +26,7 @@ class QSharpGenerator:
             weights=[3, 3, 3, 3],  # plain 的权重是 3，其它是 2
             k=self.num_blocks
         )
+        init_controls = []
         block_ops = []
         test_body = []
         extra_single_blocks = []
@@ -46,13 +47,19 @@ class QSharpGenerator:
 
             if call_type in ("controlled", "adj+ctl"):
                 available = list(range(self.qubit_num))
-                num_ctrl = random.randint(1, self.qubit_num // 2)
+                num_ctrl = random.randint(1, min(2, self.qubit_num // 2))
                 ctrl = sorted(random.sample(available, num_ctrl))
                 target = sorted([i for i in available if i not in ctrl])
                 if not target:
                     call_type = "plain"
                     target = list(range(self.qubit_num))
                     ctrl = []
+                # 如果是第一个 block，记录下 ctrl 以便后面插入 X 操作
+                if idx == 0 and self.include_deadcode:
+                    init_controls = ctrl
+                if init_controls:
+                    for i in init_controls:
+                        test_body.append(f"X(q[{i}]);")
             else:
                 target = list(range(self.qubit_num))
                 ctrl = []

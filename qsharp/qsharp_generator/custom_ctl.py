@@ -194,7 +194,7 @@ def make_for_loop_block(
     use_controlled = False
     if call_type in ("controlled", "adj+ctl") and N >= 2 and random.random() < 0.5:
         use_controlled = True
-        num_ctrl = random.randint(1, N // 2)
+        num_ctrl = random.randint(1, min(2, N // 2))
         ctrl = sorted(random.sample(local_indices, num_ctrl))
         target = sorted([i for i in local_indices if i not in ctrl])
         if not target:
@@ -358,7 +358,7 @@ def make_controlled_on_classical_block(
     modifier = " is Adj + Ctl"
 
     # 控制与目标 qubit 分配
-    num_ctrl = random.randint(1, N - 1)
+    num_ctrl = random.randint(1, min(2, N // 2))
     ctrl = sorted(random.sample(local_indices, num_ctrl))
     target = sorted([i for i in local_indices if i not in ctrl])
     if not target:
@@ -372,7 +372,7 @@ def make_controlled_on_classical_block(
     body = make_nested_or_fallback_body(target, depth, call_type)
 
     inline_op = (
-        f"operation {inline_op_name}(q : Qubit[]) : Unit{modifier} {{\n"
+        f"operation {inline_op_name}(q : Qubit[]) : Unit is Adj + Ctl {{\n"
         f"{body}\n"
         f"}}"
     )
@@ -423,7 +423,7 @@ def make_repeat_until_block(
     # 尝试构造 controlled 调用
     if call_type in ("controlled", "adj+ctl") and N >= 2 and random.random() < 0.5:
         use_controlled = True
-        num_ctrl = random.randint(1, N // 2)
+        num_ctrl = random.randint(1, min(2, N // 2))
         ctrl = sorted(random.sample(local_indices, num_ctrl))
         target = sorted([i for i in local_indices if i not in ctrl])
         if not target:
@@ -506,7 +506,7 @@ def make_while_loop_block(
 
     if call_type in ("controlled", "adj+ctl") and N >= 2 and random.random() < 0.5:
         use_controlled = True
-        num_ctrl = random.randint(1, N // 2)
+        num_ctrl = random.randint(1, min(2, N // 2))
         ctrl = sorted(random.sample(local_indices, num_ctrl))
         target = sorted([i for i in local_indices if i not in ctrl])
         if not target:
