@@ -1,8 +1,15 @@
 import qsharp
 from collections import Counter
-from scipy.stats import chi2_contingency
+from math import sqrt
 import time
-from qsharp import StateDump
+import argparse
+
+# ==== 解析命令行参数 ====
+parser = argparse.ArgumentParser(description="Compare Q# circuit outputs via Hellinger distance")
+parser.add_argument("--shots", type=int, default=8192, help="Number of measurement shots (default: 8192)")
+args = parser.parse_args()
+
+SHOTS = args.shots
 
 qsharp.init(project_root=".")
 
@@ -24,30 +31,30 @@ def pretty_print(counter: Counter, name: str, duration: float):
         print(f"  {outcome}: {count} ({percent:.2f}%)")
     print()
 
-def perform_chi_square_test(dist1: Counter, dist2: Counter, name1="A", name2="B"):
-    all_keys = sorted(set(dist1) | set(dist2))
-    obs = [
-        [dist1.get(k, 0) for k in all_keys],
-        [dist2.get(k, 0) for k in all_keys]
-    ]
-    chi2, p, _, _ = chi2_contingency(obs)
-    print(f"Chi-square test p-value: {p:.4f}")
-    if p >= 0.05:
-        print("[PASS] (p >= 0.05)")
+def hellinger_distance(p: Counter, q: Counter) -> float:
+    all_keys = set(p) | set(q)
+    p_total = sum(p.values())
+    q_total = sum(q.values())
+    return sqrt(0.5 * sum(
+        (sqrt(p.get(k, 0) / p_total) - sqrt(q.get(k, 0) / q_total)) ** 2
+        for k in all_keys
+    ))
+
+def compare_distributions_with_hellinger(dist1: Counter, dist2: Counter, name1="A", name2="B", threshold=0.25):
+    h = hellinger_distance(dist1, dist2)
+    print(f"Hellinger distance between {name1} and {name2}: {h:.4f}")
+    if h > threshold:
+        print(f"[FAIL] (Hellinger distance {h:.4f} > {threshold})")
     else:
-        print("[FAIL] (p < 0.05)")
+        print(f"[PASS] (Hellinger distance {h:.4f} ≤ {threshold})")
     print()
 
-# 参数
-SHOTS = 1
+# ==== 主逻辑 ====
 
-# 收集主程序分布及耗时
 main_dist, main_time = collect_distribution("Main.TestCircuit", shots=SHOTS)
 fuzz_dist, fuzz_time = collect_distribution("Main_fuzzing.TestCircuit", shots=SHOTS)
 
-# 打印分布与时间
 pretty_print(main_dist, "Main", main_time)
 pretty_print(fuzz_dist, "Main_fuzzing", fuzz_time)
 
-# 执行卡方分析
-perform_chi_square_test(main_dist, fuzz_dist)
+compare_distributions_with_hellinger(main_dist, fuzz_dist, "Main", "Main_fuzzing")
