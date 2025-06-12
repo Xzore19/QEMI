@@ -1,1777 +1,2281 @@
 
 === Iteration 1 ===
 [base_gen.py SUCCESS]
-[exeqs.py SUCCESS]
-Main Distribution (collected in 1.67s):
-
-Main_fuzzing Distribution (collected in 1.65s):
-
-Hellinger distance between Main and Main_fuzzing: 0.0000
-
-[Time elapsed: 4.10 seconds]
-
-=== Iteration 2 ===
-[base_gen.py SUCCESS]
-[exeqs.py SUCCESS]
-Main Distribution (collected in 3.11s):
-
-Main_fuzzing Distribution (collected in 0.61s):
-
-Hellinger distance between Main and Main_fuzzing: 0.0224
-
-[Time elapsed: 4.48 seconds]
-
-=== Iteration 3 ===
-[base_gen.py SUCCESS]
-[exeqs.py SUCCESS]
-Main Distribution (collected in 1.01s):
-
-Main_fuzzing Distribution (collected in 1.01s):
-
-Hellinger distance between Main and Main_fuzzing: 0.0000
-
-[Time elapsed: 2.77 seconds]
-
-=== Iteration 4 ===
-[base_gen.py SUCCESS]
-[exeqs.py SUCCESS]
-Main Distribution (collected in 0.33s):
-
-Main_fuzzing Distribution (collected in 0.32s):
-
-Hellinger distance between Main and Main_fuzzing: 0.0000
-
-[Time elapsed: 1.43 seconds]
-
-=== Iteration 5 ===
-[base_gen.py SUCCESS]
-[exeqs.py SUCCESS]
-Main Distribution (collected in 1.19s):
-
-Main_fuzzing Distribution (collected in 0.94s):
-
-Hellinger distance between Main and Main_fuzzing: 0.0056
-
-[Time elapsed: 2.90 seconds]
-
-=== Iteration 6 ===
-[base_gen.py SUCCESS]
-[exeqs.py SUCCESS]
-Main Distribution (collected in 3.73s):
-
-Main_fuzzing Distribution (collected in 3.72s):
-
-Hellinger distance between Main and Main_fuzzing: 0.0247
-
-[Time elapsed: 8.26 seconds]
-
-=== Iteration 7 ===
-[base_gen.py SUCCESS]
-[exeqs.py SUCCESS]
-Main Distribution (collected in 0.47s):
-
-Main_fuzzing Distribution (collected in 0.43s):
-
-Hellinger distance between Main and Main_fuzzing: 0.0000
-
-[Time elapsed: 1.65 seconds]
-
-=== Iteration 8 ===
-[base_gen.py SUCCESS]
-[exeqs.py SUCCESS]
-Main Distribution (collected in 2.63s):
-
-Main_fuzzing Distribution (collected in 1.90s):
-
-Hellinger distance between Main and Main_fuzzing: 0.0185
-
-[Time elapsed: 5.32 seconds]
-
-=== Iteration 9 ===
-[base_gen.py SUCCESS]
-[exeqs.py SUCCESS]
-Main Distribution (collected in 0.95s):
-
-Main_fuzzing Distribution (collected in 0.95s):
-
-Hellinger distance between Main and Main_fuzzing: 0.0028
-
-[Time elapsed: 2.67 seconds]
-
-=== Iteration 10 ===
-[base_gen.py SUCCESS]
-[exeqs.py SUCCESS]
-Main Distribution (collected in 3.02s):
-
-Main_fuzzing Distribution (collected in 2.97s):
-
-Hellinger distance between Main and Main_fuzzing: 0.0000
-
-[Time elapsed: 6.75 seconds]
-
-=== Iteration 11 ===
-[base_gen.py SUCCESS]
-[exeqs.py SUCCESS]
-Main Distribution (collected in 3.84s):
-
-Main_fuzzing Distribution (collected in 2.53s):
-
-Hellinger distance between Main and Main_fuzzing: 0.0064
-
-[Time elapsed: 7.12 seconds]
-
-=== Iteration 12 ===
-[base_gen.py SUCCESS]
-[exeqs.py SUCCESS]
-Main Distribution (collected in 0.47s):
-
-Main_fuzzing Distribution (collected in 0.27s):
-
-Hellinger distance between Main and Main_fuzzing: 0.0000
-
-[Time elapsed: 1.52 seconds]
-
-=== Iteration 13 ===
-[base_gen.py SUCCESS]
-[exeqs.py SUCCESS]
-Main Distribution (collected in 0.40s):
-
-Main_fuzzing Distribution (collected in 0.19s):
-
-Hellinger distance between Main and Main_fuzzing: 0.0000
-
-[Time elapsed: 1.35 seconds]
-
-=== Iteration 14 ===
-[base_gen.py SUCCESS]
-[exeqs.py SUCCESS]
-Main Distribution (collected in 4.35s):
-
-Main_fuzzing Distribution (collected in 1.40s):
-
-Hellinger distance between Main and Main_fuzzing: 0.0085
-
-[Time elapsed: 6.52 seconds]
-
-=== Iteration 15 ===
-[base_gen.py SUCCESS]
-
-=== Iteration 1 ===
-[base_gen.py SUCCESS]
-[exeqs.py SUCCESS]
-Main Distribution (collected in 39.74s):
-
-Main_fuzzing Distribution (collected in 39.17s):
-
-Hellinger distance between Main and Main_fuzzing: 0.2095
-
-[Time elapsed: 80.07 seconds]
-
-=== Iteration 2 ===
-[base_gen.py SUCCESS]
-[exeqs.py SUCCESS]
-Main Distribution (collected in 1.25s):
-
-Main_fuzzing Distribution (collected in 1.23s):
-
-Hellinger distance between Main and Main_fuzzing: 0.0000
-
-[Time elapsed: 3.24 seconds]
-
-=== Iteration 3 ===
-[base_gen.py SUCCESS]
-[exeqs.py SUCCESS]
-Main Distribution (collected in 2.94s):
-
-Main_fuzzing Distribution (collected in 0.50s):
-
-Hellinger distance between Main and Main_fuzzing: 0.0000
-
-[Time elapsed: 4.22 seconds]
-
-=== Iteration 4 ===
-[base_gen.py SUCCESS]
-[exeqs.py SUCCESS]
-Main Distribution (collected in 2.12s):
-
-Main_fuzzing Distribution (collected in 1.11s):
-
-Hellinger distance between Main and Main_fuzzing: 0.0253
-
-[Time elapsed: 4.01 seconds]
-
-=== Iteration 5 ===
-[base_gen.py SUCCESS]
-[exeqs.py SUCCESS]
-Main Distribution (collected in 2.02s):
-
-Main_fuzzing Distribution (collected in 2.02s):
-
-Hellinger distance between Main and Main_fuzzing: 0.0000
-
-[Time elapsed: 4.91 seconds]
-
-=== Iteration 6 ===
-[base_gen.py SUCCESS]
-[exeqs.py SUCCESS]
-Main Distribution (collected in 10.19s):
-
-Main_fuzzing Distribution (collected in 10.19s):
-
-Hellinger distance between Main and Main_fuzzing: 0.0000
-
-[Time elapsed: 21.14 seconds]
-
-=== Iteration 7 ===
-[base_gen.py SUCCESS]
-[exeqs.py SUCCESS]
-Main Distribution (collected in 1.74s):
-
-Main_fuzzing Distribution (collected in 1.60s):
-
-Hellinger distance between Main and Main_fuzzing: 0.0058
-
-[Time elapsed: 4.11 seconds]
-
-=== Iteration 8 ===
-[base_gen.py SUCCESS]
-[exeqs.py SUCCESS]
-Main Distribution (collected in 3.14s):
-
-Main_fuzzing Distribution (collected in 2.21s):
-
-Hellinger distance between Main and Main_fuzzing: 0.0000
-
-[Time elapsed: 6.14 seconds]
-
-=== Iteration 9 ===
-[base_gen.py SUCCESS]
-[exeqs.py SUCCESS]
-Main Distribution (collected in 1.25s):
-
-Main_fuzzing Distribution (collected in 1.24s):
-
-Hellinger distance between Main and Main_fuzzing: 0.0302
-
-[Time elapsed: 3.23 seconds]
-
-=== Iteration 10 ===
-[base_gen.py SUCCESS]
-[exeqs.py SUCCESS]
-Main Distribution (collected in 3.65s):
-
-Main_fuzzing Distribution (collected in 1.43s):
-
-Hellinger distance between Main and Main_fuzzing: 0.0000
-
-[Time elapsed: 5.82 seconds]
-
-=== Iteration 11 ===
-[base_gen.py SUCCESS]
-[exeqs.py SUCCESS]
-Main Distribution (collected in 1.11s):
-
-Main_fuzzing Distribution (collected in 0.32s):
-
-Hellinger distance between Main and Main_fuzzing: 0.0000
-
-[Time elapsed: 2.22 seconds]
-
-=== Iteration 12 ===
-[base_gen.py SUCCESS]
-
-=== Iteration 1 ===
-[base_gen.py SUCCESS]
-[exeqs.py SUCCESS]
-Main Distribution (collected in 0.33s):
-
-Main_fuzzing Distribution (collected in 0.32s):
-
-Hellinger distance between Main and Main_fuzzing: 0.0000
-
-[Time elapsed: 1.55 seconds]
-
-=== Iteration 2 ===
-[base_gen.py SUCCESS]
-[exeqs.py SUCCESS]
-Main Distribution (collected in 4.34s):
-
-Main_fuzzing Distribution (collected in 0.63s):
-
-Hellinger distance between Main and Main_fuzzing: 0.0000
-
-[Time elapsed: 5.73 seconds]
-
-=== Iteration 3 ===
-[base_gen.py SUCCESS]
-[exeqs.py SUCCESS]
-Main Distribution (collected in 0.16s):
-
-Main_fuzzing Distribution (collected in 0.15s):
-
-Hellinger distance between Main and Main_fuzzing: 0.0000
-
-[Time elapsed: 1.08 seconds]
-
-=== Iteration 4 ===
-[base_gen.py SUCCESS]
-[exeqs.py SUCCESS]
-Main Distribution (collected in 0.33s):
-
-Main_fuzzing Distribution (collected in 0.33s):
-
-Hellinger distance between Main and Main_fuzzing: 0.0142
-
-[Time elapsed: 1.44 seconds]
-
-=== Iteration 5 ===
-[base_gen.py SUCCESS]
-[exeqs.py SUCCESS]
-Main Distribution (collected in 2.37s):
-
-Main_fuzzing Distribution (collected in 0.21s):
-
-Hellinger distance between Main and Main_fuzzing: 0.0000
-
-[Time elapsed: 3.34 seconds]
-
-=== Iteration 6 ===
-[base_gen.py SUCCESS]
-[exeqs.py SUCCESS]
-Main Distribution (collected in 1.19s):
-
-Main_fuzzing Distribution (collected in 0.47s):
-
-Hellinger distance between Main and Main_fuzzing: 0.0000
-
-[Time elapsed: 2.42 seconds]
-
-=== Iteration 7 ===
-[base_gen.py SUCCESS]
-[exeqs.py SUCCESS]
-Main Distribution (collected in 1.19s):
-
-Main_fuzzing Distribution (collected in 0.99s):
-
-Hellinger distance between Main and Main_fuzzing: 0.0498
-
-[Time elapsed: 2.93 seconds]
-
-=== Iteration 8 ===
-[base_gen.py SUCCESS]
-[exeqs.py SUCCESS]
-Main Distribution (collected in 0.96s):
-
-Main_fuzzing Distribution (collected in 0.56s):
-
-Hellinger distance between Main and Main_fuzzing: 0.0000
-
-[Time elapsed: 2.31 seconds]
-
-=== Iteration 9 ===
-[base_gen.py SUCCESS]
-[exeqs.py SUCCESS]
-Main Distribution (collected in 1.36s):
-
-Main_fuzzing Distribution (collected in 1.36s):
-
-Hellinger distance between Main and Main_fuzzing: 0.0000
-
-[Time elapsed: 3.49 seconds]
-
-=== Iteration 10 ===
-[base_gen.py SUCCESS]
-[exeqs.py SUCCESS]
-Main Distribution (collected in 1.09s):
-
-Main_fuzzing Distribution (collected in 0.68s):
-
-Hellinger distance between Main and Main_fuzzing: 0.0071
-
-[Time elapsed: 2.52 seconds]
-
-=== Iteration 11 ===
-[base_gen.py SUCCESS]
-[exeqs.py SUCCESS]
-Main Distribution (collected in 0.11s):
-
-Main_fuzzing Distribution (collected in 0.11s):
-
-Hellinger distance between Main and Main_fuzzing: 0.0000
-
-[Time elapsed: 1.04 seconds]
-
-=== Iteration 12 ===
-[base_gen.py SUCCESS]
-[exeqs.py SUCCESS]
-Main Distribution (collected in 0.40s):
-
-Main_fuzzing Distribution (collected in 0.39s):
-
-Hellinger distance between Main and Main_fuzzing: 0.0000
-
-[Time elapsed: 1.55 seconds]
-
-=== Iteration 13 ===
-[base_gen.py SUCCESS]
-[exeqs.py SUCCESS]
-Main Distribution (collected in 0.28s):
-
-Main_fuzzing Distribution (collected in 0.28s):
-
-Hellinger distance between Main and Main_fuzzing: 0.0234
-
-[Time elapsed: 1.36 seconds]
-
-=== Iteration 14 ===
-[base_gen.py SUCCESS]
-[exeqs.py SUCCESS]
-Main Distribution (collected in 1.11s):
-
-Main_fuzzing Distribution (collected in 0.23s):
-
-Hellinger distance between Main and Main_fuzzing: 0.0000
-
-[Time elapsed: 2.10 seconds]
-
-=== Iteration 15 ===
-[base_gen.py SUCCESS]
-[exeqs.py SUCCESS]
-Main Distribution (collected in 0.45s):
-
-Main_fuzzing Distribution (collected in 0.08s):
-
-Hellinger distance between Main and Main_fuzzing: 0.0000
-
-[Time elapsed: 1.31 seconds]
-
-=== Iteration 16 ===
-[base_gen.py SUCCESS]
-[exeqs.py SUCCESS]
-Main Distribution (collected in 4.90s):
-
-Main_fuzzing Distribution (collected in 2.94s):
-
-Hellinger distance between Main and Main_fuzzing: 0.1091
-
-[Time elapsed: 8.58 seconds]
-
-=== Iteration 17 ===
-[base_gen.py SUCCESS]
-
-=== Iteration 1 ===
-[base_gen.py SUCCESS]
-[exeqs.py SUCCESS]
-[Time elapsed: 1.08 seconds]
-
-=== Iteration 2 ===
-[base_gen.py SUCCESS]
-[exeqs.py SUCCESS]
-[Time elapsed: 0.88 seconds]
-
-=== Iteration 3 ===
-[base_gen.py SUCCESS]
-[exeqs.py SUCCESS]
-[Time elapsed: 1.32 seconds]
-
-=== Iteration 4 ===
-[base_gen.py SUCCESS]
-[exeqs.py SUCCESS]
-[Time elapsed: 1.09 seconds]
-
-=== Iteration 5 ===
-[base_gen.py SUCCESS]
-
-=== Iteration 1 ===
-[base_gen.py SUCCESS]
-[exeqs.py SUCCESS]
-[Time elapsed: 3.36 seconds]
-
-=== Iteration 2 ===
-[base_gen.py SUCCESS]
-[exeqs.py SUCCESS]
-[Time elapsed: 2.52 seconds]
-
-=== Iteration 3 ===
-[base_gen.py SUCCESS]
-[exeqs.py SUCCESS]
-[Time elapsed: 2.49 seconds]
-
-=== Iteration 4 ===
-[base_gen.py SUCCESS]
-[exeqs.py SUCCESS]
-[Time elapsed: 3.85 seconds]
-
-=== Iteration 5 ===
-[base_gen.py SUCCESS]
-[exeqs.py SUCCESS]
-[Time elapsed: 2.37 seconds]
-
-=== Iteration 6 ===
-[base_gen.py SUCCESS]
-[exeqs.py SUCCESS]
-[Time elapsed: 6.49 seconds]
-
-=== Iteration 7 ===
-[base_gen.py SUCCESS]
-[exeqs.py SUCCESS]
-[Time elapsed: 5.10 seconds]
-
-=== Iteration 8 ===
-[base_gen.py SUCCESS]
-[exeqs.py SUCCESS]
-[Time elapsed: 3.52 seconds]
-
-=== Iteration 9 ===
-[base_gen.py SUCCESS]
-[exeqs.py SUCCESS]
-[Time elapsed: 3.29 seconds]
-
-=== Iteration 10 ===
-[base_gen.py SUCCESS]
-[exeqs.py SUCCESS]
-[Time elapsed: 3.03 seconds]
-
-=== Iteration 11 ===
-[base_gen.py SUCCESS]
-[exeqs.py SUCCESS]
-[Time elapsed: 3.66 seconds]
-
-=== Iteration 12 ===
-[base_gen.py SUCCESS]
-[exeqs.py SUCCESS]
-[Time elapsed: 31.75 seconds]
-
-=== Iteration 13 ===
-[base_gen.py SUCCESS]
-[exeqs.py SUCCESS]
-[Time elapsed: 11.00 seconds]
-
-=== Iteration 14 ===
-[base_gen.py SUCCESS]
-[exeqs.py SUCCESS]
-[Time elapsed: 4.06 seconds]
-
-=== Iteration 15 ===
-[base_gen.py SUCCESS]
-[exeqs.py SUCCESS]
-[Time elapsed: 4.29 seconds]
-
-=== Iteration 16 ===
-[base_gen.py SUCCESS]
-[exeqs.py SUCCESS]
-[Time elapsed: 3.50 seconds]
-
-=== Iteration 17 ===
-[base_gen.py SUCCESS]
-[exeqs.py SUCCESS]
-[Time elapsed: 7.41 seconds]
-
-=== Iteration 18 ===
-[base_gen.py SUCCESS]
-[exeqs.py SUCCESS]
-[Time elapsed: 4.70 seconds]
-
-=== Iteration 19 ===
-[base_gen.py SUCCESS]
-
-=== Iteration 1 ===
-[base_gen.py SUCCESS]
-[exeqs.py SUCCESS @ step=100]
-[EXCEPTION]
-Traceback (most recent call last):
-  File "/home/luojunjie/EMI/qsharp/stress_test.py", line 166, in <module>
-    h, extra_info, errored = try_exeqs_until_converge(
-                             ~~~~~~~~~~~~~~~~~~~~~~~~^
-        qs_contents, initial_shots=EXEQS_SHOTS,
-        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-        max_shots=MAX_SHOTS, threshold=HELLINGER_THRESHOLD
-        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-    )
-    ^
-  File "/home/luojunjie/EMI/qsharp/stress_test.py", line 125, in try_exeqs_until_converge
-    h = hellinger_distance(total_main, total_fuzz)
-        ^^^^^^^^^^^^^^^^^^
-NameError: name 'hellinger_distance' is not defined
-
-
-=== Iteration 2 ===
-[base_gen.py SUCCESS]
-[exeqs.py SUCCESS @ step=100]
-[EXCEPTION]
-Traceback (most recent call last):
-  File "/home/luojunjie/EMI/qsharp/stress_test.py", line 166, in <module>
-    h, extra_info, errored = try_exeqs_until_converge(
-                             ~~~~~~~~~~~~~~~~~~~~~~~~^
-        qs_contents, initial_shots=EXEQS_SHOTS,
-        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-        max_shots=MAX_SHOTS, threshold=HELLINGER_THRESHOLD
-        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-    )
-    ^
-  File "/home/luojunjie/EMI/qsharp/stress_test.py", line 125, in try_exeqs_until_converge
-    h = hellinger_distance(total_main, total_fuzz)
-        ^^^^^^^^^^^^^^^^^^
-NameError: name 'hellinger_distance' is not defined
-
-
-=== Iteration 3 ===
-[base_gen.py SUCCESS]
-[exeqs.py SUCCESS @ step=100]
-[EXCEPTION]
-Traceback (most recent call last):
-  File "/home/luojunjie/EMI/qsharp/stress_test.py", line 166, in <module>
-    h, extra_info, errored = try_exeqs_until_converge(
-                             ~~~~~~~~~~~~~~~~~~~~~~~~^
-        qs_contents, initial_shots=EXEQS_SHOTS,
-        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-        max_shots=MAX_SHOTS, threshold=HELLINGER_THRESHOLD
-        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-    )
-    ^
-  File "/home/luojunjie/EMI/qsharp/stress_test.py", line 125, in try_exeqs_until_converge
-    h = hellinger_distance(total_main, total_fuzz)
-        ^^^^^^^^^^^^^^^^^^
-NameError: name 'hellinger_distance' is not defined
-
-
-=== Iteration 4 ===
-[base_gen.py SUCCESS]
-[exeqs.py SUCCESS @ step=100]
-[EXCEPTION]
-Traceback (most recent call last):
-  File "/home/luojunjie/EMI/qsharp/stress_test.py", line 166, in <module>
-    h, extra_info, errored = try_exeqs_until_converge(
-                             ~~~~~~~~~~~~~~~~~~~~~~~~^
-        qs_contents, initial_shots=EXEQS_SHOTS,
-        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-        max_shots=MAX_SHOTS, threshold=HELLINGER_THRESHOLD
-        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-    )
-    ^
-  File "/home/luojunjie/EMI/qsharp/stress_test.py", line 125, in try_exeqs_until_converge
-    h = hellinger_distance(total_main, total_fuzz)
-        ^^^^^^^^^^^^^^^^^^
-NameError: name 'hellinger_distance' is not defined
-
-
-=== Iteration 5 ===
-[base_gen.py SUCCESS]
-
-=== Iteration 1 ===
-[base_gen.py SUCCESS]
-[exeqs.py SUCCESS @ step=100]
-[Cumulative Hellinger] shots=100, h=0.1230
-[exeqs.py SUCCESS @ step=200]
-[Cumulative Hellinger] shots=300, h=0.0801
-[Time elapsed: 1.86 seconds]
-
-=== Iteration 2 ===
-[base_gen.py SUCCESS]
-[exeqs.py SUCCESS @ step=100]
-[Cumulative Hellinger] shots=100, h=0.0000
-[Time elapsed: 0.93 seconds]
-
-=== Iteration 3 ===
-[base_gen.py SUCCESS]
-[exeqs.py SUCCESS @ step=100]
-[Cumulative Hellinger] shots=100, h=0.1292
-[exeqs.py SUCCESS @ step=200]
-[Cumulative Hellinger] shots=300, h=0.0588
-[Time elapsed: 1.97 seconds]
-
-=== Iteration 4 ===
-[base_gen.py SUCCESS]
-[exeqs.py SUCCESS @ step=100]
-[Cumulative Hellinger] shots=100, h=0.2194
-[exeqs.py SUCCESS @ step=200]
-[Cumulative Hellinger] shots=300, h=0.1661
 [exeqs.py SUCCESS @ step=400]
-[Cumulative Hellinger] shots=700, h=0.1072
-[exeqs.py SUCCESS @ step=800]
-[Cumulative Hellinger] shots=1500, h=0.0991
-[Time elapsed: 5.99 seconds]
-
-=== Iteration 5 ===
-[base_gen.py SUCCESS]
-[exeqs.py SUCCESS @ step=100]
-[Cumulative Hellinger] shots=100, h=0.0000
-[Time elapsed: 0.83 seconds]
-
-=== Iteration 6 ===
-[base_gen.py SUCCESS]
-[exeqs.py SUCCESS @ step=100]
-[Cumulative Hellinger] shots=100, h=0.0127
-[Time elapsed: 1.17 seconds]
-
-=== Iteration 7 ===
-[base_gen.py SUCCESS]
-[exeqs.py SUCCESS @ step=100]
-[Cumulative Hellinger] shots=100, h=0.0000
-[Time elapsed: 1.01 seconds]
-
-=== Iteration 8 ===
-[base_gen.py SUCCESS]
-[exeqs.py SUCCESS @ step=100]
-[Cumulative Hellinger] shots=100, h=0.0000
-[Time elapsed: 1.01 seconds]
-
-=== Iteration 9 ===
-[base_gen.py SUCCESS]
-[exeqs.py SUCCESS @ step=100]
-[Cumulative Hellinger] shots=100, h=0.0212
-[Time elapsed: 1.02 seconds]
-
-=== Iteration 10 ===
-[base_gen.py SUCCESS]
-[exeqs.py SUCCESS @ step=100]
-[Cumulative Hellinger] shots=100, h=0.0283
-[Time elapsed: 0.87 seconds]
-
-=== Iteration 11 ===
-[base_gen.py SUCCESS]
-[exeqs.py SUCCESS @ step=100]
-[Cumulative Hellinger] shots=100, h=0.0975
-[Time elapsed: 0.85 seconds]
-
-=== Iteration 12 ===
-[base_gen.py SUCCESS]
-[exeqs.py SUCCESS @ step=100]
-[Cumulative Hellinger] shots=100, h=0.0000
-[Time elapsed: 0.81 seconds]
-
-=== Iteration 13 ===
-[base_gen.py SUCCESS]
-[exeqs.py SUCCESS @ step=100]
-[Cumulative Hellinger] shots=100, h=0.0000
-[Time elapsed: 0.81 seconds]
-
-=== Iteration 14 ===
-[base_gen.py SUCCESS]
-[exeqs.py SUCCESS @ step=100]
-[Cumulative Hellinger] shots=100, h=0.0000
-[Time elapsed: 0.85 seconds]
-
-=== Iteration 15 ===
-[base_gen.py SUCCESS]
-[exeqs.py SUCCESS @ step=100]
-[Cumulative Hellinger] shots=100, h=0.0326
-[Time elapsed: 0.85 seconds]
-
-=== Iteration 16 ===
-[base_gen.py SUCCESS]
-[exeqs.py SUCCESS @ step=100]
-[Cumulative Hellinger] shots=100, h=0.0000
-[Time elapsed: 0.95 seconds]
-
-=== Iteration 17 ===
-[base_gen.py SUCCESS]
-[exeqs.py SUCCESS @ step=100]
-[Cumulative Hellinger] shots=100, h=0.0000
-[Time elapsed: 1.23 seconds]
-
-=== Iteration 18 ===
-[base_gen.py SUCCESS]
-[exeqs.py SUCCESS @ step=100]
-[Cumulative Hellinger] shots=100, h=0.0647
-[Time elapsed: 1.53 seconds]
-
-=== Iteration 19 ===
-[base_gen.py SUCCESS]
-[exeqs.py SUCCESS @ step=100]
-[Cumulative Hellinger] shots=100, h=0.0000
-[Time elapsed: 0.83 seconds]
-
-=== Iteration 20 ===
-[base_gen.py SUCCESS]
-[exeqs.py SUCCESS @ step=100]
-[Cumulative Hellinger] shots=100, h=0.0000
-[Time elapsed: 0.89 seconds]
-
-=== Iteration 21 ===
-[base_gen.py SUCCESS]
-[exeqs.py SUCCESS @ step=100]
-[Cumulative Hellinger] shots=100, h=0.0000
-[Time elapsed: 1.16 seconds]
-
-=== Iteration 22 ===
-[base_gen.py SUCCESS]
-[exeqs.py SUCCESS @ step=100]
-[Cumulative Hellinger] shots=100, h=0.0000
-[Time elapsed: 0.86 seconds]
-
-=== Iteration 23 ===
-[base_gen.py SUCCESS]
-[exeqs.py SUCCESS @ step=100]
-[Cumulative Hellinger] shots=100, h=0.0000
-[Time elapsed: 1.08 seconds]
-
-=== Iteration 24 ===
-[base_gen.py SUCCESS]
-[exeqs.py SUCCESS @ step=100]
-[Cumulative Hellinger] shots=100, h=0.0193
-[Time elapsed: 0.92 seconds]
-
-=== Iteration 25 ===
-[base_gen.py SUCCESS]
-[exeqs.py SUCCESS @ step=100]
-[Cumulative Hellinger] shots=100, h=0.0000
-[Time elapsed: 0.95 seconds]
-
-=== Iteration 26 ===
-[base_gen.py SUCCESS]
-[exeqs.py SUCCESS @ step=100]
-[Cumulative Hellinger] shots=100, h=0.0000
-[Time elapsed: 0.86 seconds]
-
-=== Iteration 27 ===
-[base_gen.py SUCCESS]
-[exeqs.py SUCCESS @ step=100]
-[Cumulative Hellinger] shots=100, h=0.0000
-[Time elapsed: 0.81 seconds]
-
-=== Iteration 28 ===
-[base_gen.py SUCCESS]
-[exeqs.py SUCCESS @ step=100]
-[Cumulative Hellinger] shots=100, h=0.0000
-[Time elapsed: 0.93 seconds]
-
-=== Iteration 29 ===
-[base_gen.py SUCCESS]
-[exeqs.py SUCCESS @ step=100]
-[Cumulative Hellinger] shots=100, h=0.0730
-[Time elapsed: 0.93 seconds]
-
-=== Iteration 30 ===
-[base_gen.py SUCCESS]
-[exeqs.py SUCCESS @ step=100]
-[Cumulative Hellinger] shots=100, h=0.0000
-[Time elapsed: 0.92 seconds]
-
-=== Iteration 31 ===
-[base_gen.py SUCCESS]
-[exeqs.py SUCCESS @ step=100]
-[Cumulative Hellinger] shots=100, h=0.0000
-[Time elapsed: 0.87 seconds]
-
-=== Iteration 32 ===
-[base_gen.py SUCCESS]
-[exeqs.py SUCCESS @ step=100]
-[Cumulative Hellinger] shots=100, h=0.0321
-[Time elapsed: 0.90 seconds]
-
-=== Iteration 33 ===
-[base_gen.py SUCCESS]
-[exeqs.py SUCCESS @ step=100]
-[Cumulative Hellinger] shots=100, h=0.0213
-[Time elapsed: 1.04 seconds]
-
-=== Iteration 34 ===
-[base_gen.py SUCCESS]
-[exeqs.py SUCCESS @ step=100]
-[Cumulative Hellinger] shots=100, h=0.0000
-[Time elapsed: 0.88 seconds]
-
-=== Iteration 35 ===
-[base_gen.py SUCCESS]
-[exeqs.py SUCCESS @ step=100]
-[Cumulative Hellinger] shots=100, h=0.0000
-[Time elapsed: 0.93 seconds]
-
-=== Iteration 36 ===
-[base_gen.py SUCCESS]
-[exeqs.py SUCCESS @ step=100]
-[Cumulative Hellinger] shots=100, h=0.0000
-[Time elapsed: 0.93 seconds]
-
-=== Iteration 37 ===
-[base_gen.py SUCCESS]
-[exeqs.py SUCCESS @ step=100]
-[Cumulative Hellinger] shots=100, h=0.0000
-[Time elapsed: 0.93 seconds]
-
-=== Iteration 38 ===
-[base_gen.py SUCCESS]
-[exeqs.py SUCCESS @ step=100]
-[Cumulative Hellinger] shots=100, h=0.0111
-[Time elapsed: 1.46 seconds]
-
-=== Iteration 39 ===
-[base_gen.py SUCCESS]
-[exeqs.py SUCCESS @ step=100]
-[Cumulative Hellinger] shots=100, h=0.0000
-[Time elapsed: 0.85 seconds]
-
-=== Iteration 40 ===
-[base_gen.py SUCCESS]
-[exeqs.py SUCCESS @ step=100]
-[Cumulative Hellinger] shots=100, h=0.0000
-[Time elapsed: 0.90 seconds]
-
-=== Iteration 41 ===
-[base_gen.py SUCCESS]
-[exeqs.py SUCCESS @ step=100]
-[Cumulative Hellinger] shots=100, h=0.0000
-[Time elapsed: 0.96 seconds]
-
-=== Iteration 42 ===
-[base_gen.py SUCCESS]
-[exeqs.py SUCCESS @ step=100]
-[Cumulative Hellinger] shots=100, h=0.7464
-[exeqs.py SUCCESS @ step=200]
-[Cumulative Hellinger] shots=300, h=0.4559
-[exeqs.py SUCCESS @ step=400]
-[Cumulative Hellinger] shots=700, h=0.2594
-[exeqs.py SUCCESS @ step=800]
-[Cumulative Hellinger] shots=1500, h=0.1541
-[exeqs.py SUCCESS @ step=1600]
-[Cumulative Hellinger] shots=3100, h=0.1074
-
-=== Iteration 1 ===
-[base_gen.py SUCCESS]
-[exeqs.py SUCCESS @ step=100]
-[Cumulative Hellinger] shots=100, h=0.0496
-[Hellinger above threshold] h=0.0496 > 0.1, total_shots=100, next_step=100
-[Time elapsed: 1.12 seconds]
+[Cumulative Hellinger] shots=400, h=0.0000
+[Time elapsed: 2.07 seconds]
 
 === Iteration 2 ===
 [base_gen.py SUCCESS]
-[exeqs.py SUCCESS @ step=100]
-[Cumulative Hellinger] shots=100, h=0.1004
-[Hellinger above threshold] h=0.1004 > 0.1, total_shots=100, next_step=100
-[exeqs.py SUCCESS @ step=200]
-[Cumulative Hellinger] shots=300, h=0.0687
-[Hellinger above threshold] h=0.0687 > 0.1, total_shots=300, next_step=200
-[Time elapsed: 2.00 seconds]
+[exeqs.py SUCCESS @ step=400]
+[Cumulative Hellinger] shots=400, h=0.0354
+[Time elapsed: 1.57 seconds]
 
 === Iteration 3 ===
 [base_gen.py SUCCESS]
-[exeqs.py SUCCESS @ step=100]
-[Cumulative Hellinger] shots=100, h=0.0000
-[Hellinger above threshold] h=0.0000 > 0.1, total_shots=100, next_step=100
-[Time elapsed: 0.79 seconds]
+[exeqs.py SUCCESS @ step=400]
+[Cumulative Hellinger] shots=400, h=0.0140
+[Time elapsed: 1.27 seconds]
 
 === Iteration 4 ===
 [base_gen.py SUCCESS]
-[exeqs.py SUCCESS @ step=100]
-[Cumulative Hellinger] shots=100, h=0.0000
-[Hellinger above threshold] h=0.0000 > 0.1, total_shots=100, next_step=100
-[Time elapsed: 1.11 seconds]
-
-=== Iteration 5 ===
-[base_gen.py SUCCESS]
-[exeqs.py SUCCESS @ step=100]
-[Cumulative Hellinger] shots=100, h=0.2369
-[Hellinger above threshold] h=0.2369 > 0.1, total_shots=100, next_step=100
-[exeqs.py SUCCESS @ step=200]
-[Cumulative Hellinger] shots=300, h=0.1413
-[Hellinger above threshold] h=0.1413 > 0.1, total_shots=300, next_step=200
 [exeqs.py SUCCESS @ step=400]
-[Cumulative Hellinger] shots=700, h=0.1258
-[Hellinger above threshold] h=0.1258 > 0.1, total_shots=700, next_step=400
-[exeqs.py SUCCESS @ step=800]
-[Cumulative Hellinger] shots=1500, h=0.0901
-[Hellinger above threshold] h=0.0901 > 0.1, total_shots=1500, next_step=800
-[Time elapsed: 4.13 seconds]
-
-=== Iteration 6 ===
-[base_gen.py SUCCESS]
-[exeqs.py SUCCESS @ step=100]
-[Cumulative Hellinger] shots=100, h=0.0000
-[Hellinger above threshold] h=0.0000 > 0.1, total_shots=100, next_step=100
-[Time elapsed: 1.32 seconds]
-
-=== Iteration 7 ===
-[base_gen.py SUCCESS]
-[exeqs.py SUCCESS @ step=100]
-[Cumulative Hellinger] shots=100, h=0.0000
-[Hellinger above threshold] h=0.0000 > 0.1, total_shots=100, next_step=100
-[Time elapsed: 0.92 seconds]
-
-=== Iteration 8 ===
-[base_gen.py SUCCESS]
-[exeqs.py SUCCESS @ step=100]
-[Cumulative Hellinger] shots=100, h=0.2449
-[Hellinger above threshold] h=0.2449 > 0.1, total_shots=100, next_step=100
-[exeqs.py SUCCESS @ step=200]
-[Cumulative Hellinger] shots=300, h=0.1701
-[Hellinger above threshold] h=0.1701 > 0.1, total_shots=300, next_step=200
-[exeqs.py SUCCESS @ step=400]
-[Cumulative Hellinger] shots=700, h=0.1006
-[Hellinger above threshold] h=0.1006 > 0.1, total_shots=700, next_step=400
-[exeqs.py SUCCESS @ step=800]
-[Cumulative Hellinger] shots=1500, h=0.0611
-[Hellinger above threshold] h=0.0611 > 0.1, total_shots=1500, next_step=800
-[Time elapsed: 14.90 seconds]
-
-=== Iteration 9 ===
-[base_gen.py SUCCESS]
-[exeqs.py SUCCESS @ step=100]
-[Cumulative Hellinger] shots=100, h=0.0000
-[Hellinger above threshold] h=0.0000 > 0.1, total_shots=100, next_step=100
-[Time elapsed: 0.93 seconds]
-
-=== Iteration 10 ===
-[base_gen.py SUCCESS]
-[exeqs.py SUCCESS @ step=100]
-[Cumulative Hellinger] shots=100, h=0.0000
-[Hellinger above threshold] h=0.0000 > 0.1, total_shots=100, next_step=100
-[Time elapsed: 1.25 seconds]
-
-=== Iteration 11 ===
-[base_gen.py SUCCESS]
-[exeqs.py SUCCESS @ step=100]
-[Cumulative Hellinger] shots=100, h=0.1168
-[Hellinger above threshold] h=0.1168 > 0.1, total_shots=100, next_step=100
-[exeqs.py SUCCESS @ step=200]
-[Cumulative Hellinger] shots=300, h=0.1002
-[Hellinger above threshold] h=0.1002 > 0.1, total_shots=300, next_step=200
-[exeqs.py SUCCESS @ step=400]
-[Cumulative Hellinger] shots=700, h=0.0360
-[Hellinger above threshold] h=0.0360 > 0.1, total_shots=700, next_step=400
-[Time elapsed: 3.97 seconds]
-
-=== Iteration 12 ===
-[base_gen.py SUCCESS]
-[exeqs.py SUCCESS @ step=100]
-[Cumulative Hellinger] shots=100, h=0.0000
-[Hellinger above threshold] h=0.0000 > 0.1, total_shots=100, next_step=100
-[Time elapsed: 1.00 seconds]
-
-=== Iteration 13 ===
-[base_gen.py SUCCESS]
-[exeqs.py SUCCESS @ step=100]
-[Cumulative Hellinger] shots=100, h=0.0000
-[Hellinger above threshold] h=0.0000 > 0.1, total_shots=100, next_step=100
-[Time elapsed: 0.98 seconds]
-
-=== Iteration 14 ===
-[base_gen.py SUCCESS]
-[exeqs.py SUCCESS @ step=100]
-[Cumulative Hellinger] shots=100, h=0.0293
-[Hellinger above threshold] h=0.0293 > 0.1, total_shots=100, next_step=100
-[Time elapsed: 0.91 seconds]
-
-=== Iteration 15 ===
-[base_gen.py SUCCESS]
-[exeqs.py SUCCESS @ step=100]
-[Cumulative Hellinger] shots=100, h=0.1310
-[Hellinger above threshold] h=0.1310 > 0.1, total_shots=100, next_step=100
-[exeqs.py SUCCESS @ step=200]
-[Cumulative Hellinger] shots=300, h=0.0478
-[Hellinger above threshold] h=0.0478 > 0.1, total_shots=300, next_step=200
-[Time elapsed: 1.86 seconds]
-
-=== Iteration 16 ===
-[base_gen.py SUCCESS]
-[exeqs.py SUCCESS @ step=100]
-[Cumulative Hellinger] shots=100, h=0.1213
-[Hellinger above threshold] h=0.1213 > 0.1, total_shots=100, next_step=100
-[exeqs.py SUCCESS @ step=200]
-[Cumulative Hellinger] shots=300, h=0.0659
-[Hellinger above threshold] h=0.0659 > 0.1, total_shots=300, next_step=200
-[Time elapsed: 2.88 seconds]
-
-=== Iteration 17 ===
-[base_gen.py SUCCESS]
-[exeqs.py SUCCESS @ step=100]
-[Cumulative Hellinger] shots=100, h=0.0000
-[Hellinger above threshold] h=0.0000 > 0.1, total_shots=100, next_step=100
-[Time elapsed: 0.96 seconds]
-
-=== Iteration 18 ===
-[base_gen.py SUCCESS]
-[exeqs.py SUCCESS @ step=100]
-[Cumulative Hellinger] shots=100, h=0.1155
-[Hellinger above threshold] h=0.1155 > 0.1, total_shots=100, next_step=100
-[exeqs.py SUCCESS @ step=200]
-[Cumulative Hellinger] shots=300, h=0.0448
-[Hellinger above threshold] h=0.0448 > 0.1, total_shots=300, next_step=200
-[Time elapsed: 2.22 seconds]
-
-=== Iteration 19 ===
-[base_gen.py SUCCESS]
-[exeqs.py SUCCESS @ step=100]
-[Cumulative Hellinger] shots=100, h=0.0427
-[Hellinger above threshold] h=0.0427 > 0.1, total_shots=100, next_step=100
-[Time elapsed: 1.02 seconds]
-
-=== Iteration 20 ===
-[base_gen.py SUCCESS]
-[exeqs.py SUCCESS @ step=100]
-[Cumulative Hellinger] shots=100, h=0.0874
-[Hellinger above threshold] h=0.0874 > 0.1, total_shots=100, next_step=100
-[Time elapsed: 0.84 seconds]
-
-=== Iteration 21 ===
-[base_gen.py SUCCESS]
-[exeqs.py SUCCESS @ step=100]
-[Cumulative Hellinger] shots=100, h=0.0000
-[Hellinger above threshold] h=0.0000 > 0.1, total_shots=100, next_step=100
-[Time elapsed: 1.04 seconds]
-
-=== Iteration 22 ===
-[base_gen.py SUCCESS]
-[exeqs.py SUCCESS @ step=100]
-[Cumulative Hellinger] shots=100, h=0.1398
-[Hellinger above threshold] h=0.1398 > 0.1, total_shots=100, next_step=100
-[exeqs.py SUCCESS @ step=200]
-[Cumulative Hellinger] shots=300, h=0.0320
-[Hellinger above threshold] h=0.0320 > 0.1, total_shots=300, next_step=200
-[Time elapsed: 1.71 seconds]
-
-=== Iteration 23 ===
-[base_gen.py SUCCESS]
-[exeqs.py SUCCESS @ step=100]
-[Cumulative Hellinger] shots=100, h=0.4767
-[Hellinger above threshold] h=0.4767 > 0.1, total_shots=100, next_step=100
-[exeqs.py SUCCESS @ step=200]
-[Cumulative Hellinger] shots=300, h=0.2586
-[Hellinger above threshold] h=0.2586 > 0.1, total_shots=300, next_step=200
-[exeqs.py SUCCESS @ step=400]
-[Cumulative Hellinger] shots=700, h=0.1446
-[Hellinger above threshold] h=0.1446 > 0.1, total_shots=700, next_step=400
-[exeqs.py SUCCESS @ step=800]
-[Cumulative Hellinger] shots=1500, h=0.0950
-[Hellinger above threshold] h=0.0950 > 0.1, total_shots=1500, next_step=800
-[Time elapsed: 11.88 seconds]
-
-=== Iteration 24 ===
-[base_gen.py SUCCESS]
-[exeqs.py SUCCESS @ step=100]
-[Cumulative Hellinger] shots=100, h=0.1072
-[Hellinger above threshold] h=0.1072 > 0.1, total_shots=100, next_step=100
-[exeqs.py SUCCESS @ step=200]
-[Cumulative Hellinger] shots=300, h=0.0721
-[Hellinger above threshold] h=0.0721 > 0.1, total_shots=300, next_step=200
-[Time elapsed: 2.18 seconds]
-
-=== Iteration 25 ===
-[base_gen.py SUCCESS]
-[exeqs.py SUCCESS @ step=100]
-[Cumulative Hellinger] shots=100, h=0.0000
-[Hellinger above threshold] h=0.0000 > 0.1, total_shots=100, next_step=100
-[Time elapsed: 1.01 seconds]
-
-=== Iteration 26 ===
-[base_gen.py SUCCESS]
-[exeqs.py SUCCESS @ step=100]
-[Cumulative Hellinger] shots=100, h=0.0000
-[Hellinger above threshold] h=0.0000 > 0.1, total_shots=100, next_step=100
-[Time elapsed: 0.97 seconds]
-
-=== Iteration 27 ===
-[base_gen.py SUCCESS]
-[exeqs.py SUCCESS @ step=100]
-[Cumulative Hellinger] shots=100, h=0.0922
-[Hellinger above threshold] h=0.0922 > 0.1, total_shots=100, next_step=100
-[Time elapsed: 0.82 seconds]
-
-=== Iteration 28 ===
-[base_gen.py SUCCESS]
-[exeqs.py SUCCESS @ step=100]
-[Cumulative Hellinger] shots=100, h=0.0640
-[Hellinger above threshold] h=0.0640 > 0.1, total_shots=100, next_step=100
-[Time elapsed: 0.93 seconds]
-
-=== Iteration 29 ===
-[base_gen.py SUCCESS]
-[exeqs.py SUCCESS @ step=100]
-[Cumulative Hellinger] shots=100, h=0.0285
-[Hellinger above threshold] h=0.0285 > 0.1, total_shots=100, next_step=100
-[Time elapsed: 0.83 seconds]
-
-=== Iteration 30 ===
-
-=== Iteration 1 ===
-[base_gen.py SUCCESS]
-[exeqs.py SUCCESS @ step=100]
-[Cumulative Hellinger] shots=100, h=0.0000
-[Time elapsed: 0.90 seconds]
-
-=== Iteration 2 ===
-[base_gen.py SUCCESS]
-[exeqs.py SUCCESS @ step=100]
-[Cumulative Hellinger] shots=100, h=0.0000
-[Time elapsed: 0.95 seconds]
-
-=== Iteration 3 ===
-[base_gen.py SUCCESS]
-[exeqs.py SUCCESS @ step=100]
-[Cumulative Hellinger] shots=100, h=0.0000
+[Cumulative Hellinger] shots=400, h=0.0321
 [Time elapsed: 1.26 seconds]
 
-=== Iteration 4 ===
-[base_gen.py SUCCESS]
-[exeqs.py SUCCESS @ step=100]
-[Cumulative Hellinger] shots=100, h=0.0000
-[Time elapsed: 0.79 seconds]
-
 === Iteration 5 ===
 [base_gen.py SUCCESS]
-[exeqs.py SUCCESS @ step=100]
-[Cumulative Hellinger] shots=100, h=0.0072
-[Time elapsed: 0.88 seconds]
+[exeqs.py SUCCESS @ step=400]
+[Cumulative Hellinger] shots=400, h=0.0090
+[Time elapsed: 1.78 seconds]
 
 === Iteration 6 ===
 [base_gen.py SUCCESS]
-[exeqs.py SUCCESS @ step=100]
-[Cumulative Hellinger] shots=100, h=0.0000
-[Time elapsed: 0.88 seconds]
+[exeqs.py SUCCESS @ step=400]
+[Cumulative Hellinger] shots=400, h=0.0000
+[Time elapsed: 1.23 seconds]
 
 === Iteration 7 ===
 [base_gen.py SUCCESS]
-[exeqs.py SUCCESS @ step=100]
-[Cumulative Hellinger] shots=100, h=0.0000
-[Time elapsed: 0.92 seconds]
+[exeqs.py SUCCESS @ step=400]
+[Cumulative Hellinger] shots=400, h=0.0706
+[Time elapsed: 1.77 seconds]
 
 === Iteration 8 ===
 [base_gen.py SUCCESS]
-[exeqs.py SUCCESS @ step=100]
-[Cumulative Hellinger] shots=100, h=0.0000
-[Time elapsed: 0.84 seconds]
-
-=== Iteration 9 ===
-[base_gen.py SUCCESS]
-[exeqs.py SUCCESS @ step=100]
-[Cumulative Hellinger] shots=100, h=0.0000
-[Time elapsed: 0.89 seconds]
-
-=== Iteration 10 ===
-[base_gen.py SUCCESS]
-[exeqs.py SUCCESS @ step=100]
-[Cumulative Hellinger] shots=100, h=0.0000
-[Time elapsed: 1.05 seconds]
-
-=== Iteration 11 ===
-[base_gen.py SUCCESS]
-[exeqs.py SUCCESS @ step=100]
-[Cumulative Hellinger] shots=100, h=0.0499
-[Time elapsed: 0.79 seconds]
-
-=== Iteration 12 ===
-[base_gen.py SUCCESS]
-
-=== Iteration 1 ===
-[base_gen.py SUCCESS]
-[exeqs.py SUCCESS @ step=100]
-[Cumulative Hellinger] shots=100, h=0.2044
-[Hellinger above threshold] h=0.2044 > 0.1, total_shots=100, next_step=100
-[exeqs.py SUCCESS @ step=200]
-[Cumulative Hellinger] shots=300, h=0.1087
-[Hellinger above threshold] h=0.1087 > 0.1, total_shots=300, next_step=200
 [exeqs.py SUCCESS @ step=400]
-[Cumulative Hellinger] shots=700, h=0.0716
-[Time elapsed: 4.43 seconds]
-
-=== Iteration 2 ===
-[base_gen.py SUCCESS]
-[exeqs.py SUCCESS @ step=100]
-[Cumulative Hellinger] shots=100, h=0.0000
-[Time elapsed: 0.87 seconds]
-
-=== Iteration 3 ===
-[base_gen.py SUCCESS]
-[exeqs.py SUCCESS @ step=100]
-[Cumulative Hellinger] shots=100, h=0.0000
-[Time elapsed: 0.91 seconds]
-
-=== Iteration 4 ===
-[base_gen.py SUCCESS]
-[exeqs.py SUCCESS @ step=100]
-[Cumulative Hellinger] shots=100, h=0.1178
-[Hellinger above threshold] h=0.1178 > 0.1, total_shots=100, next_step=100
-[exeqs.py SUCCESS @ step=200]
-[Cumulative Hellinger] shots=300, h=0.0591
-[Time elapsed: 4.31 seconds]
-
-=== Iteration 5 ===
-[base_gen.py SUCCESS]
-[exeqs.py SUCCESS @ step=100]
-[Cumulative Hellinger] shots=100, h=0.0000
-[Time elapsed: 1.01 seconds]
-
-=== Iteration 6 ===
-[base_gen.py SUCCESS]
-[exeqs.py SUCCESS @ step=100]
-[Cumulative Hellinger] shots=100, h=0.0327
-[Time elapsed: 0.91 seconds]
-
-=== Iteration 7 ===
-[base_gen.py SUCCESS]
-[exeqs.py SUCCESS @ step=100]
-[Cumulative Hellinger] shots=100, h=0.1444
-[Hellinger above threshold] h=0.1444 > 0.1, total_shots=100, next_step=100
-[exeqs.py SUCCESS @ step=200]
-[Cumulative Hellinger] shots=300, h=0.1098
-[Hellinger above threshold] h=0.1098 > 0.1, total_shots=300, next_step=200
-[exeqs.py SUCCESS @ step=400]
-[Cumulative Hellinger] shots=700, h=0.0447
-[Time elapsed: 3.50 seconds]
-
-=== Iteration 8 ===
-[base_gen.py SUCCESS]
-[exeqs.py SUCCESS @ step=100]
-[Cumulative Hellinger] shots=100, h=0.0000
-[Time elapsed: 0.95 seconds]
-
-=== Iteration 9 ===
-[base_gen.py SUCCESS]
-[exeqs.py SUCCESS @ step=100]
-[Cumulative Hellinger] shots=100, h=0.0000
-[Time elapsed: 0.93 seconds]
-
-=== Iteration 10 ===
-[base_gen.py SUCCESS]
-[exeqs.py SUCCESS @ step=100]
-[Cumulative Hellinger] shots=100, h=0.0000
-[Time elapsed: 0.95 seconds]
-
-=== Iteration 11 ===
-[base_gen.py SUCCESS]
-[exeqs.py SUCCESS @ step=100]
-[Cumulative Hellinger] shots=100, h=0.0708
-[Time elapsed: 1.01 seconds]
-
-=== Iteration 12 ===
-[base_gen.py SUCCESS]
-[exeqs.py SUCCESS @ step=100]
-[Cumulative Hellinger] shots=100, h=0.0000
+[Cumulative Hellinger] shots=400, h=0.0000
 [Time elapsed: 0.99 seconds]
 
-=== Iteration 13 ===
-[base_gen.py SUCCESS]
-[exeqs.py SUCCESS @ step=100]
-[Cumulative Hellinger] shots=100, h=0.1003
-[Hellinger above threshold] h=0.1003 > 0.1, total_shots=100, next_step=100
-[exeqs.py SUCCESS @ step=200]
-[Cumulative Hellinger] shots=300, h=0.0506
-[Time elapsed: 2.23 seconds]
-
-=== Iteration 14 ===
-[base_gen.py SUCCESS]
-[exeqs.py SUCCESS @ step=100]
-[Cumulative Hellinger] shots=100, h=0.1234
-[Hellinger above threshold] h=0.1234 > 0.1, total_shots=100, next_step=100
-[exeqs.py SUCCESS @ step=200]
-[Cumulative Hellinger] shots=300, h=0.0808
-[Time elapsed: 2.13 seconds]
-
-=== Iteration 15 ===
-[base_gen.py SUCCESS]
-[exeqs.py SUCCESS @ step=100]
-[Cumulative Hellinger] shots=100, h=0.0635
-[Time elapsed: 0.94 seconds]
-
-=== Iteration 16 ===
-[base_gen.py SUCCESS]
-[exeqs.py SUCCESS @ step=100]
-[Cumulative Hellinger] shots=100, h=0.0000
-[Time elapsed: 0.93 seconds]
-
-=== Iteration 17 ===
-[base_gen.py SUCCESS]
-[exeqs.py SUCCESS @ step=100]
-[Cumulative Hellinger] shots=100, h=0.4323
-[Hellinger above threshold] h=0.4323 > 0.1, total_shots=100, next_step=100
-[exeqs.py SUCCESS @ step=200]
-[Cumulative Hellinger] shots=300, h=0.2499
-[Hellinger above threshold] h=0.2499 > 0.1, total_shots=300, next_step=200
-[exeqs.py SUCCESS @ step=400]
-[Cumulative Hellinger] shots=700, h=0.1382
-[Hellinger above threshold] h=0.1382 > 0.1, total_shots=700, next_step=400
-[exeqs.py SUCCESS @ step=800]
-[Cumulative Hellinger] shots=1500, h=0.1038
-[Hellinger above threshold] h=0.1038 > 0.1, total_shots=1500, next_step=800
-[exeqs.py SUCCESS @ step=1600]
-[Cumulative Hellinger] shots=3100, h=0.0629
-[Time elapsed: 40.07 seconds]
-
-=== Iteration 18 ===
-[base_gen.py SUCCESS]
-[exeqs.py SUCCESS @ step=100]
-[Cumulative Hellinger] shots=100, h=0.0000
-[Time elapsed: 1.00 seconds]
-
-=== Iteration 19 ===
-[base_gen.py SUCCESS]
-[exeqs.py SUCCESS @ step=100]
-[Cumulative Hellinger] shots=100, h=0.1510
-[Hellinger above threshold] h=0.1510 > 0.1, total_shots=100, next_step=100
-[exeqs.py SUCCESS @ step=200]
-[Cumulative Hellinger] shots=300, h=0.0855
-[Time elapsed: 1.66 seconds]
-
-=== Iteration 20 ===
-[base_gen.py SUCCESS]
-[exeqs.py SUCCESS @ step=100]
-[Cumulative Hellinger] shots=100, h=0.0594
-[Time elapsed: 1.02 seconds]
-
-=== Iteration 21 ===
-[base_gen.py SUCCESS]
-[exeqs.py SUCCESS @ step=100]
-[Cumulative Hellinger] shots=100, h=0.0142
-[Time elapsed: 0.92 seconds]
-
-=== Iteration 22 ===
-[base_gen.py SUCCESS]
-[exeqs.py SUCCESS @ step=100]
-[Cumulative Hellinger] shots=100, h=0.6506
-[Hellinger above threshold] h=0.6506 > 0.1, total_shots=100, next_step=100
-[exeqs.py SUCCESS @ step=200]
-[Cumulative Hellinger] shots=300, h=0.4806
-[Hellinger above threshold] h=0.4806 > 0.1, total_shots=300, next_step=200
-[exeqs.py SUCCESS @ step=400]
-[Cumulative Hellinger] shots=700, h=0.3084
-[Hellinger above threshold] h=0.3084 > 0.1, total_shots=700, next_step=400
-[exeqs.py SUCCESS @ step=800]
-[Cumulative Hellinger] shots=1500, h=0.2277
-[Hellinger above threshold] h=0.2277 > 0.1, total_shots=1500, next_step=800
-
-=== Iteration 1 ===
-[base_gen.py SUCCESS]
-[exeqs.py SUCCESS @ step=100]
-[Cumulative Hellinger] shots=100, h=0.0364
-[Time elapsed: 0.86 seconds]
-
-=== Iteration 2 ===
-[base_gen.py SUCCESS]
-[exeqs.py SUCCESS @ step=100]
-[Cumulative Hellinger] shots=100, h=0.0000
-[Time elapsed: 0.95 seconds]
-
-=== Iteration 3 ===
-[base_gen.py SUCCESS]
-[exeqs.py SUCCESS @ step=100]
-[Cumulative Hellinger] shots=100, h=0.0177
-[Time elapsed: 0.91 seconds]
-
-=== Iteration 4 ===
-[base_gen.py SUCCESS]
-[exeqs.py SUCCESS @ step=100]
-[Cumulative Hellinger] shots=100, h=0.8286
-[Hellinger above threshold] h=0.8286 > 0.1, total_shots=100, next_step=100
-[exeqs.py SUCCESS @ step=200]
-[Cumulative Hellinger] shots=300, h=0.6072
-[Hellinger above threshold] h=0.6072 > 0.1, total_shots=300, next_step=200
-[exeqs.py SUCCESS @ step=400]
-[Cumulative Hellinger] shots=700, h=0.3328
-[Hellinger above threshold] h=0.3328 > 0.1, total_shots=700, next_step=400
-[exeqs.py SUCCESS @ step=800]
-[Cumulative Hellinger] shots=1500, h=0.1940
-[Hellinger above threshold] h=0.1940 > 0.1, total_shots=1500, next_step=800
-
-=== Iteration 1 ===
-[base_gen.py SUCCESS]
-[exeqs.py SUCCESS @ step=100]
-[Cumulative Hellinger] shots=100, h=0.1063
-[Hellinger above threshold] h=0.1063 > 0.1, total_shots=100, next_step=100
-[exeqs.py SUCCESS @ step=200]
-[Cumulative Hellinger] shots=300, h=0.0465
-[Time elapsed: 3.90 seconds]
-
-=== Iteration 2 ===
-[base_gen.py SUCCESS]
-[exeqs.py SUCCESS @ step=100]
-[Cumulative Hellinger] shots=100, h=0.0000
-[Time elapsed: 0.84 seconds]
-
-=== Iteration 3 ===
-[base_gen.py SUCCESS]
-[exeqs.py SUCCESS @ step=100]
-[Cumulative Hellinger] shots=100, h=0.0454
-[Time elapsed: 1.03 seconds]
-
-=== Iteration 4 ===
-[base_gen.py SUCCESS]
-[exeqs.py SUCCESS @ step=100]
-[Cumulative Hellinger] shots=100, h=0.0000
-[Time elapsed: 1.16 seconds]
-
-=== Iteration 5 ===
-[base_gen.py SUCCESS]
-[exeqs.py SUCCESS @ step=100]
-[Cumulative Hellinger] shots=100, h=0.0000
-[Time elapsed: 0.95 seconds]
-
-=== Iteration 6 ===
-[base_gen.py SUCCESS]
-[exeqs.py SUCCESS @ step=100]
-[Cumulative Hellinger] shots=100, h=0.0000
-[Time elapsed: 1.08 seconds]
-
-=== Iteration 7 ===
-[base_gen.py SUCCESS]
-[exeqs.py SUCCESS @ step=100]
-[Cumulative Hellinger] shots=100, h=0.0765
-[Time elapsed: 1.22 seconds]
-
-=== Iteration 8 ===
-[base_gen.py SUCCESS]
-[exeqs.py SUCCESS @ step=100]
-[Cumulative Hellinger] shots=100, h=0.1953
-[Hellinger above threshold] h=0.1953 > 0.1, total_shots=100, next_step=100
-[exeqs.py SUCCESS @ step=200]
-[Cumulative Hellinger] shots=300, h=0.0940
-[Time elapsed: 2.47 seconds]
-
 === Iteration 9 ===
 [base_gen.py SUCCESS]
-[exeqs.py SUCCESS @ step=100]
-[Cumulative Hellinger] shots=100, h=0.0000
-[Time elapsed: 0.84 seconds]
+[exeqs.py SUCCESS @ step=400]
+[Cumulative Hellinger] shots=400, h=0.0000
+[Time elapsed: 1.51 seconds]
 
 === Iteration 10 ===
 [base_gen.py SUCCESS]
-[exeqs.py SUCCESS @ step=100]
-[Cumulative Hellinger] shots=100, h=0.0802
-[Time elapsed: 0.85 seconds]
+[exeqs.py SUCCESS @ step=400]
+[Cumulative Hellinger] shots=400, h=0.0000
+[Time elapsed: 1.29 seconds]
 
 === Iteration 11 ===
 [base_gen.py SUCCESS]
-[exeqs.py SUCCESS @ step=100]
-[Cumulative Hellinger] shots=100, h=0.0376
-[Time elapsed: 0.91 seconds]
+[exeqs.py SUCCESS @ step=400]
+[Cumulative Hellinger] shots=400, h=0.0000
+[Time elapsed: 1.98 seconds]
 
 === Iteration 12 ===
 [base_gen.py SUCCESS]
-[exeqs.py SUCCESS @ step=100]
-[Cumulative Hellinger] shots=100, h=0.0000
-[Time elapsed: 0.87 seconds]
+[exeqs.py SUCCESS @ step=400]
+[Cumulative Hellinger] shots=400, h=0.0000
+[Time elapsed: 1.33 seconds]
 
 === Iteration 13 ===
 [base_gen.py SUCCESS]
-[exeqs.py SUCCESS @ step=100]
-[Cumulative Hellinger] shots=100, h=0.0000
-[Time elapsed: 0.98 seconds]
+[exeqs.py SUCCESS @ step=400]
+[Cumulative Hellinger] shots=400, h=0.4697
+[Hellinger above threshold] h=0.4697 > 0.1, total_shots=400, next_step=400
+[exeqs.py SUCCESS @ step=800]
+[Cumulative Hellinger] shots=1200, h=0.2648
+[Hellinger above threshold] h=0.2648 > 0.1, total_shots=1200, next_step=800
+[exeqs.py SUCCESS @ step=1600]
+[Cumulative Hellinger] shots=2800, h=0.1568
+[Hellinger above threshold] h=0.1568 > 0.1, total_shots=2800, next_step=1600
+[exeqs.py SUCCESS @ step=3200]
+[Cumulative Hellinger] shots=6000, h=0.0982
+[Time elapsed: 32.04 seconds]
 
 === Iteration 14 ===
 [base_gen.py SUCCESS]
-[exeqs.py SUCCESS @ step=100]
-[Cumulative Hellinger] shots=100, h=0.0546
-[Time elapsed: 0.84 seconds]
+[exeqs.py SUCCESS @ step=400]
+[Cumulative Hellinger] shots=400, h=0.0000
+[Time elapsed: 1.59 seconds]
 
 === Iteration 15 ===
 [base_gen.py SUCCESS]
-[exeqs.py SUCCESS @ step=100]
-[Cumulative Hellinger] shots=100, h=0.1040
-[Hellinger above threshold] h=0.1040 > 0.1, total_shots=100, next_step=100
-[exeqs.py SUCCESS @ step=200]
-[Cumulative Hellinger] shots=300, h=0.0460
-[Time elapsed: 2.76 seconds]
+[exeqs.py SUCCESS @ step=400]
+[Cumulative Hellinger] shots=400, h=0.0000
+[Time elapsed: 1.85 seconds]
 
 === Iteration 16 ===
 [base_gen.py SUCCESS]
-[exeqs.py SUCCESS @ step=100]
-[Cumulative Hellinger] shots=100, h=0.0000
-[Time elapsed: 1.46 seconds]
+[exeqs.py SUCCESS @ step=400]
+[Cumulative Hellinger] shots=400, h=0.2044
+[Hellinger above threshold] h=0.2044 > 0.1, total_shots=400, next_step=400
+[exeqs.py SUCCESS @ step=800]
+[Cumulative Hellinger] shots=1200, h=0.1496
+[Hellinger above threshold] h=0.1496 > 0.1, total_shots=1200, next_step=800
+[exeqs.py SUCCESS @ step=1600]
+[Cumulative Hellinger] shots=2800, h=0.1154
+[Hellinger above threshold] h=0.1154 > 0.1, total_shots=2800, next_step=1600
+[exeqs.py SUCCESS @ step=3200]
+[Cumulative Hellinger] shots=6000, h=0.0846
+[Time elapsed: 20.52 seconds]
 
 === Iteration 17 ===
 [base_gen.py SUCCESS]
-[exeqs.py SUCCESS @ step=100]
-[Cumulative Hellinger] shots=100, h=0.0000
-[Time elapsed: 0.96 seconds]
+[exeqs.py SUCCESS @ step=400]
+[Cumulative Hellinger] shots=400, h=0.0000
+[Time elapsed: 2.15 seconds]
 
 === Iteration 18 ===
 [base_gen.py SUCCESS]
-[exeqs.py SUCCESS @ step=100]
-[Cumulative Hellinger] shots=100, h=0.0000
-[Time elapsed: 0.87 seconds]
+[exeqs.py SUCCESS @ step=400]
+[Cumulative Hellinger] shots=400, h=0.0000
+[Time elapsed: 1.96 seconds]
 
 === Iteration 19 ===
 [base_gen.py SUCCESS]
-[exeqs.py SUCCESS @ step=100]
-[Cumulative Hellinger] shots=100, h=0.0000
-[Time elapsed: 0.98 seconds]
+[exeqs.py SUCCESS @ step=400]
+[Cumulative Hellinger] shots=400, h=0.0300
+[Time elapsed: 1.64 seconds]
 
 === Iteration 20 ===
 [base_gen.py SUCCESS]
-[exeqs.py SUCCESS @ step=100]
-[Cumulative Hellinger] shots=100, h=0.0000
-[Time elapsed: 1.27 seconds]
+[exeqs.py SUCCESS @ step=400]
+[Cumulative Hellinger] shots=400, h=0.0000
+[Time elapsed: 1.67 seconds]
 
 === Iteration 21 ===
 [base_gen.py SUCCESS]
-[exeqs.py SUCCESS @ step=100]
-[Cumulative Hellinger] shots=100, h=0.0791
-[Time elapsed: 0.98 seconds]
+[exeqs.py SUCCESS @ step=400]
+[Cumulative Hellinger] shots=400, h=0.0000
+[Time elapsed: 1.64 seconds]
 
 === Iteration 22 ===
 [base_gen.py SUCCESS]
-[exeqs.py SUCCESS @ step=100]
-[Cumulative Hellinger] shots=100, h=0.1006
-[Hellinger above threshold] h=0.1006 > 0.1, total_shots=100, next_step=100
-[exeqs.py SUCCESS @ step=200]
-[Cumulative Hellinger] shots=300, h=0.0365
-[Time elapsed: 5.63 seconds]
+[exeqs.py SUCCESS @ step=400]
+[Cumulative Hellinger] shots=400, h=0.0000
+[Time elapsed: 1.09 seconds]
 
 === Iteration 23 ===
 [base_gen.py SUCCESS]
-[exeqs.py SUCCESS @ step=100]
-[Cumulative Hellinger] shots=100, h=0.6958
-[Hellinger above threshold] h=0.6958 > 0.1, total_shots=100, next_step=100
-[exeqs.py SUCCESS @ step=200]
-[Cumulative Hellinger] shots=300, h=0.4849
-[Hellinger above threshold] h=0.4849 > 0.1, total_shots=300, next_step=200
 [exeqs.py SUCCESS @ step=400]
-[Cumulative Hellinger] shots=700, h=0.3459
-[Hellinger above threshold] h=0.3459 > 0.1, total_shots=700, next_step=400
-[exeqs.py SUCCESS @ step=800]
-[Cumulative Hellinger] shots=1500, h=0.2272
-[Hellinger above threshold] h=0.2272 > 0.1, total_shots=1500, next_step=800
-[exeqs.py SUCCESS @ step=1600]
-[Cumulative Hellinger] shots=3100, h=0.1465
-[Hellinger above threshold] h=0.1465 > 0.1, total_shots=3100, next_step=1600
-[exeqs.py SUCCESS @ step=3200]
-[Cumulative Hellinger] shots=6300, h=0.1088
-[Hellinger above threshold] h=0.1088 > 0.1, total_shots=6300, next_step=3200
-[Time elapsed: 36.82 seconds]
+[Cumulative Hellinger] shots=400, h=0.0263
+[Time elapsed: 1.35 seconds]
 
 === Iteration 24 ===
 [base_gen.py SUCCESS]
-[exeqs.py SUCCESS @ step=100]
-[Cumulative Hellinger] shots=100, h=0.0000
-[Time elapsed: 0.84 seconds]
+[exeqs.py SUCCESS @ step=400]
+[Cumulative Hellinger] shots=400, h=0.0000
+[Time elapsed: 1.02 seconds]
 
 === Iteration 25 ===
 [base_gen.py SUCCESS]
-[exeqs.py SUCCESS @ step=100]
-[Cumulative Hellinger] shots=100, h=0.0943
-[Time elapsed: 1.19 seconds]
+[exeqs.py SUCCESS @ step=400]
+[Cumulative Hellinger] shots=400, h=0.4426
+[Hellinger above threshold] h=0.4426 > 0.1, total_shots=400, next_step=400
+[exeqs.py SUCCESS @ step=800]
+[Cumulative Hellinger] shots=1200, h=0.2426
+[Hellinger above threshold] h=0.2426 > 0.1, total_shots=1200, next_step=800
+[exeqs.py SUCCESS @ step=1600]
+[Cumulative Hellinger] shots=2800, h=0.1644
+[Hellinger above threshold] h=0.1644 > 0.1, total_shots=2800, next_step=1600
+[exeqs.py SUCCESS @ step=3200]
+[Cumulative Hellinger] shots=6000, h=0.1107
+[Hellinger above threshold] h=0.1107 > 0.1, total_shots=6000, next_step=3200
+[exeqs.py SUCCESS @ step=6400]
+[Cumulative Hellinger] shots=12400, h=0.0745
+[Time elapsed: 298.08 seconds]
 
 === Iteration 26 ===
 [base_gen.py SUCCESS]
-[exeqs.py SUCCESS @ step=100]
-[Cumulative Hellinger] shots=100, h=0.0283
-[Time elapsed: 0.97 seconds]
+[exeqs.py SUCCESS @ step=400]
+[Cumulative Hellinger] shots=400, h=0.0036
+[Time elapsed: 1.37 seconds]
 
 === Iteration 27 ===
 [base_gen.py SUCCESS]
-[exeqs.py SUCCESS @ step=100]
-[Cumulative Hellinger] shots=100, h=0.0000
-[Time elapsed: 0.96 seconds]
+[exeqs.py SUCCESS @ step=400]
+[Cumulative Hellinger] shots=400, h=0.0000
+[Time elapsed: 1.66 seconds]
 
 === Iteration 28 ===
 [base_gen.py SUCCESS]
-[exeqs.py SUCCESS @ step=100]
-[Cumulative Hellinger] shots=100, h=0.0000
-[Time elapsed: 1.41 seconds]
+[exeqs.py SUCCESS @ step=400]
+[Cumulative Hellinger] shots=400, h=0.0758
+[Time elapsed: 1.50 seconds]
 
 === Iteration 29 ===
 [base_gen.py SUCCESS]
-[exeqs.py SUCCESS @ step=100]
-[Cumulative Hellinger] shots=100, h=0.1668
-[Hellinger above threshold] h=0.1668 > 0.1, total_shots=100, next_step=100
-[exeqs.py SUCCESS @ step=200]
-[Cumulative Hellinger] shots=300, h=0.0578
-[Time elapsed: 1.89 seconds]
+[exeqs.py SUCCESS @ step=400]
+[Cumulative Hellinger] shots=400, h=0.0000
+[Time elapsed: 0.82 seconds]
 
 === Iteration 30 ===
 [base_gen.py SUCCESS]
-[exeqs.py SUCCESS @ step=100]
-[Cumulative Hellinger] shots=100, h=0.0000
-[Time elapsed: 0.88 seconds]
+[exeqs.py SUCCESS @ step=400]
+[Cumulative Hellinger] shots=400, h=0.0275
+[Time elapsed: 2.05 seconds]
 
 === Iteration 31 ===
 [base_gen.py SUCCESS]
-[exeqs.py SUCCESS @ step=100]
-[Cumulative Hellinger] shots=100, h=0.0000
-[Time elapsed: 1.24 seconds]
+[exeqs.py SUCCESS @ step=400]
+[Cumulative Hellinger] shots=400, h=0.0000
+[Time elapsed: 2.23 seconds]
 
 === Iteration 32 ===
 [base_gen.py SUCCESS]
-[exeqs.py SUCCESS @ step=100]
-[Cumulative Hellinger] shots=100, h=0.6732
-[Hellinger above threshold] h=0.6732 > 0.1, total_shots=100, next_step=100
-[exeqs.py SUCCESS @ step=200]
-[Cumulative Hellinger] shots=300, h=0.5330
-[Hellinger above threshold] h=0.5330 > 0.1, total_shots=300, next_step=200
 [exeqs.py SUCCESS @ step=400]
-[Cumulative Hellinger] shots=700, h=0.3660
-[Hellinger above threshold] h=0.3660 > 0.1, total_shots=700, next_step=400
-[exeqs.py SUCCESS @ step=800]
-[Cumulative Hellinger] shots=1500, h=0.2137
-[Hellinger above threshold] h=0.2137 > 0.1, total_shots=1500, next_step=800
-[exeqs.py SUCCESS @ step=1600]
-[Cumulative Hellinger] shots=3100, h=0.1395
-[Hellinger above threshold] h=0.1395 > 0.1, total_shots=3100, next_step=1600
-[exeqs.py SUCCESS @ step=3200]
-[Cumulative Hellinger] shots=6300, h=0.1028
-[Hellinger above threshold] h=0.1028 > 0.1, total_shots=6300, next_step=3200
-[Time elapsed: 259.01 seconds]
+[Cumulative Hellinger] shots=400, h=0.0036
+[Time elapsed: 2.14 seconds]
 
 === Iteration 33 ===
 [base_gen.py SUCCESS]
-[exeqs.py SUCCESS @ step=100]
-[Cumulative Hellinger] shots=100, h=0.0954
-[Time elapsed: 1.28 seconds]
+[exeqs.py SUCCESS @ step=400]
+[Cumulative Hellinger] shots=400, h=0.0000
+[Time elapsed: 1.06 seconds]
 
 === Iteration 34 ===
 [base_gen.py SUCCESS]
-[exeqs.py SUCCESS @ step=100]
-[Cumulative Hellinger] shots=100, h=0.1003
-[Hellinger above threshold] h=0.1003 > 0.1, total_shots=100, next_step=100
-[exeqs.py SUCCESS @ step=200]
-[Cumulative Hellinger] shots=300, h=0.0680
-[Time elapsed: 2.05 seconds]
+[exeqs.py SUCCESS @ step=400]
+[Cumulative Hellinger] shots=400, h=0.0000
+[Time elapsed: 1.58 seconds]
 
 === Iteration 35 ===
 [base_gen.py SUCCESS]
-[exeqs.py SUCCESS @ step=100]
-[Cumulative Hellinger] shots=100, h=0.0000
-[Time elapsed: 0.98 seconds]
+[exeqs.py SUCCESS @ step=400]
+[Cumulative Hellinger] shots=400, h=0.0000
+[Time elapsed: 1.66 seconds]
 
 === Iteration 36 ===
 [base_gen.py SUCCESS]
-[exeqs.py SUCCESS @ step=100]
-[Cumulative Hellinger] shots=100, h=0.0000
-[Time elapsed: 0.88 seconds]
+[exeqs.py SUCCESS @ step=400]
+[Cumulative Hellinger] shots=400, h=0.0000
+[Time elapsed: 1.40 seconds]
 
 === Iteration 37 ===
 [base_gen.py SUCCESS]
-[exeqs.py SUCCESS @ step=100]
-[Cumulative Hellinger] shots=100, h=0.0420
-[Time elapsed: 0.87 seconds]
+[exeqs.py SUCCESS @ step=400]
+[Cumulative Hellinger] shots=400, h=0.0000
+[Time elapsed: 1.73 seconds]
 
 === Iteration 38 ===
 [base_gen.py SUCCESS]
-[exeqs.py SUCCESS @ step=100]
-[Cumulative Hellinger] shots=100, h=0.0000
-[Time elapsed: 1.03 seconds]
+[exeqs.py SUCCESS @ step=400]
+[Cumulative Hellinger] shots=400, h=0.0000
+[Time elapsed: 3.78 seconds]
 
 === Iteration 39 ===
 [base_gen.py SUCCESS]
-[exeqs.py SUCCESS @ step=100]
-[Cumulative Hellinger] shots=100, h=0.0000
-[Time elapsed: 0.85 seconds]
+[exeqs.py SUCCESS @ step=400]
+[Cumulative Hellinger] shots=400, h=0.0000
+[Time elapsed: 6.18 seconds]
 
 === Iteration 40 ===
 [base_gen.py SUCCESS]
-[exeqs.py SUCCESS @ step=100]
-[Cumulative Hellinger] shots=100, h=0.0000
-[Time elapsed: 0.88 seconds]
+[exeqs.py SUCCESS @ step=400]
+[Cumulative Hellinger] shots=400, h=0.0698
+[Time elapsed: 1.21 seconds]
 
 === Iteration 41 ===
 [base_gen.py SUCCESS]
-[exeqs.py SUCCESS @ step=100]
-[Cumulative Hellinger] shots=100, h=0.0000
-[Time elapsed: 1.01 seconds]
+[exeqs.py SUCCESS @ step=400]
+[Cumulative Hellinger] shots=400, h=0.0000
+[Time elapsed: 1.29 seconds]
 
 === Iteration 42 ===
 [base_gen.py SUCCESS]
-[exeqs.py SUCCESS @ step=100]
-[Cumulative Hellinger] shots=100, h=0.0000
-[Time elapsed: 1.27 seconds]
+[exeqs.py SUCCESS @ step=400]
+[Cumulative Hellinger] shots=400, h=0.0000
+[Time elapsed: 3.53 seconds]
 
 === Iteration 43 ===
 [base_gen.py SUCCESS]
-[exeqs.py SUCCESS @ step=100]
-[Cumulative Hellinger] shots=100, h=0.4494
-[Hellinger above threshold] h=0.4494 > 0.1, total_shots=100, next_step=100
-[exeqs.py SUCCESS @ step=200]
-[Cumulative Hellinger] shots=300, h=0.2334
-[Hellinger above threshold] h=0.2334 > 0.1, total_shots=300, next_step=200
 [exeqs.py SUCCESS @ step=400]
-[Cumulative Hellinger] shots=700, h=0.1555
-[Hellinger above threshold] h=0.1555 > 0.1, total_shots=700, next_step=400
+[Cumulative Hellinger] shots=400, h=0.0915
+[Time elapsed: 5.68 seconds]
+
+=== Iteration 44 ===
+[base_gen.py SUCCESS]
+[exeqs.py SUCCESS @ step=400]
+[Cumulative Hellinger] shots=400, h=0.0521
+[Time elapsed: 1.50 seconds]
+
+=== Iteration 45 ===
+[base_gen.py SUCCESS]
+[exeqs.py SUCCESS @ step=400]
+[Cumulative Hellinger] shots=400, h=0.1207
+[Hellinger above threshold] h=0.1207 > 0.1, total_shots=400, next_step=400
+[exeqs.py SUCCESS @ step=800]
+[Cumulative Hellinger] shots=1200, h=0.0556
+[Time elapsed: 3.09 seconds]
+
+=== Iteration 46 ===
+[base_gen.py SUCCESS]
+[exeqs.py SUCCESS @ step=400]
+[Cumulative Hellinger] shots=400, h=0.0245
+[Time elapsed: 2.30 seconds]
+
+=== Iteration 47 ===
+[base_gen.py SUCCESS]
+[exeqs.py SUCCESS @ step=400]
+[Cumulative Hellinger] shots=400, h=0.0000
+[Time elapsed: 1.33 seconds]
+
+=== Iteration 48 ===
+[base_gen.py SUCCESS]
+[exeqs.py SUCCESS @ step=400]
+[Cumulative Hellinger] shots=400, h=0.0372
+[Time elapsed: 1.77 seconds]
+
+=== Iteration 49 ===
+[base_gen.py SUCCESS]
+[exeqs.py SUCCESS @ step=400]
+[Cumulative Hellinger] shots=400, h=0.0392
+[Time elapsed: 1.22 seconds]
+
+=== Iteration 50 ===
+[base_gen.py SUCCESS]
+[exeqs.py SUCCESS @ step=400]
+[Cumulative Hellinger] shots=400, h=0.0144
+[Time elapsed: 1.12 seconds]
+
+=== Iteration 51 ===
+[base_gen.py SUCCESS]
+[exeqs.py SUCCESS @ step=400]
+[Cumulative Hellinger] shots=400, h=0.0000
+[Time elapsed: 1.24 seconds]
+
+=== Iteration 52 ===
+[base_gen.py SUCCESS]
+[exeqs.py SUCCESS @ step=400]
+[Cumulative Hellinger] shots=400, h=0.0425
+[Time elapsed: 0.92 seconds]
+
+=== Iteration 53 ===
+[base_gen.py SUCCESS]
+[exeqs.py SUCCESS @ step=400]
+[Cumulative Hellinger] shots=400, h=0.0620
+[Time elapsed: 1.75 seconds]
+
+=== Iteration 54 ===
+[base_gen.py SUCCESS]
+[exeqs.py SUCCESS @ step=400]
+[Cumulative Hellinger] shots=400, h=0.0000
+[Time elapsed: 1.19 seconds]
+
+=== Iteration 55 ===
+[base_gen.py SUCCESS]
+[exeqs.py SUCCESS @ step=400]
+[Cumulative Hellinger] shots=400, h=0.3006
+[Hellinger above threshold] h=0.3006 > 0.1, total_shots=400, next_step=400
+[exeqs.py SUCCESS @ step=800]
+[Cumulative Hellinger] shots=1200, h=0.1713
+[Hellinger above threshold] h=0.1713 > 0.1, total_shots=1200, next_step=800
+[exeqs.py SUCCESS @ step=1600]
+[Cumulative Hellinger] shots=2800, h=0.1200
+[Hellinger above threshold] h=0.1200 > 0.1, total_shots=2800, next_step=1600
+[exeqs.py SUCCESS @ step=3200]
+[Cumulative Hellinger] shots=6000, h=0.0798
+[Time elapsed: 91.04 seconds]
+
+=== Iteration 56 ===
+[base_gen.py SUCCESS]
+[exeqs.py SUCCESS @ step=400]
+[Cumulative Hellinger] shots=400, h=0.0495
+[Time elapsed: 1.35 seconds]
+
+=== Iteration 57 ===
+[base_gen.py SUCCESS]
+[exeqs.py SUCCESS @ step=400]
+[Cumulative Hellinger] shots=400, h=0.0000
+[Time elapsed: 1.15 seconds]
+
+=== Iteration 58 ===
+[base_gen.py SUCCESS]
+[exeqs.py SUCCESS @ step=400]
+[Cumulative Hellinger] shots=400, h=0.0265
+[Time elapsed: 2.19 seconds]
+
+=== Iteration 59 ===
+[base_gen.py SUCCESS]
+[exeqs.py SUCCESS @ step=400]
+[Cumulative Hellinger] shots=400, h=0.0000
+[Time elapsed: 1.19 seconds]
+
+=== Iteration 60 ===
+[base_gen.py SUCCESS]
+[exeqs.py SUCCESS @ step=400]
+[Cumulative Hellinger] shots=400, h=0.0000
+[Time elapsed: 2.59 seconds]
+
+=== Iteration 61 ===
+[base_gen.py SUCCESS]
+[exeqs.py SUCCESS @ step=400]
+[Cumulative Hellinger] shots=400, h=0.0000
+[Time elapsed: 1.05 seconds]
+
+=== Iteration 62 ===
+[base_gen.py SUCCESS]
+[exeqs.py SUCCESS @ step=400]
+[Cumulative Hellinger] shots=400, h=0.0248
+[Time elapsed: 1.57 seconds]
+
+=== Iteration 63 ===
+[base_gen.py SUCCESS]
+[exeqs.py SUCCESS @ step=400]
+[Cumulative Hellinger] shots=400, h=0.1298
+[Hellinger above threshold] h=0.1298 > 0.1, total_shots=400, next_step=400
+[exeqs.py SUCCESS @ step=800]
+[Cumulative Hellinger] shots=1200, h=0.0788
+[Time elapsed: 8.21 seconds]
+
+=== Iteration 64 ===
+[base_gen.py SUCCESS]
+[exeqs.py SUCCESS @ step=400]
+[Cumulative Hellinger] shots=400, h=0.0000
+[Time elapsed: 2.01 seconds]
+
+=== Iteration 65 ===
+[base_gen.py SUCCESS]
+[exeqs.py SUCCESS @ step=400]
+[Cumulative Hellinger] shots=400, h=0.0141
+[Time elapsed: 2.12 seconds]
+
+=== Iteration 66 ===
+[base_gen.py SUCCESS]
+[exeqs.py SUCCESS @ step=400]
+[Cumulative Hellinger] shots=400, h=0.0000
+[Time elapsed: 3.43 seconds]
+
+=== Iteration 67 ===
+[base_gen.py SUCCESS]
+[exeqs.py SUCCESS @ step=400]
+[Cumulative Hellinger] shots=400, h=0.0443
+[Time elapsed: 1.21 seconds]
+
+=== Iteration 68 ===
+[base_gen.py SUCCESS]
+[exeqs.py SUCCESS @ step=400]
+[Cumulative Hellinger] shots=400, h=0.0478
+[Time elapsed: 1.75 seconds]
+
+=== Iteration 69 ===
+[base_gen.py SUCCESS]
+[exeqs.py SUCCESS @ step=400]
+[Cumulative Hellinger] shots=400, h=0.0000
+[Time elapsed: 1.69 seconds]
+
+=== Iteration 70 ===
+[base_gen.py SUCCESS]
+[exeqs.py SUCCESS @ step=400]
+[Cumulative Hellinger] shots=400, h=0.0176
+[Time elapsed: 0.96 seconds]
+
+=== Iteration 71 ===
+[base_gen.py SUCCESS]
+[exeqs.py SUCCESS @ step=400]
+[Cumulative Hellinger] shots=400, h=0.0000
+[Time elapsed: 1.46 seconds]
+
+=== Iteration 72 ===
+[base_gen.py SUCCESS]
+[exeqs.py SUCCESS @ step=400]
+[Cumulative Hellinger] shots=400, h=0.0000
+[Time elapsed: 1.50 seconds]
+
+=== Iteration 73 ===
+[base_gen.py SUCCESS]
+[exeqs.py SUCCESS @ step=400]
+[Cumulative Hellinger] shots=400, h=0.0000
+[Time elapsed: 0.84 seconds]
+
+=== Iteration 74 ===
+[base_gen.py SUCCESS]
+[exeqs.py SUCCESS @ step=400]
+[Cumulative Hellinger] shots=400, h=0.0000
+[Time elapsed: 0.89 seconds]
+
+=== Iteration 75 ===
+[base_gen.py SUCCESS]
+[exeqs.py SUCCESS @ step=400]
+[Cumulative Hellinger] shots=400, h=0.0000
+[Time elapsed: 1.40 seconds]
+
+=== Iteration 76 ===
+[base_gen.py SUCCESS]
+[exeqs.py SUCCESS @ step=400]
+[Cumulative Hellinger] shots=400, h=0.0000
+[Time elapsed: 2.19 seconds]
+
+=== Iteration 77 ===
+[base_gen.py SUCCESS]
+[exeqs.py SUCCESS @ step=400]
+[Cumulative Hellinger] shots=400, h=0.0636
+[Time elapsed: 1.04 seconds]
+
+=== Iteration 78 ===
+[base_gen.py SUCCESS]
+[exeqs.py SUCCESS @ step=400]
+[Cumulative Hellinger] shots=400, h=0.0000
+[Time elapsed: 1.54 seconds]
+
+=== Iteration 79 ===
+[base_gen.py SUCCESS]
+[exeqs.py SUCCESS @ step=400]
+[Cumulative Hellinger] shots=400, h=0.0000
+[Time elapsed: 0.92 seconds]
+
+=== Iteration 80 ===
+[base_gen.py SUCCESS]
+[exeqs.py SUCCESS @ step=400]
+[Cumulative Hellinger] shots=400, h=0.0000
+[Time elapsed: 2.00 seconds]
+
+=== Iteration 81 ===
+[base_gen.py SUCCESS]
+[exeqs.py SUCCESS @ step=400]
+[Cumulative Hellinger] shots=400, h=0.0000
+[Time elapsed: 1.71 seconds]
+
+=== Iteration 82 ===
+[base_gen.py SUCCESS]
+[exeqs.py SUCCESS @ step=400]
+[Cumulative Hellinger] shots=400, h=0.0000
+[Time elapsed: 1.92 seconds]
+
+=== Iteration 83 ===
+[base_gen.py SUCCESS]
+[exeqs.py SUCCESS @ step=400]
+[Cumulative Hellinger] shots=400, h=0.3144
+[Hellinger above threshold] h=0.3144 > 0.1, total_shots=400, next_step=400
+[exeqs.py SUCCESS @ step=800]
+[Cumulative Hellinger] shots=1200, h=0.1766
+[Hellinger above threshold] h=0.1766 > 0.1, total_shots=1200, next_step=800
+[exeqs.py SUCCESS @ step=1600]
+[Cumulative Hellinger] shots=2800, h=0.1196
+[Hellinger above threshold] h=0.1196 > 0.1, total_shots=2800, next_step=1600
+[exeqs.py SUCCESS @ step=3200]
+[Cumulative Hellinger] shots=6000, h=0.0815
+[Time elapsed: 66.53 seconds]
+
+=== Iteration 84 ===
+[base_gen.py SUCCESS]
+[exeqs.py SUCCESS @ step=400]
+[Cumulative Hellinger] shots=400, h=0.0000
+[Time elapsed: 1.64 seconds]
+
+=== Iteration 85 ===
+[base_gen.py SUCCESS]
+[exeqs.py SUCCESS @ step=400]
+[Cumulative Hellinger] shots=400, h=0.0000
+[Time elapsed: 1.61 seconds]
+
+=== Iteration 86 ===
+[base_gen.py SUCCESS]
+[exeqs.py SUCCESS @ step=400]
+[Cumulative Hellinger] shots=400, h=0.0000
+[Time elapsed: 1.55 seconds]
+
+=== Iteration 87 ===
+[base_gen.py SUCCESS]
+[exeqs.py SUCCESS @ step=400]
+[Cumulative Hellinger] shots=400, h=0.0063
+[Time elapsed: 1.55 seconds]
+
+=== Iteration 88 ===
+[base_gen.py SUCCESS]
+[exeqs.py SUCCESS @ step=400]
+[Cumulative Hellinger] shots=400, h=0.2059
+[Hellinger above threshold] h=0.2059 > 0.1, total_shots=400, next_step=400
+[exeqs.py SUCCESS @ step=800]
+[Cumulative Hellinger] shots=1200, h=0.1058
+[Hellinger above threshold] h=0.1058 > 0.1, total_shots=1200, next_step=800
+[exeqs.py SUCCESS @ step=1600]
+[Cumulative Hellinger] shots=2800, h=0.0782
+[Time elapsed: 65.26 seconds]
+
+=== Iteration 89 ===
+[base_gen.py SUCCESS]
+[exeqs.py SUCCESS @ step=400]
+[Cumulative Hellinger] shots=400, h=0.4497
+[Hellinger above threshold] h=0.4497 > 0.1, total_shots=400, next_step=400
+[exeqs.py SUCCESS @ step=800]
+[Cumulative Hellinger] shots=1200, h=0.2401
+[Hellinger above threshold] h=0.2401 > 0.1, total_shots=1200, next_step=800
+[exeqs.py SUCCESS @ step=1600]
+[Cumulative Hellinger] shots=2800, h=0.1566
+[Hellinger above threshold] h=0.1566 > 0.1, total_shots=2800, next_step=1600
+[exeqs.py SUCCESS @ step=3200]
+[Cumulative Hellinger] shots=6000, h=0.1058
+[Hellinger above threshold] h=0.1058 > 0.1, total_shots=6000, next_step=3200
+[exeqs.py SUCCESS @ step=6400]
+[Cumulative Hellinger] shots=12400, h=0.0708
+[Time elapsed: 84.88 seconds]
+
+=== Iteration 90 ===
+[base_gen.py SUCCESS]
+[exeqs.py SUCCESS @ step=400]
+[Cumulative Hellinger] shots=400, h=0.0000
+[Time elapsed: 1.96 seconds]
+
+=== Iteration 91 ===
+[base_gen.py SUCCESS]
+[exeqs.py SUCCESS @ step=400]
+[Cumulative Hellinger] shots=400, h=0.0000
+[Time elapsed: 1.92 seconds]
+
+=== Iteration 92 ===
+[base_gen.py SUCCESS]
+[exeqs.py SUCCESS @ step=400]
+[Cumulative Hellinger] shots=400, h=0.0686
+[Time elapsed: 1.10 seconds]
+
+=== Iteration 93 ===
+[base_gen.py SUCCESS]
+[exeqs.py SUCCESS @ step=400]
+[Cumulative Hellinger] shots=400, h=0.0000
+[Time elapsed: 1.52 seconds]
+
+=== Iteration 94 ===
+[base_gen.py SUCCESS]
+[exeqs.py SUCCESS @ step=400]
+[Cumulative Hellinger] shots=400, h=0.0092
+[Time elapsed: 2.79 seconds]
+
+=== Iteration 95 ===
+[base_gen.py SUCCESS]
+[exeqs.py SUCCESS @ step=400]
+[Cumulative Hellinger] shots=400, h=0.0354
+[Time elapsed: 1.08 seconds]
+
+=== Iteration 96 ===
+[base_gen.py SUCCESS]
+[exeqs.py SUCCESS @ step=400]
+[Cumulative Hellinger] shots=400, h=0.0691
+[Time elapsed: 1.21 seconds]
+
+=== Iteration 97 ===
+[base_gen.py SUCCESS]
+[exeqs.py SUCCESS @ step=400]
+[Cumulative Hellinger] shots=400, h=0.0000
+[Time elapsed: 1.18 seconds]
+
+=== Iteration 98 ===
+[base_gen.py SUCCESS]
+[exeqs.py SUCCESS @ step=400]
+[Cumulative Hellinger] shots=400, h=0.0000
+[Time elapsed: 1.35 seconds]
+
+=== Iteration 99 ===
+[base_gen.py SUCCESS]
+[exeqs.py SUCCESS @ step=400]
+[Cumulative Hellinger] shots=400, h=0.0000
+[Time elapsed: 1.63 seconds]
+
+=== Iteration 100 ===
+[base_gen.py SUCCESS]
+[exeqs.py SUCCESS @ step=400]
+[Cumulative Hellinger] shots=400, h=0.0000
+[Time elapsed: 1.75 seconds]
+
+=== Iteration 101 ===
+[base_gen.py SUCCESS]
+[exeqs.py SUCCESS @ step=400]
+[Cumulative Hellinger] shots=400, h=0.0578
+[Time elapsed: 1.18 seconds]
+
+=== Iteration 102 ===
+[base_gen.py SUCCESS]
+[exeqs.py SUCCESS @ step=400]
+[Cumulative Hellinger] shots=400, h=0.0000
+[Time elapsed: 1.71 seconds]
+
+=== Iteration 103 ===
+[base_gen.py SUCCESS]
+[exeqs.py SUCCESS @ step=400]
+[Cumulative Hellinger] shots=400, h=0.0477
+[Time elapsed: 1.21 seconds]
+
+=== Iteration 104 ===
+[base_gen.py SUCCESS]
+[exeqs.py SUCCESS @ step=400]
+[Cumulative Hellinger] shots=400, h=0.0330
+[Time elapsed: 1.23 seconds]
+
+=== Iteration 105 ===
+[base_gen.py SUCCESS]
+[exeqs.py SUCCESS @ step=400]
+[Cumulative Hellinger] shots=400, h=0.3254
+[Hellinger above threshold] h=0.3254 > 0.1, total_shots=400, next_step=400
+[exeqs.py SUCCESS @ step=800]
+[Cumulative Hellinger] shots=1200, h=0.1868
+[Hellinger above threshold] h=0.1868 > 0.1, total_shots=1200, next_step=800
+[exeqs.py SUCCESS @ step=1600]
+[Cumulative Hellinger] shots=2800, h=0.1121
+[Hellinger above threshold] h=0.1121 > 0.1, total_shots=2800, next_step=1600
+[exeqs.py SUCCESS @ step=3200]
+[Cumulative Hellinger] shots=6000, h=0.0745
+[Time elapsed: 24.37 seconds]
+
+=== Iteration 106 ===
+[base_gen.py SUCCESS]
+[exeqs.py SUCCESS @ step=400]
+[Cumulative Hellinger] shots=400, h=0.0000
+[Time elapsed: 1.84 seconds]
+
+=== Iteration 107 ===
+[base_gen.py SUCCESS]
+[exeqs.py SUCCESS @ step=400]
+[Cumulative Hellinger] shots=400, h=0.0000
+[Time elapsed: 1.53 seconds]
+
+=== Iteration 108 ===
+[base_gen.py SUCCESS]
+[exeqs.py SUCCESS @ step=400]
+[Cumulative Hellinger] shots=400, h=0.0000
+[Time elapsed: 2.35 seconds]
+
+=== Iteration 109 ===
+[base_gen.py SUCCESS]
+[exeqs.py SUCCESS @ step=400]
+[Cumulative Hellinger] shots=400, h=0.0000
+[Time elapsed: 1.23 seconds]
+
+=== Iteration 110 ===
+[base_gen.py SUCCESS]
+[exeqs.py SUCCESS @ step=400]
+[Cumulative Hellinger] shots=400, h=0.0000
+[Time elapsed: 1.19 seconds]
+
+=== Iteration 111 ===
+[base_gen.py SUCCESS]
+[exeqs.py SUCCESS @ step=400]
+[Cumulative Hellinger] shots=400, h=0.0000
+[Time elapsed: 2.55 seconds]
+
+=== Iteration 112 ===
+[base_gen.py SUCCESS]
+[exeqs.py SUCCESS @ step=400]
+[Cumulative Hellinger] shots=400, h=0.0658
+[Time elapsed: 2.34 seconds]
+
+=== Iteration 113 ===
+[base_gen.py SUCCESS]
+[exeqs.py SUCCESS @ step=400]
+[Cumulative Hellinger] shots=400, h=0.0000
+[Time elapsed: 2.08 seconds]
+
+=== Iteration 114 ===
+[base_gen.py SUCCESS]
+[exeqs.py SUCCESS @ step=400]
+[Cumulative Hellinger] shots=400, h=0.0000
+[Time elapsed: 2.42 seconds]
+
+=== Iteration 115 ===
+[base_gen.py SUCCESS]
+[exeqs.py SUCCESS @ step=400]
+[Cumulative Hellinger] shots=400, h=0.0000
+[Time elapsed: 1.08 seconds]
+
+=== Iteration 116 ===
+[base_gen.py SUCCESS]
+[exeqs.py SUCCESS @ step=400]
+[Cumulative Hellinger] shots=400, h=0.0000
+[Time elapsed: 0.87 seconds]
+
+=== Iteration 117 ===
+[base_gen.py SUCCESS]
+[exeqs.py SUCCESS @ step=400]
+[Cumulative Hellinger] shots=400, h=0.0115
+[Time elapsed: 1.54 seconds]
+
+=== Iteration 118 ===
+[base_gen.py SUCCESS]
+[exeqs.py SUCCESS @ step=400]
+[Cumulative Hellinger] shots=400, h=0.0496
+[Time elapsed: 1.35 seconds]
+
+=== Iteration 119 ===
+[base_gen.py SUCCESS]
+[exeqs.py SUCCESS @ step=400]
+[Cumulative Hellinger] shots=400, h=0.0020
+[Time elapsed: 0.93 seconds]
+
+=== Iteration 120 ===
+[base_gen.py SUCCESS]
+[exeqs.py SUCCESS @ step=400]
+[Cumulative Hellinger] shots=400, h=0.0000
+[Time elapsed: 1.62 seconds]
+
+=== Iteration 121 ===
+[base_gen.py SUCCESS]
+[exeqs.py SUCCESS @ step=400]
+[Cumulative Hellinger] shots=400, h=0.0578
+[Time elapsed: 1.10 seconds]
+
+=== Iteration 122 ===
+[base_gen.py SUCCESS]
+[exeqs.py SUCCESS @ step=400]
+[Cumulative Hellinger] shots=400, h=0.0000
+[Time elapsed: 2.45 seconds]
+
+=== Iteration 123 ===
+[base_gen.py SUCCESS]
+[exeqs.py SUCCESS @ step=400]
+[Cumulative Hellinger] shots=400, h=0.0000
+[Time elapsed: 0.97 seconds]
+
+=== Iteration 124 ===
+[base_gen.py SUCCESS]
+[exeqs.py SUCCESS @ step=400]
+[Cumulative Hellinger] shots=400, h=0.0000
+[Time elapsed: 1.71 seconds]
+
+=== Iteration 125 ===
+[base_gen.py SUCCESS]
+[exeqs.py SUCCESS @ step=400]
+[Cumulative Hellinger] shots=400, h=0.2383
+[Hellinger above threshold] h=0.2383 > 0.1, total_shots=400, next_step=400
+[exeqs.py SUCCESS @ step=800]
+[Cumulative Hellinger] shots=1200, h=0.1437
+[Hellinger above threshold] h=0.1437 > 0.1, total_shots=1200, next_step=800
+[exeqs.py SUCCESS @ step=1600]
+[Cumulative Hellinger] shots=2800, h=0.0826
+[Time elapsed: 10.11 seconds]
+
+=== Iteration 126 ===
+[base_gen.py SUCCESS]
+[exeqs.py SUCCESS @ step=400]
+[Cumulative Hellinger] shots=400, h=0.0000
+[Time elapsed: 1.91 seconds]
+
+=== Iteration 127 ===
+[base_gen.py SUCCESS]
+[exeqs.py SUCCESS @ step=400]
+[Cumulative Hellinger] shots=400, h=0.0066
+[Time elapsed: 1.76 seconds]
+
+=== Iteration 128 ===
+[base_gen.py SUCCESS]
+[exeqs.py SUCCESS @ step=400]
+[Cumulative Hellinger] shots=400, h=0.0074
+[Time elapsed: 1.13 seconds]
+
+=== Iteration 129 ===
+[base_gen.py SUCCESS]
+[exeqs.py SUCCESS @ step=400]
+[Cumulative Hellinger] shots=400, h=0.0019
+[Time elapsed: 1.30 seconds]
+
+=== Iteration 130 ===
+[base_gen.py SUCCESS]
+[exeqs.py SUCCESS @ step=400]
+[Cumulative Hellinger] shots=400, h=0.0035
+[Time elapsed: 0.85 seconds]
+
+=== Iteration 131 ===
+[base_gen.py SUCCESS]
+[exeqs.py SUCCESS @ step=400]
+[Cumulative Hellinger] shots=400, h=0.0000
+[Time elapsed: 1.01 seconds]
+
+=== Iteration 132 ===
+[base_gen.py SUCCESS]
+[exeqs.py SUCCESS @ step=400]
+[Cumulative Hellinger] shots=400, h=0.0000
+[Time elapsed: 3.29 seconds]
+
+=== Iteration 133 ===
+[base_gen.py SUCCESS]
+[exeqs.py SUCCESS @ step=400]
+[Cumulative Hellinger] shots=400, h=0.0000
+[Time elapsed: 1.26 seconds]
+
+=== Iteration 134 ===
+[base_gen.py SUCCESS]
+[exeqs.py SUCCESS @ step=400]
+[Cumulative Hellinger] shots=400, h=0.0000
+[Time elapsed: 1.79 seconds]
+
+=== Iteration 135 ===
+[base_gen.py SUCCESS]
+[exeqs.py SUCCESS @ step=400]
+[Cumulative Hellinger] shots=400, h=0.0000
+[Time elapsed: 2.33 seconds]
+
+=== Iteration 136 ===
+[base_gen.py SUCCESS]
+[exeqs.py SUCCESS @ step=400]
+[Cumulative Hellinger] shots=400, h=0.0000
+[Time elapsed: 1.06 seconds]
+
+=== Iteration 137 ===
+[base_gen.py SUCCESS]
+[exeqs.py SUCCESS @ step=400]
+[Cumulative Hellinger] shots=400, h=0.0000
+[Time elapsed: 1.97 seconds]
+
+=== Iteration 138 ===
+[base_gen.py SUCCESS]
+[exeqs.py SUCCESS @ step=400]
+[Cumulative Hellinger] shots=400, h=0.0000
+[Time elapsed: 1.28 seconds]
+
+=== Iteration 139 ===
+[base_gen.py SUCCESS]
+[exeqs.py SUCCESS @ step=400]
+[Cumulative Hellinger] shots=400, h=0.1611
+[Hellinger above threshold] h=0.1611 > 0.1, total_shots=400, next_step=400
+[exeqs.py SUCCESS @ step=800]
+[Cumulative Hellinger] shots=1200, h=0.0912
+[Time elapsed: 3.29 seconds]
+
+=== Iteration 140 ===
+[base_gen.py SUCCESS]
+[exeqs.py SUCCESS @ step=400]
+[Cumulative Hellinger] shots=400, h=0.0127
+[Time elapsed: 1.51 seconds]
+
+=== Iteration 141 ===
+[base_gen.py SUCCESS]
+[exeqs.py SUCCESS @ step=400]
+[Cumulative Hellinger] shots=400, h=0.0000
+[Time elapsed: 1.89 seconds]
+
+=== Iteration 142 ===
+[base_gen.py SUCCESS]
+[exeqs.py SUCCESS @ step=400]
+[Cumulative Hellinger] shots=400, h=0.0374
+[Time elapsed: 1.02 seconds]
+
+=== Iteration 143 ===
+[base_gen.py SUCCESS]
+[exeqs.py SUCCESS @ step=400]
+[Cumulative Hellinger] shots=400, h=0.0000
+[Time elapsed: 2.19 seconds]
+
+=== Iteration 144 ===
+[base_gen.py SUCCESS]
+[exeqs.py SUCCESS @ step=400]
+[Cumulative Hellinger] shots=400, h=0.0227
+[Time elapsed: 1.37 seconds]
+
+=== Iteration 145 ===
+[base_gen.py SUCCESS]
+[exeqs.py SUCCESS @ step=400]
+[Cumulative Hellinger] shots=400, h=0.0410
+[Time elapsed: 1.51 seconds]
+
+=== Iteration 146 ===
+[base_gen.py SUCCESS]
+[exeqs.py SUCCESS @ step=400]
+[Cumulative Hellinger] shots=400, h=0.1568
+[Hellinger above threshold] h=0.1568 > 0.1, total_shots=400, next_step=400
+[exeqs.py SUCCESS @ step=800]
+[Cumulative Hellinger] shots=1200, h=0.0880
+[Time elapsed: 17.16 seconds]
+
+=== Iteration 147 ===
+[base_gen.py SUCCESS]
+[exeqs.py SUCCESS @ step=400]
+[Cumulative Hellinger] shots=400, h=0.0000
+[Time elapsed: 1.37 seconds]
+
+=== Iteration 148 ===
+[base_gen.py SUCCESS]
+[exeqs.py SUCCESS @ step=400]
+[Cumulative Hellinger] shots=400, h=0.0682
+[Time elapsed: 1.42 seconds]
+
+=== Iteration 149 ===
+[base_gen.py SUCCESS]
+[exeqs.py SUCCESS @ step=400]
+[Cumulative Hellinger] shots=400, h=0.0000
+[Time elapsed: 1.65 seconds]
+
+=== Iteration 150 ===
+[base_gen.py SUCCESS]
+[exeqs.py SUCCESS @ step=400]
+[Cumulative Hellinger] shots=400, h=0.0035
+[Time elapsed: 2.62 seconds]
+
+=== Iteration 151 ===
+[base_gen.py SUCCESS]
+[exeqs.py SUCCESS @ step=400]
+[Cumulative Hellinger] shots=400, h=0.0000
+[Time elapsed: 1.57 seconds]
+
+=== Iteration 152 ===
+[base_gen.py SUCCESS]
+[exeqs.py SUCCESS @ step=400]
+[Cumulative Hellinger] shots=400, h=0.0465
+[Time elapsed: 1.17 seconds]
+
+=== Iteration 153 ===
+[base_gen.py SUCCESS]
+[exeqs.py SUCCESS @ step=400]
+[Cumulative Hellinger] shots=400, h=0.0000
+[Time elapsed: 0.92 seconds]
+
+=== Iteration 154 ===
+[base_gen.py SUCCESS]
+[exeqs.py SUCCESS @ step=400]
+[Cumulative Hellinger] shots=400, h=0.0000
+[Time elapsed: 1.57 seconds]
+
+=== Iteration 155 ===
+[base_gen.py SUCCESS]
+[exeqs.py SUCCESS @ step=400]
+[Cumulative Hellinger] shots=400, h=0.2028
+[Hellinger above threshold] h=0.2028 > 0.1, total_shots=400, next_step=400
+[exeqs.py SUCCESS @ step=800]
+[Cumulative Hellinger] shots=1200, h=0.1209
+[Hellinger above threshold] h=0.1209 > 0.1, total_shots=1200, next_step=800
+[exeqs.py SUCCESS @ step=1600]
+[Cumulative Hellinger] shots=2800, h=0.0694
+[Time elapsed: 14.35 seconds]
+
+=== Iteration 156 ===
+[base_gen.py SUCCESS]
+[exeqs.py SUCCESS @ step=400]
+[Cumulative Hellinger] shots=400, h=0.0269
+[Time elapsed: 0.83 seconds]
+
+=== Iteration 157 ===
+[base_gen.py SUCCESS]
+[exeqs.py SUCCESS @ step=400]
+[Cumulative Hellinger] shots=400, h=0.0211
+[Time elapsed: 2.69 seconds]
+
+=== Iteration 158 ===
+[base_gen.py SUCCESS]
+[exeqs.py SUCCESS @ step=400]
+[Cumulative Hellinger] shots=400, h=0.0157
+[Time elapsed: 1.44 seconds]
+
+=== Iteration 159 ===
+[base_gen.py SUCCESS]
+[exeqs.py SUCCESS @ step=400]
+[Cumulative Hellinger] shots=400, h=0.0000
+[Time elapsed: 0.94 seconds]
+
+=== Iteration 160 ===
+[base_gen.py SUCCESS]
+[exeqs.py SUCCESS @ step=400]
+[Cumulative Hellinger] shots=400, h=0.0068
+[Time elapsed: 1.89 seconds]
+
+=== Iteration 161 ===
+[base_gen.py SUCCESS]
+[exeqs.py SUCCESS @ step=400]
+[Cumulative Hellinger] shots=400, h=0.0089
+[Time elapsed: 0.90 seconds]
+
+=== Iteration 162 ===
+[base_gen.py SUCCESS]
+[exeqs.py SUCCESS @ step=400]
+[Cumulative Hellinger] shots=400, h=0.0291
+[Time elapsed: 1.63 seconds]
+
+=== Iteration 163 ===
+[base_gen.py SUCCESS]
+[exeqs.py SUCCESS @ step=400]
+[Cumulative Hellinger] shots=400, h=0.0284
+[Time elapsed: 1.88 seconds]
+
+=== Iteration 164 ===
+[base_gen.py SUCCESS]
+[exeqs.py SUCCESS @ step=400]
+[Cumulative Hellinger] shots=400, h=0.0000
+[Time elapsed: 0.91 seconds]
+
+=== Iteration 165 ===
+[base_gen.py SUCCESS]
+[exeqs.py SUCCESS @ step=400]
+[Cumulative Hellinger] shots=400, h=0.0878
+[Time elapsed: 1.03 seconds]
+
+=== Iteration 166 ===
+[base_gen.py SUCCESS]
+[exeqs.py SUCCESS @ step=400]
+[Cumulative Hellinger] shots=400, h=0.0248
+[Time elapsed: 1.64 seconds]
+
+=== Iteration 167 ===
+[base_gen.py SUCCESS]
+[exeqs.py SUCCESS @ step=400]
+[Cumulative Hellinger] shots=400, h=0.0000
+[Time elapsed: 1.46 seconds]
+
+=== Iteration 168 ===
+[base_gen.py SUCCESS]
+[exeqs.py SUCCESS @ step=400]
+[Cumulative Hellinger] shots=400, h=0.1123
+[Hellinger above threshold] h=0.1123 > 0.1, total_shots=400, next_step=400
+[exeqs.py SUCCESS @ step=800]
+[Cumulative Hellinger] shots=1200, h=0.0537
+[Time elapsed: 6.48 seconds]
+
+=== Iteration 169 ===
+[base_gen.py SUCCESS]
+[exeqs.py SUCCESS @ step=400]
+[Cumulative Hellinger] shots=400, h=0.0000
+[Time elapsed: 1.20 seconds]
+
+=== Iteration 170 ===
+[base_gen.py SUCCESS]
+[exeqs.py SUCCESS @ step=400]
+[Cumulative Hellinger] shots=400, h=0.0278
+[Time elapsed: 0.91 seconds]
+
+=== Iteration 171 ===
+[base_gen.py SUCCESS]
+[exeqs.py SUCCESS @ step=400]
+[Cumulative Hellinger] shots=400, h=0.0000
+[Time elapsed: 1.31 seconds]
+
+=== Iteration 172 ===
+[base_gen.py SUCCESS]
+[exeqs.py SUCCESS @ step=400]
+[Cumulative Hellinger] shots=400, h=0.0000
+[Time elapsed: 1.03 seconds]
+
+=== Iteration 173 ===
+[base_gen.py SUCCESS]
+[exeqs.py SUCCESS @ step=400]
+[Cumulative Hellinger] shots=400, h=0.0000
+[Time elapsed: 1.59 seconds]
+
+=== Iteration 174 ===
+[base_gen.py SUCCESS]
+[exeqs.py SUCCESS @ step=400]
+[Cumulative Hellinger] shots=400, h=0.0198
+[Time elapsed: 0.89 seconds]
+
+=== Iteration 175 ===
+[base_gen.py SUCCESS]
+[exeqs.py SUCCESS @ step=400]
+[Cumulative Hellinger] shots=400, h=0.0000
+[Time elapsed: 1.18 seconds]
+
+=== Iteration 176 ===
+[base_gen.py SUCCESS]
+[exeqs.py SUCCESS @ step=400]
+[Cumulative Hellinger] shots=400, h=0.0883
+[Time elapsed: 1.40 seconds]
+
+=== Iteration 177 ===
+[base_gen.py SUCCESS]
+[exeqs.py SUCCESS @ step=400]
+[Cumulative Hellinger] shots=400, h=0.0000
+[Time elapsed: 0.87 seconds]
+
+=== Iteration 178 ===
+[base_gen.py SUCCESS]
+[exeqs.py SUCCESS @ step=400]
+[Cumulative Hellinger] shots=400, h=0.0054
+[Time elapsed: 2.03 seconds]
+
+=== Iteration 179 ===
+[base_gen.py SUCCESS]
+[exeqs.py SUCCESS @ step=400]
+[Cumulative Hellinger] shots=400, h=0.0291
+[Time elapsed: 1.26 seconds]
+
+=== Iteration 180 ===
+[base_gen.py SUCCESS]
+[exeqs.py SUCCESS @ step=400]
+[Cumulative Hellinger] shots=400, h=0.0000
+[Time elapsed: 1.14 seconds]
+
+=== Iteration 181 ===
+[base_gen.py SUCCESS]
+[exeqs.py SUCCESS @ step=400]
+[Cumulative Hellinger] shots=400, h=0.0858
+[Time elapsed: 1.19 seconds]
+
+=== Iteration 182 ===
+[base_gen.py SUCCESS]
+[exeqs.py SUCCESS @ step=400]
+[Cumulative Hellinger] shots=400, h=0.0088
+[Time elapsed: 1.36 seconds]
+
+=== Iteration 183 ===
+[base_gen.py SUCCESS]
+[exeqs.py SUCCESS @ step=400]
+[Cumulative Hellinger] shots=400, h=0.0071
+[Time elapsed: 1.17 seconds]
+
+=== Iteration 184 ===
+[base_gen.py SUCCESS]
+[exeqs.py SUCCESS @ step=400]
+[Cumulative Hellinger] shots=400, h=0.0000
+[Time elapsed: 1.18 seconds]
+
+=== Iteration 185 ===
+[base_gen.py SUCCESS]
+[exeqs.py SUCCESS @ step=400]
+[Cumulative Hellinger] shots=400, h=0.0786
+[Time elapsed: 1.31 seconds]
+
+=== Iteration 186 ===
+[base_gen.py SUCCESS]
+[exeqs.py SUCCESS @ step=400]
+[Cumulative Hellinger] shots=400, h=0.4530
+[Hellinger above threshold] h=0.4530 > 0.1, total_shots=400, next_step=400
+[exeqs.py SUCCESS @ step=800]
+[Cumulative Hellinger] shots=1200, h=0.2630
+[Hellinger above threshold] h=0.2630 > 0.1, total_shots=1200, next_step=800
+[exeqs.py SUCCESS @ step=1600]
+[Cumulative Hellinger] shots=2800, h=0.1655
+[Hellinger above threshold] h=0.1655 > 0.1, total_shots=2800, next_step=1600
+[exeqs.py SUCCESS @ step=3200]
+[Cumulative Hellinger] shots=6000, h=0.1134
+[Hellinger above threshold] h=0.1134 > 0.1, total_shots=6000, next_step=3200
+[exeqs.py SUCCESS @ step=6400]
+[Cumulative Hellinger] shots=12400, h=0.0733
+[Time elapsed: 50.34 seconds]
+
+=== Iteration 187 ===
+[base_gen.py SUCCESS]
+[exeqs.py SUCCESS @ step=400]
+[Cumulative Hellinger] shots=400, h=0.0212
+[Time elapsed: 1.04 seconds]
+
+=== Iteration 188 ===
+[base_gen.py SUCCESS]
+[exeqs.py SUCCESS @ step=400]
+[Cumulative Hellinger] shots=400, h=0.4243
+[Hellinger above threshold] h=0.4243 > 0.1, total_shots=400, next_step=400
+[exeqs.py SUCCESS @ step=800]
+[Cumulative Hellinger] shots=1200, h=0.2303
+[Hellinger above threshold] h=0.2303 > 0.1, total_shots=1200, next_step=800
+[exeqs.py SUCCESS @ step=1600]
+[Cumulative Hellinger] shots=2800, h=0.1577
+[Hellinger above threshold] h=0.1577 > 0.1, total_shots=2800, next_step=1600
+[exeqs.py SUCCESS @ step=3200]
+[Cumulative Hellinger] shots=6000, h=0.1062
+[Hellinger above threshold] h=0.1062 > 0.1, total_shots=6000, next_step=3200
+[exeqs.py SUCCESS @ step=6400]
+[Cumulative Hellinger] shots=12400, h=0.0687
+[Time elapsed: 808.05 seconds]
+
+=== Iteration 189 ===
+[base_gen.py SUCCESS]
+[exeqs.py SUCCESS @ step=400]
+[Cumulative Hellinger] shots=400, h=0.0000
+[Time elapsed: 1.15 seconds]
+
+=== Iteration 190 ===
+[base_gen.py SUCCESS]
+[exeqs.py SUCCESS @ step=400]
+[Cumulative Hellinger] shots=400, h=0.0000
+[Time elapsed: 1.09 seconds]
+
+=== Iteration 191 ===
+[base_gen.py SUCCESS]
+[exeqs.py SUCCESS @ step=400]
+[Cumulative Hellinger] shots=400, h=0.0133
+[Time elapsed: 1.30 seconds]
+
+=== Iteration 192 ===
+[base_gen.py SUCCESS]
+[exeqs.py SUCCESS @ step=400]
+[Cumulative Hellinger] shots=400, h=0.0000
+[Time elapsed: 1.20 seconds]
+
+=== Iteration 193 ===
+[base_gen.py SUCCESS]
+[exeqs.py SUCCESS @ step=400]
+[Cumulative Hellinger] shots=400, h=0.0757
+[Time elapsed: 2.06 seconds]
+
+=== Iteration 194 ===
+[base_gen.py SUCCESS]
+[exeqs.py SUCCESS @ step=400]
+[Cumulative Hellinger] shots=400, h=0.0821
+[Time elapsed: 4.00 seconds]
+
+=== Iteration 195 ===
+[base_gen.py SUCCESS]
+[exeqs.py SUCCESS @ step=400]
+[Cumulative Hellinger] shots=400, h=0.0000
+[Time elapsed: 1.38 seconds]
+
+=== Iteration 196 ===
+[base_gen.py SUCCESS]
+[exeqs.py SUCCESS @ step=400]
+[Cumulative Hellinger] shots=400, h=0.0641
+[Time elapsed: 1.86 seconds]
+
+=== Iteration 197 ===
+[base_gen.py SUCCESS]
+[exeqs.py SUCCESS @ step=400]
+[Cumulative Hellinger] shots=400, h=0.0000
+[Time elapsed: 1.23 seconds]
+
+=== Iteration 198 ===
+[base_gen.py SUCCESS]
+[exeqs.py SUCCESS @ step=400]
+[Cumulative Hellinger] shots=400, h=0.0085
+[Time elapsed: 3.00 seconds]
+
+=== Iteration 199 ===
+[base_gen.py SUCCESS]
+[exeqs.py SUCCESS @ step=400]
+[Cumulative Hellinger] shots=400, h=0.0000
+[Time elapsed: 2.21 seconds]
+
+=== Iteration 200 ===
+[base_gen.py SUCCESS]
+[exeqs.py SUCCESS @ step=400]
+[Cumulative Hellinger] shots=400, h=0.0000
+[Time elapsed: 2.07 seconds]
+
+=== Iteration 201 ===
+[base_gen.py SUCCESS]
+[exeqs.py SUCCESS @ step=400]
+[Cumulative Hellinger] shots=400, h=0.0181
+[Time elapsed: 1.79 seconds]
+
+=== Iteration 202 ===
+[base_gen.py SUCCESS]
+[exeqs.py SUCCESS @ step=400]
+[Cumulative Hellinger] shots=400, h=0.0000
+[Time elapsed: 1.35 seconds]
+
+=== Iteration 203 ===
+[base_gen.py SUCCESS]
+[exeqs.py SUCCESS @ step=400]
+[Cumulative Hellinger] shots=400, h=0.0817
+[Time elapsed: 2.64 seconds]
+
+=== Iteration 204 ===
+[base_gen.py SUCCESS]
+[exeqs.py SUCCESS @ step=400]
+[Cumulative Hellinger] shots=400, h=0.2551
+[Hellinger above threshold] h=0.2551 > 0.1, total_shots=400, next_step=400
+[exeqs.py SUCCESS @ step=800]
+[Cumulative Hellinger] shots=1200, h=0.1210
+[Hellinger above threshold] h=0.1210 > 0.1, total_shots=1200, next_step=800
+[exeqs.py SUCCESS @ step=1600]
+[Cumulative Hellinger] shots=2800, h=0.0812
+[Time elapsed: 80.28 seconds]
+
+=== Iteration 205 ===
+[base_gen.py SUCCESS]
+[exeqs.py SUCCESS @ step=400]
+[Cumulative Hellinger] shots=400, h=0.0000
+[Time elapsed: 1.03 seconds]
+
+=== Iteration 206 ===
+[base_gen.py SUCCESS]
+[exeqs.py SUCCESS @ step=400]
+[Cumulative Hellinger] shots=400, h=0.0292
+[Time elapsed: 3.21 seconds]
+
+=== Iteration 207 ===
+[base_gen.py SUCCESS]
+[exeqs.py SUCCESS @ step=400]
+[Cumulative Hellinger] shots=400, h=0.0000
+[Time elapsed: 0.93 seconds]
+
+=== Iteration 208 ===
+[base_gen.py SUCCESS]
+[exeqs.py SUCCESS @ step=400]
+[Cumulative Hellinger] shots=400, h=0.2325
+[Hellinger above threshold] h=0.2325 > 0.1, total_shots=400, next_step=400
+[exeqs.py SUCCESS @ step=800]
+[Cumulative Hellinger] shots=1200, h=0.1127
+[Hellinger above threshold] h=0.1127 > 0.1, total_shots=1200, next_step=800
+[exeqs.py SUCCESS @ step=1600]
+[Cumulative Hellinger] shots=2800, h=0.0687
+[Time elapsed: 29.53 seconds]
+
+=== Iteration 209 ===
+[base_gen.py SUCCESS]
+[exeqs.py SUCCESS @ step=400]
+[Cumulative Hellinger] shots=400, h=0.0400
+[Time elapsed: 1.21 seconds]
+
+=== Iteration 210 ===
+[base_gen.py SUCCESS]
+[exeqs.py SUCCESS @ step=400]
+[Cumulative Hellinger] shots=400, h=0.0354
+[Time elapsed: 1.20 seconds]
+
+=== Iteration 211 ===
+[base_gen.py SUCCESS]
+[exeqs.py SUCCESS @ step=400]
+[Cumulative Hellinger] shots=400, h=0.0000
+[Time elapsed: 1.79 seconds]
+
+=== Iteration 212 ===
+[base_gen.py SUCCESS]
+[exeqs.py SUCCESS @ step=400]
+[Cumulative Hellinger] shots=400, h=0.0241
+[Time elapsed: 9.43 seconds]
+
+=== Iteration 213 ===
+[base_gen.py SUCCESS]
+[exeqs.py SUCCESS @ step=400]
+[Cumulative Hellinger] shots=400, h=0.0000
+[Time elapsed: 1.17 seconds]
+
+=== Iteration 214 ===
+[base_gen.py SUCCESS]
+[exeqs.py SUCCESS @ step=400]
+[Cumulative Hellinger] shots=400, h=0.0964
+[Time elapsed: 1.53 seconds]
+
+=== Iteration 215 ===
+[base_gen.py SUCCESS]
+[exeqs.py SUCCESS @ step=400]
+[Cumulative Hellinger] shots=400, h=0.0000
+[Time elapsed: 2.39 seconds]
+
+=== Iteration 216 ===
+[base_gen.py SUCCESS]
+[exeqs.py SUCCESS @ step=400]
+[Cumulative Hellinger] shots=400, h=0.0089
+[Time elapsed: 1.72 seconds]
+
+=== Iteration 217 ===
+[base_gen.py SUCCESS]
+[exeqs.py SUCCESS @ step=400]
+[Cumulative Hellinger] shots=400, h=0.0000
+[Time elapsed: 1.66 seconds]
+
+=== Iteration 218 ===
+[base_gen.py SUCCESS]
+[exeqs.py SUCCESS @ step=400]
+[Cumulative Hellinger] shots=400, h=0.0000
+[Time elapsed: 1.00 seconds]
+
+=== Iteration 219 ===
+[base_gen.py SUCCESS]
+[exeqs.py SUCCESS @ step=400]
+[Cumulative Hellinger] shots=400, h=0.0184
+[Time elapsed: 1.01 seconds]
+
+=== Iteration 220 ===
+[base_gen.py SUCCESS]
+[exeqs.py SUCCESS @ step=400]
+[Cumulative Hellinger] shots=400, h=0.0000
+[Time elapsed: 1.39 seconds]
+
+=== Iteration 221 ===
+[base_gen.py SUCCESS]
+[exeqs.py SUCCESS @ step=400]
+[Cumulative Hellinger] shots=400, h=0.0000
+[Time elapsed: 1.26 seconds]
+
+=== Iteration 222 ===
+[base_gen.py SUCCESS]
+[exeqs.py SUCCESS @ step=400]
+[Cumulative Hellinger] shots=400, h=0.0000
+[Time elapsed: 2.40 seconds]
+
+=== Iteration 223 ===
+[base_gen.py SUCCESS]
+[exeqs.py SUCCESS @ step=400]
+[Cumulative Hellinger] shots=400, h=0.0568
+[Time elapsed: 1.11 seconds]
+
+=== Iteration 224 ===
+[base_gen.py SUCCESS]
+[exeqs.py SUCCESS @ step=400]
+[Cumulative Hellinger] shots=400, h=0.0438
+[Time elapsed: 1.23 seconds]
+
+=== Iteration 225 ===
+[base_gen.py SUCCESS]
+[exeqs.py SUCCESS @ step=400]
+[Cumulative Hellinger] shots=400, h=0.0230
+[Time elapsed: 1.46 seconds]
+
+=== Iteration 226 ===
+[base_gen.py SUCCESS]
+[exeqs.py SUCCESS @ step=400]
+[Cumulative Hellinger] shots=400, h=0.0000
+[Time elapsed: 1.85 seconds]
+
+=== Iteration 227 ===
+[base_gen.py SUCCESS]
+[exeqs.py SUCCESS @ step=400]
+[Cumulative Hellinger] shots=400, h=0.0000
+[Time elapsed: 1.33 seconds]
+
+=== Iteration 228 ===
+[base_gen.py SUCCESS]
+[exeqs.py SUCCESS @ step=400]
+[Cumulative Hellinger] shots=400, h=0.0468
+[Time elapsed: 1.48 seconds]
+
+=== Iteration 229 ===
+[base_gen.py SUCCESS]
+[exeqs.py SUCCESS @ step=400]
+[Cumulative Hellinger] shots=400, h=0.2686
+[Hellinger above threshold] h=0.2686 > 0.1, total_shots=400, next_step=400
+[exeqs.py SUCCESS @ step=800]
+[Cumulative Hellinger] shots=1200, h=0.1480
+[Hellinger above threshold] h=0.1480 > 0.1, total_shots=1200, next_step=800
+[exeqs.py SUCCESS @ step=1600]
+[Cumulative Hellinger] shots=2800, h=0.0980
+[Time elapsed: 16.02 seconds]
+
+=== Iteration 230 ===
+[base_gen.py SUCCESS]
+[exeqs.py SUCCESS @ step=400]
+[Cumulative Hellinger] shots=400, h=0.0000
+[Time elapsed: 0.84 seconds]
+
+=== Iteration 231 ===
+[base_gen.py SUCCESS]
+[exeqs.py SUCCESS @ step=400]
+[Cumulative Hellinger] shots=400, h=0.0000
+[Time elapsed: 1.44 seconds]
+
+=== Iteration 232 ===
+[base_gen.py SUCCESS]
+[exeqs.py SUCCESS @ step=400]
+[Cumulative Hellinger] shots=400, h=0.0000
+[Time elapsed: 2.11 seconds]
+
+=== Iteration 233 ===
+[base_gen.py SUCCESS]
+[exeqs.py SUCCESS @ step=400]
+[Cumulative Hellinger] shots=400, h=0.5199
+[Hellinger above threshold] h=0.5199 > 0.1, total_shots=400, next_step=400
+[exeqs.py SUCCESS @ step=800]
+[Cumulative Hellinger] shots=1200, h=0.2423
+[Hellinger above threshold] h=0.2423 > 0.1, total_shots=1200, next_step=800
+[exeqs.py SUCCESS @ step=1600]
+[Cumulative Hellinger] shots=2800, h=0.1519
+[Hellinger above threshold] h=0.1519 > 0.1, total_shots=2800, next_step=1600
+[exeqs.py SUCCESS @ step=3200]
+[Cumulative Hellinger] shots=6000, h=0.0992
+[Time elapsed: 15.81 seconds]
+
+=== Iteration 234 ===
+[base_gen.py SUCCESS]
+[exeqs.py SUCCESS @ step=400]
+[Cumulative Hellinger] shots=400, h=0.0000
+[Time elapsed: 1.88 seconds]
+
+=== Iteration 235 ===
+[base_gen.py SUCCESS]
+[exeqs.py SUCCESS @ step=400]
+[Cumulative Hellinger] shots=400, h=0.0000
+[Time elapsed: 2.15 seconds]
+
+=== Iteration 236 ===
+[base_gen.py SUCCESS]
+[exeqs.py SUCCESS @ step=400]
+[Cumulative Hellinger] shots=400, h=0.0000
+[Time elapsed: 0.96 seconds]
+
+=== Iteration 237 ===
+[base_gen.py SUCCESS]
+[exeqs.py SUCCESS @ step=400]
+[Cumulative Hellinger] shots=400, h=0.0000
+[Time elapsed: 1.25 seconds]
+
+=== Iteration 238 ===
+[base_gen.py SUCCESS]
+[exeqs.py SUCCESS @ step=400]
+[Cumulative Hellinger] shots=400, h=0.0000
+[Time elapsed: 1.32 seconds]
+
+=== Iteration 239 ===
+[base_gen.py SUCCESS]
+[exeqs.py SUCCESS @ step=400]
+[Cumulative Hellinger] shots=400, h=0.0504
+[Time elapsed: 1.35 seconds]
+
+=== Iteration 240 ===
+[base_gen.py SUCCESS]
+[exeqs.py SUCCESS @ step=400]
+[Cumulative Hellinger] shots=400, h=0.0000
+[Time elapsed: 0.86 seconds]
+
+=== Iteration 241 ===
+[base_gen.py SUCCESS]
+[exeqs.py SUCCESS @ step=400]
+[Cumulative Hellinger] shots=400, h=0.5620
+[Hellinger above threshold] h=0.5620 > 0.1, total_shots=400, next_step=400
+[exeqs.py SUCCESS @ step=800]
+[Cumulative Hellinger] shots=1200, h=0.5476
+[Hellinger above threshold] h=0.5476 > 0.1, total_shots=1200, next_step=800
+[exeqs.py SUCCESS @ step=1600]
+[Cumulative Hellinger] shots=2800, h=0.5415
+[Hellinger above threshold] h=0.5415 > 0.1, total_shots=2800, next_step=1600
+[exeqs.py SUCCESS @ step=3200]
+[Cumulative Hellinger] shots=6000, h=0.5424
+[Hellinger above threshold] h=0.5424 > 0.1, total_shots=6000, next_step=3200
+[exeqs.py SUCCESS @ step=6400]
+[Cumulative Hellinger] shots=12400, h=0.5420
+[Hellinger above threshold] h=0.5420 > 0.1, total_shots=12400, next_step=6400
+[Time elapsed: 29.63 seconds]
+
+=== Iteration 242 ===
+[base_gen.py SUCCESS]
+[exeqs.py SUCCESS @ step=400]
+[Cumulative Hellinger] shots=400, h=0.0275
+[Time elapsed: 1.11 seconds]
+
+=== Iteration 243 ===
+[base_gen.py SUCCESS]
+[exeqs.py SUCCESS @ step=400]
+[Cumulative Hellinger] shots=400, h=0.0044
+[Time elapsed: 1.18 seconds]
+
+=== Iteration 244 ===
+[base_gen.py SUCCESS]
+[exeqs.py SUCCESS @ step=400]
+[Cumulative Hellinger] shots=400, h=0.0000
+[Time elapsed: 1.86 seconds]
+
+=== Iteration 245 ===
+[base_gen.py SUCCESS]
+[exeqs.py SUCCESS @ step=400]
+[Cumulative Hellinger] shots=400, h=0.0300
+[Time elapsed: 1.66 seconds]
+
+=== Iteration 246 ===
+[base_gen.py SUCCESS]
+[exeqs.py SUCCESS @ step=400]
+[Cumulative Hellinger] shots=400, h=0.3109
+[Hellinger above threshold] h=0.3109 > 0.1, total_shots=400, next_step=400
+[exeqs.py SUCCESS @ step=800]
+[Cumulative Hellinger] shots=1200, h=0.1652
+[Hellinger above threshold] h=0.1652 > 0.1, total_shots=1200, next_step=800
+[exeqs.py SUCCESS @ step=1600]
+[Cumulative Hellinger] shots=2800, h=0.1195
+[Hellinger above threshold] h=0.1195 > 0.1, total_shots=2800, next_step=1600
+[exeqs.py SUCCESS @ step=3200]
+[Cumulative Hellinger] shots=6000, h=0.0757
+[Time elapsed: 10.97 seconds]
+
+=== Iteration 247 ===
+[base_gen.py SUCCESS]
+[exeqs.py SUCCESS @ step=400]
+[Cumulative Hellinger] shots=400, h=0.0084
+[Time elapsed: 2.88 seconds]
+
+=== Iteration 248 ===
+[base_gen.py SUCCESS]
+[exeqs.py SUCCESS @ step=400]
+[Cumulative Hellinger] shots=400, h=0.4587
+[Hellinger above threshold] h=0.4587 > 0.1, total_shots=400, next_step=400
+[exeqs.py SUCCESS @ step=800]
+[Cumulative Hellinger] shots=1200, h=0.2296
+[Hellinger above threshold] h=0.2296 > 0.1, total_shots=1200, next_step=800
+[exeqs.py SUCCESS @ step=1600]
+[Cumulative Hellinger] shots=2800, h=0.1495
+[Hellinger above threshold] h=0.1495 > 0.1, total_shots=2800, next_step=1600
+[exeqs.py SUCCESS @ step=3200]
+[Cumulative Hellinger] shots=6000, h=0.0981
+[Time elapsed: 35.53 seconds]
+
+=== Iteration 249 ===
+[base_gen.py SUCCESS]
+[exeqs.py SUCCESS @ step=400]
+[Cumulative Hellinger] shots=400, h=0.0000
+[Time elapsed: 1.27 seconds]
+
+=== Iteration 250 ===
+[base_gen.py SUCCESS]
+[exeqs.py SUCCESS @ step=400]
+[Cumulative Hellinger] shots=400, h=0.0000
+[Time elapsed: 1.20 seconds]
+
+=== Iteration 251 ===
+[base_gen.py SUCCESS]
+[exeqs.py SUCCESS @ step=400]
+[Cumulative Hellinger] shots=400, h=0.0000
+[Time elapsed: 1.58 seconds]
+
+=== Iteration 252 ===
+[base_gen.py SUCCESS]
+[exeqs.py SUCCESS @ step=400]
+[Cumulative Hellinger] shots=400, h=0.0235
+[Time elapsed: 1.74 seconds]
+
+=== Iteration 253 ===
+[base_gen.py SUCCESS]
+[exeqs.py SUCCESS @ step=400]
+[Cumulative Hellinger] shots=400, h=0.0000
+[Time elapsed: 1.29 seconds]
+
+=== Iteration 254 ===
+[base_gen.py SUCCESS]
+[exeqs.py SUCCESS @ step=400]
+[Cumulative Hellinger] shots=400, h=0.0000
+[Time elapsed: 0.99 seconds]
+
+=== Iteration 255 ===
+[base_gen.py SUCCESS]
+[exeqs.py SUCCESS @ step=400]
+[Cumulative Hellinger] shots=400, h=0.0000
+[Time elapsed: 1.34 seconds]
+
+=== Iteration 256 ===
+[base_gen.py SUCCESS]
+[exeqs.py SUCCESS @ step=400]
+[Cumulative Hellinger] shots=400, h=0.0208
+[Time elapsed: 1.06 seconds]
+
+=== Iteration 257 ===
+[base_gen.py SUCCESS]
+[exeqs.py SUCCESS @ step=400]
+[Cumulative Hellinger] shots=400, h=0.0148
+[Time elapsed: 1.13 seconds]
+
+=== Iteration 258 ===
+[base_gen.py SUCCESS]
+[exeqs.py SUCCESS @ step=400]
+[Cumulative Hellinger] shots=400, h=0.0000
+[Time elapsed: 1.18 seconds]
+
+=== Iteration 259 ===
+[base_gen.py SUCCESS]
+[exeqs.py SUCCESS @ step=400]
+[Cumulative Hellinger] shots=400, h=0.0000
+[Time elapsed: 1.03 seconds]
+
+=== Iteration 260 ===
+[base_gen.py SUCCESS]
+[exeqs.py SUCCESS @ step=400]
+[Cumulative Hellinger] shots=400, h=0.0279
+[Time elapsed: 2.01 seconds]
+
+=== Iteration 261 ===
+[base_gen.py SUCCESS]
+[exeqs.py SUCCESS @ step=400]
+[Cumulative Hellinger] shots=400, h=0.0000
+[Time elapsed: 1.07 seconds]
+
+=== Iteration 262 ===
+[base_gen.py SUCCESS]
+[exeqs.py SUCCESS @ step=400]
+[Cumulative Hellinger] shots=400, h=0.0000
+[Time elapsed: 2.05 seconds]
+
+=== Iteration 263 ===
+[base_gen.py SUCCESS]
+[exeqs.py SUCCESS @ step=400]
+[Cumulative Hellinger] shots=400, h=0.0844
+[Time elapsed: 1.33 seconds]
+
+=== Iteration 264 ===
+[base_gen.py SUCCESS]
+[exeqs.py SUCCESS @ step=400]
+[Cumulative Hellinger] shots=400, h=0.0000
+[Time elapsed: 1.45 seconds]
+
+=== Iteration 265 ===
+[base_gen.py SUCCESS]
+[exeqs.py SUCCESS @ step=400]
+[Cumulative Hellinger] shots=400, h=0.0852
+[Time elapsed: 2.08 seconds]
+
+=== Iteration 266 ===
+[base_gen.py SUCCESS]
+[exeqs.py SUCCESS @ step=400]
+[Cumulative Hellinger] shots=400, h=0.0000
+[Time elapsed: 1.95 seconds]
+
+=== Iteration 267 ===
+[base_gen.py SUCCESS]
+[exeqs.py SUCCESS @ step=400]
+[Cumulative Hellinger] shots=400, h=0.0291
+[Time elapsed: 1.88 seconds]
+
+=== Iteration 268 ===
+[base_gen.py SUCCESS]
+[exeqs.py SUCCESS @ step=400]
+[Cumulative Hellinger] shots=400, h=0.0000
+[Time elapsed: 1.32 seconds]
+
+=== Iteration 269 ===
+[base_gen.py SUCCESS]
+[exeqs.py SUCCESS @ step=400]
+[Cumulative Hellinger] shots=400, h=0.0000
+[Time elapsed: 2.14 seconds]
+
+=== Iteration 270 ===
+[base_gen.py SUCCESS]
+[exeqs.py SUCCESS @ step=400]
+[Cumulative Hellinger] shots=400, h=0.0654
+[Time elapsed: 1.44 seconds]
+
+=== Iteration 271 ===
+[base_gen.py SUCCESS]
+[exeqs.py SUCCESS @ step=400]
+[Cumulative Hellinger] shots=400, h=0.1737
+[Hellinger above threshold] h=0.1737 > 0.1, total_shots=400, next_step=400
+[exeqs.py SUCCESS @ step=800]
+[Cumulative Hellinger] shots=1200, h=0.1137
+[Hellinger above threshold] h=0.1137 > 0.1, total_shots=1200, next_step=800
+[exeqs.py SUCCESS @ step=1600]
+[Cumulative Hellinger] shots=2800, h=0.0565
+[Time elapsed: 9.47 seconds]
+
+=== Iteration 272 ===
+[base_gen.py SUCCESS]
+[exeqs.py SUCCESS @ step=400]
+[Cumulative Hellinger] shots=400, h=0.0000
+[Time elapsed: 1.21 seconds]
+
+=== Iteration 273 ===
+[base_gen.py SUCCESS]
+[exeqs.py SUCCESS @ step=400]
+[Cumulative Hellinger] shots=400, h=0.0000
+[Time elapsed: 2.46 seconds]
+
+=== Iteration 274 ===
+[base_gen.py SUCCESS]
+[exeqs.py SUCCESS @ step=400]
+[Cumulative Hellinger] shots=400, h=0.0000
+[Time elapsed: 1.54 seconds]
+
+=== Iteration 275 ===
+[base_gen.py SUCCESS]
+[exeqs.py SUCCESS @ step=400]
+[Cumulative Hellinger] shots=400, h=0.0000
+[Time elapsed: 2.86 seconds]
+
+=== Iteration 276 ===
+[base_gen.py SUCCESS]
+[exeqs.py SUCCESS @ step=400]
+[Cumulative Hellinger] shots=400, h=0.0000
+[Time elapsed: 1.12 seconds]
+
+=== Iteration 277 ===
+[base_gen.py SUCCESS]
+[exeqs.py SUCCESS @ step=400]
+[Cumulative Hellinger] shots=400, h=0.0051
+[Time elapsed: 3.03 seconds]
+
+=== Iteration 278 ===
+[base_gen.py SUCCESS]
+[exeqs.py SUCCESS @ step=400]
+[Cumulative Hellinger] shots=400, h=0.0000
+[Time elapsed: 1.24 seconds]
+
+=== Iteration 279 ===
+[base_gen.py SUCCESS]
+[exeqs.py SUCCESS @ step=400]
+[Cumulative Hellinger] shots=400, h=0.0458
+[Time elapsed: 1.35 seconds]
+
+=== Iteration 280 ===
+[base_gen.py SUCCESS]
+[exeqs.py SUCCESS @ step=400]
+[Cumulative Hellinger] shots=400, h=0.0000
+[Time elapsed: 3.79 seconds]
+
+=== Iteration 281 ===
+[base_gen.py SUCCESS]
+[exeqs.py SUCCESS @ step=400]
+[Cumulative Hellinger] shots=400, h=0.0000
+[Time elapsed: 1.65 seconds]
+
+=== Iteration 282 ===
+[base_gen.py SUCCESS]
+[exeqs.py SUCCESS @ step=400]
+[Cumulative Hellinger] shots=400, h=0.0000
+[Time elapsed: 1.34 seconds]
+
+=== Iteration 283 ===
+[base_gen.py SUCCESS]
+[exeqs.py SUCCESS @ step=400]
+[Cumulative Hellinger] shots=400, h=0.2059
+[Hellinger above threshold] h=0.2059 > 0.1, total_shots=400, next_step=400
+[exeqs.py SUCCESS @ step=800]
+[Cumulative Hellinger] shots=1200, h=0.1082
+[Hellinger above threshold] h=0.1082 > 0.1, total_shots=1200, next_step=800
+[exeqs.py SUCCESS @ step=1600]
+[Cumulative Hellinger] shots=2800, h=0.0548
+[Time elapsed: 9.34 seconds]
+
+=== Iteration 284 ===
+[base_gen.py SUCCESS]
+[exeqs.py SUCCESS @ step=400]
+[Cumulative Hellinger] shots=400, h=0.0582
+[Time elapsed: 1.17 seconds]
+
+=== Iteration 285 ===
+[base_gen.py SUCCESS]
+[exeqs.py SUCCESS @ step=400]
+[Cumulative Hellinger] shots=400, h=0.0000
+[Time elapsed: 1.09 seconds]
+
+=== Iteration 286 ===
+[base_gen.py SUCCESS]
+[exeqs.py SUCCESS @ step=400]
+[Cumulative Hellinger] shots=400, h=0.0000
+[Time elapsed: 1.22 seconds]
+
+=== Iteration 287 ===
+[base_gen.py SUCCESS]
+[exeqs.py SUCCESS @ step=400]
+[Cumulative Hellinger] shots=400, h=0.3796
+[Hellinger above threshold] h=0.3796 > 0.1, total_shots=400, next_step=400
+[exeqs.py SUCCESS @ step=800]
+[Cumulative Hellinger] shots=1200, h=0.2333
+[Hellinger above threshold] h=0.2333 > 0.1, total_shots=1200, next_step=800
+[exeqs.py SUCCESS @ step=1600]
+[Cumulative Hellinger] shots=2800, h=0.1619
+[Hellinger above threshold] h=0.1619 > 0.1, total_shots=2800, next_step=1600
+[exeqs.py SUCCESS @ step=3200]
+[Cumulative Hellinger] shots=6000, h=0.1054
+[Hellinger above threshold] h=0.1054 > 0.1, total_shots=6000, next_step=3200
+[exeqs.py SUCCESS @ step=6400]
+[Cumulative Hellinger] shots=12400, h=0.0725
+[Time elapsed: 54.70 seconds]
+
+=== Iteration 288 ===
+[base_gen.py SUCCESS]
+[exeqs.py SUCCESS @ step=400]
+[Cumulative Hellinger] shots=400, h=0.0138
+[Time elapsed: 1.41 seconds]
+
+=== Iteration 289 ===
+[base_gen.py SUCCESS]
+[exeqs.py SUCCESS @ step=400]
+[Cumulative Hellinger] shots=400, h=0.0000
+[Time elapsed: 1.20 seconds]
+
+=== Iteration 290 ===
+[base_gen.py SUCCESS]
+[exeqs.py SUCCESS @ step=400]
+[Cumulative Hellinger] shots=400, h=0.0000
+[Time elapsed: 1.48 seconds]
+
+=== Iteration 291 ===
+[base_gen.py SUCCESS]
+[exeqs.py SUCCESS @ step=400]
+[Cumulative Hellinger] shots=400, h=0.0000
+[Time elapsed: 1.29 seconds]
+
+=== Iteration 292 ===
+[base_gen.py SUCCESS]
+[exeqs.py SUCCESS @ step=400]
+[Cumulative Hellinger] shots=400, h=0.5110
+[Hellinger above threshold] h=0.5110 > 0.1, total_shots=400, next_step=400
+[exeqs.py SUCCESS @ step=800]
+[Cumulative Hellinger] shots=1200, h=0.2538
+[Hellinger above threshold] h=0.2538 > 0.1, total_shots=1200, next_step=800
+[exeqs.py SUCCESS @ step=1600]
+[Cumulative Hellinger] shots=2800, h=0.1554
+[Hellinger above threshold] h=0.1554 > 0.1, total_shots=2800, next_step=1600
+[exeqs.py SUCCESS @ step=3200]
+[Cumulative Hellinger] shots=6000, h=0.0979
+[Time elapsed: 49.21 seconds]
+
+=== Iteration 293 ===
+[base_gen.py SUCCESS]
+[exeqs.py SUCCESS @ step=400]
+[Cumulative Hellinger] shots=400, h=0.0000
+[Time elapsed: 2.18 seconds]
+
+=== Iteration 294 ===
+[base_gen.py SUCCESS]
+[exeqs.py SUCCESS @ step=400]
+[Cumulative Hellinger] shots=400, h=0.0062
+[Time elapsed: 1.15 seconds]
+
+=== Iteration 295 ===
+[base_gen.py SUCCESS]
+[exeqs.py SUCCESS @ step=400]
+[Cumulative Hellinger] shots=400, h=0.0264
+[Time elapsed: 1.63 seconds]
+
+=== Iteration 296 ===
+[base_gen.py SUCCESS]
+[exeqs.py SUCCESS @ step=400]
+[Cumulative Hellinger] shots=400, h=0.0000
+[Time elapsed: 4.58 seconds]
+
+=== Iteration 297 ===
+[base_gen.py SUCCESS]
+[exeqs.py SUCCESS @ step=400]
+[Cumulative Hellinger] shots=400, h=0.4226
+[Hellinger above threshold] h=0.4226 > 0.1, total_shots=400, next_step=400
+[exeqs.py SUCCESS @ step=800]
+[Cumulative Hellinger] shots=1200, h=0.2693
+[Hellinger above threshold] h=0.2693 > 0.1, total_shots=1200, next_step=800
+[exeqs.py SUCCESS @ step=1600]
+[Cumulative Hellinger] shots=2800, h=0.1661
+[Hellinger above threshold] h=0.1661 > 0.1, total_shots=2800, next_step=1600
+[exeqs.py SUCCESS @ step=3200]
+[Cumulative Hellinger] shots=6000, h=0.1141
+[Hellinger above threshold] h=0.1141 > 0.1, total_shots=6000, next_step=3200
+[exeqs.py SUCCESS @ step=6400]
+[Cumulative Hellinger] shots=12400, h=0.0764
+[Time elapsed: 245.49 seconds]
+
+=== Iteration 298 ===
+[base_gen.py SUCCESS]
+[exeqs.py SUCCESS @ step=400]
+[Cumulative Hellinger] shots=400, h=0.4813
+[Hellinger above threshold] h=0.4813 > 0.1, total_shots=400, next_step=400
+[exeqs.py SUCCESS @ step=800]
+[Cumulative Hellinger] shots=1200, h=0.2415
+[Hellinger above threshold] h=0.2415 > 0.1, total_shots=1200, next_step=800
+[exeqs.py SUCCESS @ step=1600]
+[Cumulative Hellinger] shots=2800, h=0.1668
+[Hellinger above threshold] h=0.1668 > 0.1, total_shots=2800, next_step=1600
+[exeqs.py SUCCESS @ step=3200]
+[Cumulative Hellinger] shots=6000, h=0.1018
+[Hellinger above threshold] h=0.1018 > 0.1, total_shots=6000, next_step=3200
+[exeqs.py SUCCESS @ step=6400]
+[Cumulative Hellinger] shots=12400, h=0.0673
+[Time elapsed: 30.73 seconds]
+
+=== Iteration 299 ===
+[base_gen.py SUCCESS]
+[exeqs.py SUCCESS @ step=400]
+[Cumulative Hellinger] shots=400, h=0.0000
+[Time elapsed: 1.68 seconds]
+
+=== Iteration 300 ===
+[base_gen.py SUCCESS]
+[exeqs.py SUCCESS @ step=400]
+[Cumulative Hellinger] shots=400, h=0.1059
+[Hellinger above threshold] h=0.1059 > 0.1, total_shots=400, next_step=400
+[exeqs.py SUCCESS @ step=800]
+[Cumulative Hellinger] shots=1200, h=0.0658
+[Time elapsed: 3.67 seconds]
+
+=== Iteration 301 ===
+[base_gen.py SUCCESS]
+[exeqs.py SUCCESS @ step=400]
+[Cumulative Hellinger] shots=400, h=0.0000
+[Time elapsed: 2.07 seconds]
+
+=== Iteration 302 ===
+[base_gen.py SUCCESS]
+[exeqs.py SUCCESS @ step=400]
+[Cumulative Hellinger] shots=400, h=0.3312
+[Hellinger above threshold] h=0.3312 > 0.1, total_shots=400, next_step=400
+[exeqs.py SUCCESS @ step=800]
+[Cumulative Hellinger] shots=1200, h=0.1702
+[Hellinger above threshold] h=0.1702 > 0.1, total_shots=1200, next_step=800
+[exeqs.py SUCCESS @ step=1600]
+[Cumulative Hellinger] shots=2800, h=0.1064
+[Hellinger above threshold] h=0.1064 > 0.1, total_shots=2800, next_step=1600
+
+=== Iteration 1 ===
+[base_gen.py SUCCESS]
+[exeqs.py SUCCESS @ step=400]
+[Cumulative Hellinger] shots=400, h=0.0000
+[Time elapsed: 2.63 seconds]
+
+=== Iteration 2 ===
+[base_gen.py SUCCESS]
+[exeqs.py SUCCESS @ step=400]
+[Cumulative Hellinger] shots=400, h=0.0000
+[Time elapsed: 1.08 seconds]
+
+=== Iteration 3 ===
+[base_gen.py SUCCESS]
+[exeqs.py SUCCESS @ step=400]
+[Cumulative Hellinger] shots=400, h=0.0344
+[Time elapsed: 2.88 seconds]
+
+=== Iteration 4 ===
+[base_gen.py SUCCESS]
+[exeqs.py SUCCESS @ step=400]
+[Cumulative Hellinger] shots=400, h=0.0399
+[Time elapsed: 2.22 seconds]
+
+=== Iteration 5 ===
+[base_gen.py SUCCESS]
+[exeqs.py SUCCESS @ step=400]
+[Cumulative Hellinger] shots=400, h=0.0000
+[Time elapsed: 0.91 seconds]
+
+=== Iteration 6 ===
+[base_gen.py SUCCESS]
+[exeqs.py SUCCESS @ step=400]
+[Cumulative Hellinger] shots=400, h=0.0000
+[Time elapsed: 2.14 seconds]
+
+=== Iteration 7 ===
+[base_gen.py SUCCESS]
+[exeqs.py SUCCESS @ step=400]
+[Cumulative Hellinger] shots=400, h=0.0616
+[Time elapsed: 1.34 seconds]
+
+=== Iteration 8 ===
+[base_gen.py SUCCESS]
+[exeqs.py SUCCESS @ step=400]
+[Cumulative Hellinger] shots=400, h=0.0000
+[Time elapsed: 1.20 seconds]
+
+=== Iteration 9 ===
+[base_gen.py SUCCESS]
+[exeqs.py SUCCESS @ step=400]
+[Cumulative Hellinger] shots=400, h=0.1758
+[Hellinger above threshold] h=0.1758 > 0.1, total_shots=400, next_step=400
+[exeqs.py SUCCESS @ step=800]
+[Cumulative Hellinger] shots=1200, h=0.1138
+[Hellinger above threshold] h=0.1138 > 0.1, total_shots=1200, next_step=800
+[exeqs.py SUCCESS @ step=1600]
+[Cumulative Hellinger] shots=2800, h=0.0825
+[Time elapsed: 7.32 seconds]
+
+=== Iteration 10 ===
+[base_gen.py SUCCESS]
+[exeqs.py SUCCESS @ step=400]
+[Cumulative Hellinger] shots=400, h=0.0000
+[Time elapsed: 1.16 seconds]
+
+=== Iteration 11 ===
+[base_gen.py SUCCESS]
+[exeqs.py SUCCESS @ step=400]
+[Cumulative Hellinger] shots=400, h=0.0000
+[Time elapsed: 1.09 seconds]
+
+=== Iteration 12 ===
+[base_gen.py SUCCESS]
+[exeqs.py SUCCESS @ step=400]
+[Cumulative Hellinger] shots=400, h=0.0617
+[Time elapsed: 1.22 seconds]
+
+=== Iteration 13 ===
+[base_gen.py SUCCESS]
+[exeqs.py SUCCESS @ step=400]
+[Cumulative Hellinger] shots=400, h=0.0562
+[Time elapsed: 1.09 seconds]
+
+=== Iteration 14 ===
+[base_gen.py SUCCESS]
+[exeqs.py SUCCESS @ step=400]
+[Cumulative Hellinger] shots=400, h=0.0000
+[Time elapsed: 3.53 seconds]
+
+=== Iteration 15 ===
+[base_gen.py SUCCESS]
+[exeqs.py SUCCESS @ step=400]
+[Cumulative Hellinger] shots=400, h=0.0000
+[Time elapsed: 1.14 seconds]
+
+=== Iteration 16 ===
+[base_gen.py SUCCESS]
+[exeqs.py SUCCESS @ step=400]
+[Cumulative Hellinger] shots=400, h=0.0000
+[Time elapsed: 1.38 seconds]
+
+=== Iteration 17 ===
+[base_gen.py SUCCESS]
+[exeqs.py SUCCESS @ step=400]
+[Cumulative Hellinger] shots=400, h=0.0000
+[Time elapsed: 2.28 seconds]
+
+=== Iteration 18 ===
+[base_gen.py SUCCESS]
+[exeqs.py SUCCESS @ step=400]
+[Cumulative Hellinger] shots=400, h=0.0000
+[Time elapsed: 2.04 seconds]
+
+=== Iteration 19 ===
+[base_gen.py SUCCESS]
+[exeqs.py SUCCESS @ step=400]
+[Cumulative Hellinger] shots=400, h=0.0200
+[Time elapsed: 1.38 seconds]
+
+=== Iteration 20 ===
+[base_gen.py SUCCESS]
+[exeqs.py SUCCESS @ step=400]
+[Cumulative Hellinger] shots=400, h=0.0000
+[Time elapsed: 2.51 seconds]
+
+=== Iteration 21 ===
+[base_gen.py SUCCESS]
+[exeqs.py SUCCESS @ step=400]
+[Cumulative Hellinger] shots=400, h=0.0642
+[Time elapsed: 1.97 seconds]
+
+=== Iteration 22 ===
+[base_gen.py SUCCESS]
+[exeqs.py SUCCESS @ step=400]
+[Cumulative Hellinger] shots=400, h=0.0000
+[Time elapsed: 1.16 seconds]
+
+=== Iteration 23 ===
+[base_gen.py SUCCESS]
+[exeqs.py SUCCESS @ step=400]
+[Cumulative Hellinger] shots=400, h=0.0000
+[Time elapsed: 1.42 seconds]
+
+=== Iteration 24 ===
+[base_gen.py SUCCESS]
+[exeqs.py SUCCESS @ step=400]
+[Cumulative Hellinger] shots=400, h=0.0209
+[Time elapsed: 1.27 seconds]
+
+=== Iteration 25 ===
+[base_gen.py SUCCESS]
+[exeqs.py SUCCESS @ step=400]
+[Cumulative Hellinger] shots=400, h=0.0263
+[Time elapsed: 1.40 seconds]
+
+=== Iteration 26 ===
+[base_gen.py SUCCESS]
+[exeqs.py SUCCESS @ step=400]
+[Cumulative Hellinger] shots=400, h=0.0171
+[Time elapsed: 1.91 seconds]
+
+=== Iteration 27 ===
+[base_gen.py SUCCESS]
+[exeqs.py SUCCESS @ step=400]
+[Cumulative Hellinger] shots=400, h=0.0000
+[Time elapsed: 1.87 seconds]
+
+=== Iteration 28 ===
+[base_gen.py SUCCESS]
+[exeqs.py SUCCESS @ step=400]
+[Cumulative Hellinger] shots=400, h=0.0000
+[Time elapsed: 1.23 seconds]
+
+=== Iteration 29 ===
+[base_gen.py SUCCESS]
+[exeqs.py SUCCESS @ step=400]
+[Cumulative Hellinger] shots=400, h=0.0210
+[Time elapsed: 1.54 seconds]
+
+=== Iteration 30 ===
+[base_gen.py SUCCESS]
+[exeqs.py SUCCESS @ step=400]
+[Cumulative Hellinger] shots=400, h=0.0124
+[Time elapsed: 13.43 seconds]
+
+=== Iteration 31 ===
+[base_gen.py SUCCESS]
+[exeqs.py SUCCESS @ step=400]
+[Cumulative Hellinger] shots=400, h=0.0000
+[Time elapsed: 1.98 seconds]
+
+=== Iteration 32 ===
+[base_gen.py SUCCESS]
+[exeqs.py SUCCESS @ step=400]
+[Cumulative Hellinger] shots=400, h=0.0675
+[Time elapsed: 1.31 seconds]
+
+=== Iteration 33 ===
+[base_gen.py SUCCESS]
+[exeqs.py SUCCESS @ step=400]
+[Cumulative Hellinger] shots=400, h=0.0000
+[Time elapsed: 1.03 seconds]
+
+=== Iteration 34 ===
+[base_gen.py SUCCESS]
+[exeqs.py SUCCESS @ step=400]
+[Cumulative Hellinger] shots=400, h=0.5415
+[Hellinger above threshold] h=0.5415 > 0.1, total_shots=400, next_step=400
+[exeqs.py SUCCESS @ step=800]
+[Cumulative Hellinger] shots=1200, h=0.2602
+[Hellinger above threshold] h=0.2602 > 0.1, total_shots=1200, next_step=800
+[exeqs.py SUCCESS @ step=1600]
+[Cumulative Hellinger] shots=2800, h=0.1508
+[Hellinger above threshold] h=0.1508 > 0.1, total_shots=2800, next_step=1600
+[exeqs.py SUCCESS @ step=3200]
+[Cumulative Hellinger] shots=6000, h=0.1041
+[Hellinger above threshold] h=0.1041 > 0.1, total_shots=6000, next_step=3200

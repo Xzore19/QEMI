@@ -194,7 +194,7 @@ def make_fixed_apply_if_relation_block(
         lines += [
             "use x = Qubit[2];", ]
         if use_controlled:
-            lines += [f"{prefix}{control_op_name}([{ctrl_str}], ({inline_name}, 0L, x, target));"]
+            lines += [f"{prefix}{control_op_name}([{ctrl_str}], ({inline_name}, -1L, x, target));"]
         else:
             lines += [f"{prefix}{control_op_name}({inline_name}, -1L, x, target);",]
 
