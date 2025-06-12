@@ -57,4 +57,4 @@ fuzz_dist, fuzz_time = collect_distribution("Main_fuzzing.TestCircuit", shots=SH
 pretty_print(main_dist, "Main", main_time)
 pretty_print(fuzz_dist, "Main_fuzzing", fuzz_time)
 
-compare_distributions_with_hellinger(main_dist, fuzz_dist, "Main", "Main_fuzzing")
+compare_distributions_with_hellinger(main_dist, fuzz_dist, "Main", "Main_fuzzing", 0.01)
