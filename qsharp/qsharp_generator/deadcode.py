@@ -302,12 +302,12 @@ def make_fixed_if_else_deadcode_block(
                 f"operation {inline_name}(q : Qubit[]) : Unit {{",
                 "    use flag = Qubit();",
                 "    let r = Measure([PauliZ], [flag]);",
-                "    if r == Zero {",
-                "        // --- DEADCODE START ---"
+                "    if r == Zero {"
             ] + indent(else_body.splitlines(), level=2).splitlines() + [
-                "        // --- DEADCODE END ---",
-                "    } else {"
+                "    } else {",
+                "        // --- DEADCODE START ---"
             ] + indent(dead_body.splitlines(), level=2).splitlines() + [
+                "        // --- DEADCODE END ---",
                 "    }",
                 "}"
             ]

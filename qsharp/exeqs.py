@@ -4,22 +4,24 @@ from math import sqrt
 import time
 import argparse
 
-# ==== 解析命令行参数 ====
 parser = argparse.ArgumentParser(description="Compare Q# circuit outputs via Hellinger distance")
 parser.add_argument("--shots", type=int, default=8192, help="Number of measurement shots (default: 8192)")
 args = parser.parse_args()
 
 SHOTS = args.shots
-
 qsharp.init(project_root=".")
 
-def collect_distribution(op_name: str, shots: int = 1000) -> (Counter, float):
+def collect_distribution(op_name: str, shots: int) -> (Counter, float):
     counter = Counter()
     start_time = time.time()
-    for _ in range(shots):
-        result = qsharp.eval(f"{op_name}()")
+
+    # 一次性运行所有 shots，返回的是 List[Result[]]
+    results = qsharp.run(f"{op_name}()", shots=shots)
+
+    for result in results:
         bitstring = ''.join(['1' if r == 1 else '0' for r in result])
         counter[bitstring] += 1
+
     duration = time.time() - start_time
     return counter, duration
 
@@ -48,8 +50,6 @@ def compare_distributions_with_hellinger(dist1: Counter, dist2: Counter, name1="
     else:
         print(f"[PASS] (Hellinger distance {h:.4f} ≤ {threshold})")
     print()
-
-# ==== 主逻辑 ====
 
 main_dist, main_time = collect_distribution("Main.TestCircuit", shots=SHOTS)
 fuzz_dist, fuzz_time = collect_distribution("Main_fuzzing.TestCircuit", shots=SHOTS)
