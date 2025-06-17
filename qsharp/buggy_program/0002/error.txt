@@ -1,6 +1,3 @@
-[exeqs.py SUCCESS @ step=3200]
-[Cumulative Hellinger] shots=4800, h=0.1096
-[Hellinger above threshold] h=0.1096 > 0.1, total_shots=4800, next_step=3200
 [exeqs.py ERROR]
 Traceback (most recent call last):
   File "/home/luojunjie/EMI/qsharp/exeqs.py", line 12, in <module>
@@ -55,36 +52,3 @@ Qsc.Parse.Token
     ·     ─────────
  21 │     }
     ╰────
-
-=== Iteration 24189 ===
-[base_gen.py SUCCESS]
-[exeqs.py SUCCESS @ step=1600]
-[Cumulative Hellinger] shots=1600, h=0.0152
-[Time elapsed: 0.59 seconds]
-
-=== Iteration 24190 ===
-[base_gen.py SUCCESS]
-[exeqs.py SUCCESS @ step=1600]
-[Cumulative Hellinger] shots=1600, h=0.0000
-[Time elapsed: 2.67 seconds]
-
-=== Iteration 24191 ===
-[base_gen.py SUCCESS]
-[exeqs.py SUCCESS @ step=1600]
-[Cumulative Hellinger] shots=1600, h=0.0369
-[Time elapsed: 2.70 seconds]
-
-=== Iteration 24192 ===
-[base_gen.py SUCCESS]
-[exeqs.py SUCCESS @ step=1600]
-[Cumulative Hellinger] shots=1600, h=0.0000
-[Time elapsed: 3.05 seconds]
-
-=== Iteration 24193 ===
-[base_gen.py SUCCESS]
-[exeqs.py SUCCESS @ step=1600]
-[Cumulative Hellinger] shots=1600, h=0.4654
-[Hellinger above threshold] h=0.4654 > 0.1, total_shots=1600, next_step=1600
-[exeqs.py SUCCESS @ step=3200]
-[Cumulative Hellinger] shots=4800, h=0.3348
-[Hellinger above threshold] h=0.3348 > 0.1, total_shots=4800, next_step=3200
