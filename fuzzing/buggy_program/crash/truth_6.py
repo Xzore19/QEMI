@@ -15,31 +15,38 @@ qreg = QuantumRegister(4)
 creg = ClassicalRegister(4) 
 qc = QuantumCircuit(qreg, creg) 
 
-qc.p(0.7853981633974483, 0)
-qc.tdg(0)
-def fun_8f1560(): 
-	qc =  QuantumCircuit(3) 
-	qc.t(0)
-	qc.cp(0.39269908169872414, 0, 1)
-	qc.cp(0.7853981633974483, 2, 0)
-	return qc.to_gate() 
-g_6db1f5 = fun_8f1560().control(1) 
-qc.append(g_6db1f5, [2,3,1,0]) 
-qc.tdg(2)
-qc.cswap(2, 1, 0)
-pass
-qc.append(U3Gate(2.374, 0.371, 2.412), [qreg[0]])
-qc.rz(0.39269908169872414, 3)
-qc.iswap(1, 0)
-qc.append(QFT(4), [qreg[3], qreg[0], qreg[1], qreg[2]])
-def fun_29f391(): 
-	qc =  QuantumCircuit(3) 
-	qc.cry(1.5707963267948966, 1, 0)
-	qc.t(0)
-	qc.rx(0.39269908169872414, 1)
-	return qc.to_gate() 
-g_0dc9e3 = fun_29f391().control(1) 
-qc.append(g_0dc9e3, [1,3,0,2]) 
+qc.ch(2, 1)
+qc.z(2)
+qc.rx(0.39269908169872414, 0)
+qc.ch(3, 0)
+qc.crx(0.7853981633974483, 0, 3)
+
+qr_5976e5 = QuantumRegister(2)
+cr_5976e5 = ClassicalRegister(2)
+qc.add_register(qr_5976e5)
+qc.add_register(cr_5976e5)
+qc.h(qr_5976e5[0])
+qc.cx(qr_5976e5[0], qr_5976e5[1])         
+qc.measure(qr_5976e5[0], cr_5976e5[0]) 
+qc.measure(qr_5976e5[1], cr_5976e5[1]) 
+with qc.switch(cr_5976e5) as case: 
+	with case(0b00, 0b11): 
+		a = 0
+		with qc.for_loop(range(a)) as i_c5d0ca:
+			qc.crx(1.5707963267948966, 2, 1)
+			qc.z(3)
+			qc.ch(3, 0)
+			qc.rx(0.39269908169872414, 3)
+			qc.tdg(3)
+		
+	with case(case.DEFAULT): 
+		pass
+qc.reset(qr_5976e5)
+qc.ccx(2, 1, 0)
+qc.iswap(3, 2)
+qc.z(1)
+qc.crz(0.7853981633974483, 0, 3)
+qc.x(2)
 qc.measure(qreg[0], creg[0]) 
 qc.measure(qreg[1], creg[1]) 
 qc.measure(qreg[2], creg[2]) 
@@ -50,7 +57,7 @@ qc = qc.assign_parameters({p: 0.5 for p in qc.parameters})
 
 simulator = Aer.get_backend("aer_simulator") 
 
-p = PassManager([ElidePermutations(),Optimize1qGatesSimpleCommutation(),RemoveResetInZeroState()]) 
+p = PassManager([Collect2qBlocks(),TemplateOptimization(),ConsolidateBlocks()]) 
 qc = p.run(qc) 
 
 compiled_circuit = transpile(qc, backend = simulator, optimization_level = 3, routing_method = "default", layout_method = "noise_adaptive", approximation_degree = 1) 

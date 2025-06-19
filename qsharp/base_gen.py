@@ -6,7 +6,7 @@ from qsharp_generator.custom_blocks import (
     generate_random_gate_block,
 )
 from qsharp_generator.deadcode import generate_fixed_deadcode_block
-from qsharp_generator.custom_ctl import generate_random_control_block, make_nested_or_fallback_body, instruction_cost_stack
+from qsharp_generator.custom_ctl import generate_random_control_block, make_nested_or_fallback_body
 
 class QSharpGenerator:
     def __init__(self, qubit_num=3, num_blocks=3, depth_per_block=6, include_deadcode=True):
@@ -79,7 +79,6 @@ class QSharpGenerator:
                     call_type=call_type,
                     available_indices=target,
                     depth=self.depth_per_block,
-                    current_stack=instruction_cost_stack.copy()
                 )
                 if ctl is not None:
                     block = ctl["call"]
@@ -199,5 +198,5 @@ class QSharpGenerator:
         print(f"Q# fuzzing version (no deadcode) saved to {fuzzing_path}")
 
 if __name__ == "__main__":
-    g = QSharpGenerator(qubit_num=8, num_blocks=3, depth_per_block=8)
+    g = QSharpGenerator(qubit_num=12, num_blocks=3, depth_per_block=8)
     g.save_dual_versions()

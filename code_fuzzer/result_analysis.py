@@ -1,5 +1,6 @@
 from scipy.stats import ks_2samp
 from scipy.spatial.distance import jensenshannon
+import numpy as np
 
 def remove_cr(dis, qnum):
     cleaned_counts = {}
@@ -37,20 +38,19 @@ def probability_checker(truth, fuzzing, shot, qnum):
     fuzzing_list = [fuzzing.get(i, 0) for i in check_list]
 
     # 归一化为概率分布
-    truth_probs = [x / sum(truth_list) for x in truth_list]
-    fuzzing_probs = [x / sum(fuzzing_list) for x in fuzzing_list]
+    p = np.asarray(truth_list)
+    q = np.asarray(fuzzing_list)
 
-    # Total Variation Distance
-    tvd = 0.5 * sum(abs(p - q) for p, q in zip(truth_probs, fuzzing_probs))
-    # Jensen-Shannon Distance
-    jsd = jensenshannon(truth_probs, fuzzing_probs)
+    p = p / p.sum()
+    q = q / q.sum()
 
-    if tvd > 0.1 or jsd > 0.1:
-        print("TVD:", tvd)
-        print("JSD:", jsd)
-        print(truth)
-        print("=========================================")
-        print(fuzzing)
+    metric = np.sqrt(0.5 * np.sum((np.sqrt(p) - np.sqrt(q)) ** 2))
+
+    if metric > 0.1:
+        # print("Hellinger Distance:", metric)
+        # print(truth)
+        # print("=========================================")
+        # print(fuzzing)
         return False
     else:
         return True

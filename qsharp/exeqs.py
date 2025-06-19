@@ -5,7 +5,7 @@ import time
 import argparse
 
 parser = argparse.ArgumentParser(description="Compare Q# circuit outputs via Hellinger distance")
-parser.add_argument("--shots", type=int, default=8192, help="Number of measurement shots (default: 8192)")
+parser.add_argument("--shots", type=int, default=100, help="Number of measurement shots (default: 8192)")
 args = parser.parse_args()
 
 SHOTS = args.shots
