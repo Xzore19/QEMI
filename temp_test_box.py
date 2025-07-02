@@ -1,48 +1,40 @@
-from qiskit import QuantumCircuit, QuantumRegister, ClassicalRegister, transpile
-from qiskit_aer import Aer
-from qiskit.providers.fake_provider import GenericBackendV2
-from qiskit.providers.fake_provider import GenericBackendV2
-from qiskit.circuit import Parameter, ParameterVector
-from qiskit.circuit.library import XGate
-from qiskit.transpiler.passes import *
-import z3
-from qiskit.transpiler import PassManager, generate_preset_pass_manager
-from math import pi
+import cirq
+from cirq import transformers
 
-qreg = QuantumRegister(7)
-creg = ClassicalRegister(5)
-cond_creg = ClassicalRegister(2)
-qc = QuantumCircuit(qreg, creg, cond_creg)
+q = cirq.LineQubit.range(6)
+circuit = cirq.Circuit()
 
-qc.t(0)
-qc.ry(1.5707963267948966, 4)
-qc.ccx(4, 2, 1)
-qc.rx(0.39269908169872414, 4)
+circuit.append(cirq.CZ(q[3], q[1]).controlled_by(q[2]))
+circuit.append(cirq.CNOT(q[2], q[0]))
+circuit.append(cirq.CCZ(q[3], q[0], q[2]).controlled_by(q[1]))
+circuit.append(cirq.CZ(q[1], q[3]).controlled_by(q[2]))
+circuit.append(cirq.SWAP(q[3], q[4]).controlled_by(q[0]))
+sub_circuit = cirq.Circuit()
+sub_circuit.append(cirq.XPowGate(exponent=0.006135923151542565).on(q[3]))
+sub_circuit.append(cirq.ISWAP(q[0], q[2]).controlled_by(q[1]))
+sub_circuit.append(cirq.ISWAP(q[3], q[0]).controlled_by(q[4]))
+sub_circuit.append(cirq.rx(0.19634954084936207).on(q[2]).controlled_by(q[4]))
+sub_circuit.append(cirq.CCX(q[4], q[3], q[1]))
+sub_op = cirq.CircuitOperation(sub_circuit.freeze())
+circuit.append(cirq.measure(q[5], key="c"))
+circuit.append(sub_op.with_classical_controls("c"))
+circuit.append(cirq.CCZ(q[3], q[4], q[2]).controlled_by(q[0]))
+circuit.append(cirq.Y(q[1]).controlled_by(q[3]))
+circuit.append(cirq.CCZ(q[4], q[2], q[0]).controlled_by(q[1]))
+circuit.append(cirq.CZ(q[2], q[4]))
+circuit.append(cirq.XXPowGate(exponent=0.006135923151542565).on(q[1], q[0]))
+circuit.append(cirq.measure(q, key="m"))
 
+circuit = transformers.drop_empty_moments(circuit)
+circuit = transformers.defer_measurements(circuit)
+circuit = transformers.expand_composite(circuit)
+circuit = transformers.merge_single_qubit_gates_to_phxz(circuit)
+circuit = transformers.stratified_circuit(circuit)
+circuit = transformers.eject_phased_paulis(circuit)
+circuit = transformers.drop_negligible_operations(circuit)
+circuit = transformers.eject_z(circuit)
+circuit = transformers.optimize_for_target_gateset(circuit)
 
-with qc.for_loop(range(5)) as i:
-	qc.y(1)
-	qc.y(2)
-	qc.y(3)
-	qc.ccx(4, 2, 1)
-
-qc.cry(0.39269908169872414, 0, 3)
-qc.x(0)
-qc.crx(1.5707963267948966, 1, 3)
-
-qc.measure(qreg[0], creg[0])
-qc.measure(qreg[1], creg[1])
-qc.measure(qreg[2], creg[2])
-qc.measure(qreg[3], creg[3])
-qc.measure(qreg[4], creg[4])
-
-
-simulator = Aer.get_backend("aer_simulator")
-
-p = PassManager(Optimize1qGates())
-qc = p.run(qc)
-
-compiled_circuit = transpile(qc, backend = simulator, optimization_level = 3, routing_method = "sabre", layout_method = "noise_adaptive", approximation_degree = 1 )
-job = simulator.run(compiled_circuit, shots=10000)
-result = job.result().get_counts()
-print(result)
+simulator = cirq.Simulator()
+result = simulator.run(circuit, repetitions=500)
+print(result.histogram(key='m'))

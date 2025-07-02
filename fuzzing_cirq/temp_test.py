@@ -1,0 +1,33 @@
+import cirq
+from cirq import transformers
+
+q = cirq.LineQubit.range(6) 
+circuit = cirq.Circuit()
+
+circuit.append(cirq.X(q[4]).controlled_by(q[2]))
+circuit.append(cirq.Y(q[4]).controlled_by(q[1]))
+circuit.append(cirq.T(q[1]).controlled_by(q[4]))
+circuit.append(cirq.CCZ(q[2], q[1], q[0]))
+circuit.append(cirq.ry(0.0030679615757712823).on(q[3]))
+sub_circuit = cirq.Circuit() 
+circuit.append(cirq.measure(q[5], key="c")) 
+circuit.append(cirq.PhasedXZGate(x_exponent=0.04908738521234052,z_exponent=0.39269908169872414, axis_phase_exponent=0.04908738521234052).on(q[3]).controlled_by(q[2]))
+circuit.append(cirq.rz(1.5707963267948966).on(q[4]))
+circuit.append(cirq.SWAP(q[2], q[4]).controlled_by(q[0]))
+circuit.append(cirq.SWAP(q[3], q[2]).controlled_by(q[0]))
+circuit.append(cirq.ZPowGate(exponent=0.04908738521234052).on(q[0]))
+circuit.append(cirq.measure(q, key="m")) 
+
+circuit = transformers.drop_empty_moments(circuit)
+circuit = transformers.defer_measurements(circuit)
+circuit = transformers.expand_composite(circuit)
+circuit = transformers.merge_single_qubit_gates_to_phxz(circuit)
+circuit = transformers.stratified_circuit(circuit)
+circuit = transformers.eject_phased_paulis(circuit)
+circuit = transformers.drop_negligible_operations(circuit)
+circuit = transformers.eject_z(circuit)
+circuit = transformers.optimize_for_target_gateset(circuit)
+
+simulator = cirq.Simulator() 
+result = simulator.run(circuit, repetitions=500) 
+print(result.histogram(key='m'))

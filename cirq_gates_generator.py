@@ -9,9 +9,9 @@ complete_target_gates_lib = ["h", "x", "ccx", "ccz", "s", "z", "y", "sdg", "t", 
 
 
 # 根据门操作的qubit数量不同，将其区分为以下三种
-single_qubit_gates = ["h", "x", "z", "y", "t", "rx", "ry", "rz", "xp", "yp", "zp", "pxp", "pxz", "s", "rotx", "roty", "rotz"]
+single_qubit_gates = ["h", "x", "z", "y", "t", "rx", "ry", "rz", "xp", "yp", "zp", "pxp", "pxz", "s"]
 double_qubit_gates = ["cz", "cx", "swap", "iswap", "fsim", "xxp","yyp","zzp"]
-more_qubit_gates = ["ccx", "ccz"]
+more_qubit_gates = ["ccx", "ccz", "cswap"]
 
 single_qubit_gate_map = {
     "h": "cirq.H",
@@ -31,11 +31,7 @@ single_qubit_gate_map = {
     "zp": "cirq.ZPowGate",
 
     "pxp": "cirq.PhasedXPowGate",
-    "pxz": "cirq.PhasedXZGate",
-
-    "rotx": "cirq.RotXGate",
-    "roty": "cirq.RotYGate",
-    "rotz": "cirq.RotZGate"
+    "pxz": "cirq.PhasedXZGate"
 }
 
 double_qubit_gate_map = {
@@ -52,7 +48,8 @@ double_qubit_gate_map = {
 
 more_qubit_gate_map = {
     "ccx": "cirq.CCX",
-    "ccz": "cirq.CCZ"
+    "ccz": "cirq.CCZ",
+    "cswap": "cirq.CSwapGate"
 }
 
 
@@ -75,29 +72,122 @@ def gate_generator(qubits_num, pi_phase = 1, cir_name = "qc", qubit_name = "q"):
         target = random.choice(qubits_index)
         if control_flag and qubits_num > 1:
             target = random.sample(qubits_index, qubits_num)
-            control_statement = ",".join([f"{qubit_name}[{i}]" for i in target[1:]])
+            control_statement = ",".join([f"{qubit_name}[{i}]" for i in target[1:2]])
             return f"{cir_name}.append({single_qubit_gate_map[gate_name]}({qubit_name}[{target[0]}]).controlled_by({control_statement}))"
         else:
             return f"{cir_name}.append({single_qubit_gate_map[gate_name]}({qubit_name}[{target}]))"
 
-    elif gate_name in {"rx", "ry", "rz", "xp", "yp", "zp", "rotx", "roty", "rotz"}:
+    elif gate_name in {"rx", "ry", "rz"}:
         # These gates have two parameters which are (phase, index of qubit)
         target = random.choice(qubits_index)
         if pi_phase == 1:
-            temp = 2**random.randint(1, 3)
+            temp = 2**random.randint(1, 10)
             phase = math.pi/temp
         else:
             phase = random.uniform(0, 2*math.pi)
 
         if control_flag and qubits_num > 1:
             target = random.sample(qubits_index, qubits_num)
-            control_statement = ",".join([f"{qubit_name}[{i}]" for i in target[1:]])
+            control_statement = ",".join([f"{qubit_name}[{i}]" for i in target[1:2]])
             return f"{cir_name}.append({single_qubit_gate_map[gate_name]}({phase}).on({qubit_name}[{target[0]}]).controlled_by({control_statement}))"
         else:
             return f"{cir_name}.append({single_qubit_gate_map[gate_name]}({phase}).on({qubit_name}[{target}]))"
 
-    elif gate_name in {"cx", "cz", "swap", "iswap"}:
+    elif gate_name in {"xp", "yp", "zp"}:
+        # These gates have two parameters which are (phase, index of qubit)
+        target = random.choice(qubits_index)
+        if pi_phase == 1:
+            temp = 2**random.randint(1, 10)
+            phase = math.pi/temp
+        else:
+            phase = random.uniform(0, 2*math.pi)
+
+        if control_flag and qubits_num > 1:
+            target = random.sample(qubits_index, qubits_num)
+            control_statement = ",".join([f"{qubit_name}[{i}]" for i in target[1:2]])
+            return f"{cir_name}.append({single_qubit_gate_map[gate_name]}(exponent={phase}).on({qubit_name}[{target[0]}]).controlled_by({control_statement}))"
+        else:
+            return f"{cir_name}.append({single_qubit_gate_map[gate_name]}(exponent={phase}).on({qubit_name}[{target}]))"
+
+    elif gate_name in {"pxp"}:
+        target = random.choice(qubits_index)
+        if pi_phase == 1:
+            temp = 2**random.randint(1, 10)
+            phase_1 = math.pi/temp
+            temp = 2 ** random.randint(1, 10)
+            phase_2 = math.pi / temp
+        else:
+            phase_1 = random.uniform(0, 2*math.pi)
+            phase_2 = random.uniform(0, 2 * math.pi)
+
+        if control_flag and qubits_num > 1:
+            target = random.sample(qubits_index, qubits_num)
+            control_statement = ",".join([f"{qubit_name}[{i}]" for i in target[1:2]])
+            return f"{cir_name}.append({single_qubit_gate_map[gate_name]}(exponent={phase_1},phase_exponent={phase_2}).on({qubit_name}[{target[0]}]).controlled_by({control_statement}))"
+        else:
+            return f"{cir_name}.append({single_qubit_gate_map[gate_name]}(exponent={phase_1},phase_exponent={phase_2}).on({qubit_name}[{target}]))"
+
+    elif gate_name in {"pxz"}:
+        target = random.choice(qubits_index)
+        if pi_phase == 1:
+            temp = 2**random.randint(1, 10)
+            phase_1 = math.pi/temp
+            temp = 2 ** random.randint(1, 10)
+            phase_2 = math.pi / temp
+            temp = 2 ** random.randint(1, 10)
+            phase_3 = math.pi / temp
+        else:
+            phase_1 = random.uniform(0, 2*math.pi)
+            phase_2 = random.uniform(0, 2 * math.pi)
+            phase_3 = random.uniform(0, 2 * math.pi)
+
+        if control_flag and qubits_num > 1:
+            target = random.sample(qubits_index, qubits_num)
+            control_statement = ",".join([f"{qubit_name}[{i}]" for i in target[1:2]])
+            return f"{cir_name}.append({single_qubit_gate_map[gate_name]}(x_exponent={phase_1},z_exponent={phase_2}, axis_phase_exponent={phase_3}).on({qubit_name}[{target[0]}]).controlled_by({control_statement}))"
+        else:
+            return f"{cir_name}.append({single_qubit_gate_map[gate_name]}(x_exponent={phase_1},z_exponent={phase_2}, axis_phase_exponent={phase_3}).on({qubit_name}[{target}]))"
+
+    elif gate_name in {"xxp", "yyp", "zzp"}:
         # These gates have two parameters which are both the index of target qubit.
+        index_list = random.sample(qubits_index, 2)
+        [target1, target2] = index_list
+
+        if pi_phase == 1:
+            temp = 2**random.randint(1, 10)
+            phase = math.pi/temp
+        else:
+            phase = random.uniform(0, 2*math.pi)
+
+        if control_flag and qubits_num > 2:
+            target = random.sample(qubits_index, qubits_num)
+            control_statement = ",".join([f"{qubit_name}[{i}]" for i in target[2:3]])
+            return f"{cir_name}.append({double_qubit_gate_map[gate_name]}(exponent={phase}).on({qubit_name}[{target[0]}], {qubit_name}[{target[1]}]).controlled_by({control_statement}))"
+        else:
+            return f"{cir_name}.append({double_qubit_gate_map[gate_name]}(exponent={phase}).on({qubit_name}[{target1}], {qubit_name}[{target2}]))"
+
+    elif gate_name in {"fsim"}:
+        # These gates have two parameters which are both the index of target qubit.
+        index_list = random.sample(qubits_index, 2)
+        [target1, target2] = index_list
+
+        if pi_phase == 1:
+            temp = 2 ** random.randint(1, 10)
+            phase = math.pi / temp
+            temp = 2 ** random.randint(1, 10)
+            phase_1 = math.pi / temp
+        else:
+            phase = random.uniform(0, 2 * math.pi)
+            phase_1 = random.uniform(0, 2 * math.pi)
+
+        if control_flag and qubits_num > 2:
+            target = random.sample(qubits_index, qubits_num)
+            control_statement = ",".join([f"{qubit_name}[{i}]" for i in target[2:3]])
+            return f"{cir_name}.append({double_qubit_gate_map[gate_name]}(theta={phase},phi={phase_1}).on({qubit_name}[{target[0]}], {qubit_name}[{target[1]}]).controlled_by({control_statement}))"
+        else:
+            return f"{cir_name}.append({double_qubit_gate_map[gate_name]}(theta={phase},phi={phase_1}).on({qubit_name}[{target1}], {qubit_name}[{target2}]))"
+
+    elif gate_name in {"cx", "cz", "swap", "iswap"}:
         index_list = random.sample(qubits_index, 2)
         if gate_name == "cz":
             index_list.sort()
@@ -107,10 +197,11 @@ def gate_generator(qubits_num, pi_phase = 1, cir_name = "qc", qubit_name = "q"):
 
         if control_flag and qubits_num > 2:
             target = random.sample(qubits_index, qubits_num)
-            control_statement = ",".join([f"{qubit_name}[{i}]" for i in target[2:]])
+            control_statement = ",".join([f"{qubit_name}[{i}]" for i in target[2:3]])
             return f"{cir_name}.append({double_qubit_gate_map[gate_name]}({qubit_name}[{target[0]}], {qubit_name}[{target[1]}]).controlled_by({control_statement}))"
         else:
             return f"{cir_name}.append({double_qubit_gate_map[gate_name]}({qubit_name}[{target1}], {qubit_name}[{target2}]))"
+
     elif gate_name in {"ccx", "ccz"}:
         # These gates have three parameters which are all the index of target qubit.
         index_list = random.sample(qubits_index, 3)
@@ -119,12 +210,22 @@ def gate_generator(qubits_num, pi_phase = 1, cir_name = "qc", qubit_name = "q"):
 
         if control_flag and qubits_num > 3:
             target = random.sample(qubits_index, qubits_num)
-            control_statement = ",".join([f"{qubit_name}[{i}]" for i in target[3:]])
+            control_statement = ",".join([f"{qubit_name}[{i}]" for i in target[3:4]])
             return f"{cir_name}.append({more_qubit_gate_map[gate_name]}({qubit_name}[{target[0]}], {qubit_name}[{target[1]}], {qubit_name}[{target[2]}]).controlled_by({control_statement}))"
         else:
             return f"{cir_name}.append({more_qubit_gate_map[gate_name]}({qubit_name}[{target1}], {qubit_name}[{target2}], {qubit_name}[{target3}]))"
+    elif gate_name in {"cswap"}:
+        # These gates have three parameters which are all the index of target qubit.
+        index_list = random.sample(qubits_index, 3)
+        index_list.sort(reverse=True)
+        [target1, target2, target3] = index_list
 
-#============================================================================================================================================
+        if control_flag and qubits_num > 3:
+            target = random.sample(qubits_index, qubits_num)
+            control_statement = ",".join([f"{qubit_name}[{i}]" for i in target[3:4]])
+            return f"{cir_name}.append({more_qubit_gate_map[gate_name]}().on({qubit_name}[{target[0]}], {qubit_name}[{target[1]}], {qubit_name}[{target[2]}]).controlled_by({control_statement}))"
+        else:
+            return f"{cir_name}.append({more_qubit_gate_map[gate_name]}().on({qubit_name}[{target1}], {qubit_name}[{target2}], {qubit_name}[{target3}]))"
 
 
 
