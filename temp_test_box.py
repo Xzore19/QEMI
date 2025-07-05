@@ -1,40 +1,23 @@
 import cirq
-from cirq import transformers
+from cirq.transformers import *
 
-q = cirq.LineQubit.range(6)
+q = cirq.LineQubit.range(3)
 circuit = cirq.Circuit()
 
-circuit.append(cirq.CZ(q[3], q[1]).controlled_by(q[2]))
-circuit.append(cirq.CNOT(q[2], q[0]))
-circuit.append(cirq.CCZ(q[3], q[0], q[2]).controlled_by(q[1]))
-circuit.append(cirq.CZ(q[1], q[3]).controlled_by(q[2]))
-circuit.append(cirq.SWAP(q[3], q[4]).controlled_by(q[0]))
+
 sub_circuit = cirq.Circuit()
-sub_circuit.append(cirq.XPowGate(exponent=0.006135923151542565).on(q[3]))
-sub_circuit.append(cirq.ISWAP(q[0], q[2]).controlled_by(q[1]))
-sub_circuit.append(cirq.ISWAP(q[3], q[0]).controlled_by(q[4]))
-sub_circuit.append(cirq.rx(0.19634954084936207).on(q[2]).controlled_by(q[4]))
-sub_circuit.append(cirq.CCX(q[4], q[3], q[1]))
+
+sub_circuit.append(cirq.X(q[0]).controlled_by(q[1]))
+
 sub_op = cirq.CircuitOperation(sub_circuit.freeze())
-circuit.append(cirq.measure(q[5], key="c"))
+circuit.append(cirq.measure(q[2], key="c"))
 circuit.append(sub_op.with_classical_controls("c"))
-circuit.append(cirq.CCZ(q[3], q[4], q[2]).controlled_by(q[0]))
-circuit.append(cirq.Y(q[1]).controlled_by(q[3]))
-circuit.append(cirq.CCZ(q[4], q[2], q[0]).controlled_by(q[1]))
-circuit.append(cirq.CZ(q[2], q[4]))
-circuit.append(cirq.XXPowGate(exponent=0.006135923151542565).on(q[1], q[0]))
+
 circuit.append(cirq.measure(q, key="m"))
 
-circuit = transformers.drop_empty_moments(circuit)
-circuit = transformers.defer_measurements(circuit)
-circuit = transformers.expand_composite(circuit)
-circuit = transformers.merge_single_qubit_gates_to_phxz(circuit)
-circuit = transformers.stratified_circuit(circuit)
-circuit = transformers.eject_phased_paulis(circuit)
-circuit = transformers.drop_negligible_operations(circuit)
-circuit = transformers.eject_z(circuit)
-circuit = transformers.optimize_for_target_gateset(circuit)
+# circuit = defer_measurements(circuit)
 
+circuit = insertion_sort_transformer(circuit)
 simulator = cirq.Simulator()
 result = simulator.run(circuit, repetitions=500)
 print(result.histogram(key='m'))

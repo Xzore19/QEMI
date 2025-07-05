@@ -11,21 +11,46 @@ from qiskit_api import generate_random_append_statement
 from code_fuzzer.qasm_execution import QasmExecution
 import uuid
 
-opt_passes = """
-circuit = transformers.drop_empty_moments(circuit)
-circuit = transformers.defer_measurements(circuit)
-circuit = transformers.expand_composite(circuit)
-circuit = transformers.merge_single_qubit_gates_to_phxz(circuit)
-circuit = transformers.stratified_circuit(circuit)
-circuit = transformers.eject_phased_paulis(circuit)
-circuit = transformers.drop_negligible_operations(circuit)
-circuit = transformers.eject_z(circuit)
-circuit = transformers.optimize_for_target_gateset(circuit)
-"""
+# opt_passes = """circuit = drop_empty_moments(circuit)
+# circuit = defer_measurements(circuit)
+# circuit = expand_composite(circuit)
+# circuit = merge_single_qubit_gates_to_phxz(circuit)
+# circuit = merge_single_qubit_gates_to_phased_x_and_z(circuit)
+# circuit = merge_single_qubit_moments_to_phxz(circuit)
+# circuit = stratified_circuit(circuit)
+# circuit = eject_phased_paulis(circuit)
+# circuit = drop_negligible_operations(circuit)
+# circuit = eject_z(circuit)
+# circuit = synchronize_terminal_measurements(circuit)
+# circuit = merge_k_qubit_unitaries(circuit, k=2)
+# circuit = map_clean_and_borrowable_qubits(circuit)
+# circuit = index_tags(circuit)
+# circuit = remove_tags(circuit)
+# circuit = symbolize_single_qubit_gates_by_indexed_tags(circuit)
+# circuit = insertion_sort_transformer(circuit)
+# circuit = optimize_for_target_gateset(circuit)"""
+
+opt_passes = """circuit = drop_empty_moments(circuit)
+circuit = defer_measurements(circuit)
+circuit = expand_composite(circuit)
+circuit = merge_single_qubit_gates_to_phxz(circuit)
+circuit = merge_single_qubit_gates_to_phased_x_and_z(circuit)
+circuit = merge_single_qubit_moments_to_phxz(circuit)
+circuit = stratified_circuit(circuit)
+circuit = eject_phased_paulis(circuit)
+circuit = drop_negligible_operations(circuit)
+circuit = eject_z(circuit)
+circuit = synchronize_terminal_measurements(circuit)
+circuit = merge_k_qubit_unitaries(circuit, k=2)
+circuit = map_clean_and_borrowable_qubits(circuit)
+circuit = index_tags(circuit)
+circuit = remove_tags(circuit)
+circuit = symbolize_single_qubit_gates_by_indexed_tags(circuit)
+circuit = optimize_for_target_gateset(circuit)"""
 
 
 class CirqGenerator:
-    def __init__(self, qubit_num, measure_num=1, gate_num_upper=5, measure_times=10000, transplie=None, backend="aer",
+    def __init__(self, qubit_num, measure_num=1, gate_num_upper=10, measure_times=10000, transplie=None, backend="aer",
                  use_pass=None, cond_qubit=2, structure="odi", fuzz_type="while_break"):
         self.qnum = qubit_num
         self.cnum = cond_qubit
@@ -52,6 +77,8 @@ class CirqGenerator:
         self.transpile = {}
         self.use_pass = None
         self.code_structure = structure
+        self.opt_code = ""
+        self.optimization_choice()
 
         if self.code_structure == "odi":
             self.gate_list.append(self.gate_generation(0))
@@ -74,6 +101,48 @@ class CirqGenerator:
 
         self.integrate_combine(fuzz_type=fuzz_type)
 
+    def special_api(self):
+        return_code = "\n"
+        a = random.choice([True,False])
+        if a:
+            qbit = random.randint(2, self.qnum)
+            target = random.sample([i for i in range(self.qnum)], qbit)
+            qbit_list = ",".join([f"{self.qreg}[{i}]" for i in target])
+            return_code += f"cirq.contrib.acquaintance.AcquaintanceOperation([{qbit_list}], {target}) \n"
+
+        a = random.choice([True, False])
+        if a:
+            qbit = random.randint(2, self.qnum)
+            target = random.sample([i for i in range(self.qnum)], qbit)
+            qbit_list = ",".join([f"{self.qreg}[{i}]" for i in target])
+            return_code += f"cirq.contrib.acquaintance.AcquaintanceOpportunityGate(num_qubits={qbit}).on({qbit_list}) \n"
+
+        a = random.choice([True, False])
+        if a:
+            qbit = random.randint(2, self.qnum)
+            target = random.sample([i for i in range(self.qnum)], qbit)
+            qbit_list = ",".join([f"{self.qreg}[{i}]" for i in target])
+            return_code += f"cirq.contrib.acquaintance.CircularShiftGate(shift=1, num_qubits={qbit}).on({qbit_list}) \n"
+
+
+        a = random.choice([True, False])
+        if a:
+            qbit = random.randint(2, self.qnum)
+            perm_list = random.sample([i for i in range(qbit)], qbit)
+            temp = random.sample([i for i in perm_list], qbit)
+            perm =  dict(zip(perm_list, temp))
+            target = random.sample([i for i in range(self.qnum)], qbit)
+            qbit_list = ",".join([f"{self.qreg}[{i}]" for i in target])
+            return_code += f"cirq.contrib.acquaintance.LinearPermutationGate(num_qubits={qbit}, permutation={perm}).on({qbit_list}) \n"
+
+        return return_code
+
+    def optimization_choice(self):
+        opt_list = opt_passes.split("\n")
+        optimization = random.sample(opt_list, 3)
+        optimization = "\n".join(optimization)
+        self.opt_code += optimization
+
 
     def integrate_combine(self, fuzz_type):
         # basic information of quantum program for qiskit
@@ -89,30 +158,57 @@ class CirqGenerator:
         self.fuzzing_code += self.basic_set()
         self.fuzzing_code_without_exec += self.basic_set()
 
+        self.code += self.special_api()
+        self.code_without_exec += self.special_api()
+        self.fuzzing_code += self.special_api()
+        self.fuzzing_code_without_exec += self.special_api()
+
         # 添加声明后的第一组量子门操作
         self.code += self.gate_list[0]
         self.code_without_exec += self.gate_list[0]
         self.fuzzing_code += self.gate_list[0]
         self.fuzzing_code_without_exec += self.gate_list[0]
 
+        self.code += self.special_api()
+        self.code_without_exec += self.special_api()
+        self.fuzzing_code += self.special_api()
+        self.fuzzing_code_without_exec += self.special_api()
+
         # dead code generation
         self.code += f"sub_circuit = cirq.Circuit() \n"
         self.fuzzing_code += f"sub_circuit = cirq.Circuit() \n"
-        for sub in range(5):
+        for sub in range(10):
             self.fuzzing_code += gate_generator(qubits_num=self.qnum, cir_name="sub_circuit") + "\n"
 
+        self.code += f"sub_op = cirq.CircuitOperation(sub_circuit.freeze()) \n"
         self.fuzzing_code += f"sub_op = cirq.CircuitOperation(sub_circuit.freeze()) \n"
 
         self.code += f"{self.qc}.append(cirq.measure({self.qreg}[{self.qnum}], key=\"c\")) \n"
         self.fuzzing_code += f"{self.qc}.append(cirq.measure({self.qreg}[{self.qnum}], key=\"c\")) \n"
 
-        self.fuzzing_code += f"{self.qc}.append(sub_op.with_classical_controls(\"c\")) \n"
+        a = random.sample(range(self.qnum), 2)
+        self.code += f"{self.qc}.append(cirq.measure([{self.qreg}[{a[0]}],{self.qreg}[{a[1]}]], key=\"ca\")) \n"
+        self.fuzzing_code += f"{self.qc}.append(cirq.measure([{self.qreg}[{a[0]}],{self.qreg}[{a[1]}]], key=\"ca\")) \n"
+        self.code += f"dc_cond = cirq.BitMaskKeyCondition.create_equal_mask('ca', bitmask=1)\n"
+        self.fuzzing_code += f"dc_cond = cirq.BitMaskKeyCondition.create_equal_mask('ca', bitmask=1)\n"
 
+        self.code += f"{self.qc}.append(sub_op.with_classical_controls(\"c\", dc_cond)) \n"
+        self.fuzzing_code += f"{self.qc}.append(sub_op.with_classical_controls(\"c\", dc_cond)) \n"
+
+        self.code += self.special_api()
+        self.code_without_exec += self.special_api()
+        self.fuzzing_code += self.special_api()
+        self.fuzzing_code_without_exec += self.special_api()
         # 添加后续的量子门操作
         self.code += self.gate_list[3]
         self.code_without_exec += self.gate_list[3]
         self.fuzzing_code += self.gate_list[3]
         self.fuzzing_code_without_exec += self.gate_list[3]
+
+        self.code += self.special_api()
+        self.code_without_exec += self.special_api()
+        self.fuzzing_code += self.special_api()
+        self.fuzzing_code_without_exec += self.special_api()
 
         # 添加 measure 语句
         self.code += f"{self.qc}.append(cirq.measure({self.qreg}, key=\"m\")) \n"
@@ -121,8 +217,8 @@ class CirqGenerator:
         self.fuzzing_code += f"{self.qc}.append(cirq.measure({self.qreg}, key=\"m\")) \n"
         self.fuzzing_code_without_exec += f"{self.qc}.append(cirq.measure({self.qreg}, key=\"m\")) \n"
 
-        self.code += opt_passes
-        self.fuzzing_code += opt_passes
+        self.code += self.opt_code
+        self.fuzzing_code += self.opt_code
 
         # 为 code 和fuzzing code添加模拟器，对于qasm则不需要
         self.code += self.final_part(show_type="simulator")
@@ -133,7 +229,7 @@ class CirqGenerator:
         # 最基本的import语句
         code_line = ""
         code_line += "import cirq\n"
-        code_line += "from cirq import transformers\n"
+        code_line += "from cirq.transformers import *\n"
         code_line += "\n"
         return code_line
 
@@ -169,8 +265,8 @@ class CirqGenerator:
 
     def output_postprocess(self, dis):
         dis = dis.replace("Counter(", "").replace(")", "").replace("\x1b[0m", "")
-        check_list = [f'{num:0{self.qnum}b}' for num in range(pow(2, self.qnum))]
-        target = remove_cr(eval(dis), self.qnum)
+        check_list = [num for num in range(pow(2, self.qnum+1))]
+        target = eval(dis)
         dict_target = {}
         for i in check_list:
             dict_target[i] = target.get(i, 0)
@@ -188,7 +284,7 @@ class CirqGenerator:
             truth_result = subprocess.run([sys.executable, self.filename], capture_output=True, text=True, timeout=600)
         except subprocess.TimeoutExpired:
             print("truth timeout")
-            directory = "fuzzing/buggy_program/timeout"
+            directory = "fuzzing_cirq/buggy_program/timeout"
             pattern = re.compile(r"(truth|fuzzing)_(\d+)\.py")
             max_index = -1
 
@@ -215,7 +311,7 @@ class CirqGenerator:
             fuzzing_result = subprocess.run([sys.executable, self.fuzzing_filename], capture_output=True, text=True, timeout=600)
         except subprocess.TimeoutExpired:
             print("fuzzing timeout")
-            directory = "fuzzing/buggy_program/timeout"
+            directory = "fuzzing_cirq/buggy_program/timeout"
             pattern = re.compile(r"(truth|fuzzing)_(\d+)\.py")
             max_index = -1
 
@@ -245,7 +341,7 @@ class CirqGenerator:
         if (truth_result.stderr == "" and fuzzing_result.stderr != "") or (
                 truth_result.stderr != "" and fuzzing_result.stderr == ""):
             print("Found crash!!!")
-            directory = "fuzzing/buggy_program/crash"
+            directory = "fuzzing_cirq/buggy_program/crash"
 
 
             pattern = re.compile(r"(truth|fuzzing)_(\d+)\.py")
@@ -292,7 +388,7 @@ class CirqGenerator:
                 # 说明while语句并没有通过break结束
                 # 也说明程序是一直不满足hellinger < 0.1 的要求， 而是取样次数超出限制
                 print("Found wrong!!!")
-                directory = "fuzzing/buggy_program/probability"
+                directory = "fuzzing_cirq/buggy_program/probability"
 
                 pattern = re.compile(r"(truth|fuzzing)_(\d+)\.py")
                 max_index = -1
@@ -317,13 +413,12 @@ class CirqGenerator:
 
     def check_code(self):
         # 检查truth代码和fuzzing代码
-        print(self.code)
-        print("####################################")
-        print(self.fuzzing_code)
+        print(self.opt_code)
+
 
 
 if __name__ == "__main__":
     a = CirqGenerator(5, 1)
 
-    # a.check_code()
-    a.run()
+    a.check_code()
+
