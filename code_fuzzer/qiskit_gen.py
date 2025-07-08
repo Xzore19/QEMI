@@ -528,8 +528,19 @@ qc = qc.decompose(reps=10)\n
 
             return None
 
-        if (truth_result.stderr == "" and fuzzing_result.stderr != "") or (
-                truth_result.stderr != "" and fuzzing_result.stderr == ""):
+        truth_stderr = "\n".join(
+            line for line in truth_result.stderr.splitlines()
+            if ("traceback" in line.lower() or "error" in line.lower())
+        )
+
+
+        fuzzing_stderr = "\n".join(
+            line for line in fuzzing_result.stderr.splitlines()
+            if ("traceback" in line.lower() or "error" in line.lower())
+        )
+
+        if (truth_stderr == "" and fuzzing_stderr != "") or (
+                truth_stderr != "" and fuzzing_stderr == ""):
             print("Found crash!!!")
             directory = "fuzzing/buggy_program/crash"
 
@@ -553,7 +564,7 @@ qc = qc.decompose(reps=10)\n
 
             with open(fuzzing_file, "w") as file_f:
                 file_f.write(self.fuzzing_code)
-        elif (truth_result.stderr != "" and fuzzing_result.stderr != ""):
+        elif (truth_stderr != "" and fuzzing_stderr != ""):
             pass
 
         # 通过对hellinger距离进行判断，对于超过0.1的样本进行异常的储存

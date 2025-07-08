@@ -1,23 +1,34 @@
 import cirq
 from cirq.transformers import *
 
-q = cirq.LineQubit.range(3)
+q = cirq.LineQubit.range(2)
 circuit = cirq.Circuit()
 
+c = cirq.Circuit()
+c.append([
+    cirq.S(q[0]),
+    cirq.XPowGate(exponent=0.25)(q[0]),
+    cirq.S(q[0])**-1,
+    cirq.CZ(q[0], q[1]),
+    cirq.S(q[0])**-1,
+    cirq.XPowGate(exponent=0.25)(q[0]),
+    cirq.S(q[0]),
+])
 
-sub_circuit = cirq.Circuit()
+p = cirq.LineQubit.range(2)
+circuit1 = cirq.Circuit()
 
-sub_circuit.append(cirq.X(q[0]).controlled_by(q[1]))
+c1 = cirq.Circuit()
+c1.append([
+    cirq.S(p[0])**-1,
+    cirq.XPowGate(exponent=0.75)(p[0]),
+    cirq.S(p[0]),
+    cirq.CZ(p[0], p[1]),
+    cirq.S(p[0]),
+    cirq.XPowGate(exponent=0.75)(p[0]),
+    cirq.S(p[0])**-1,
+    cirq.Z(p[1])
+])
 
-sub_op = cirq.CircuitOperation(sub_circuit.freeze())
-circuit.append(cirq.measure(q[2], key="c"))
-circuit.append(sub_op.with_classical_controls("c"))
 
-circuit.append(cirq.measure(q, key="m"))
-
-# circuit = defer_measurements(circuit)
-
-circuit = insertion_sort_transformer(circuit)
-simulator = cirq.Simulator()
-result = simulator.run(circuit, repetitions=500)
-print(result.histogram(key='m'))
+print(cirq.equal_up_to_global_phase(cirq.unitary(c), cirq.unitary(c1)))

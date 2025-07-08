@@ -30,6 +30,23 @@ import uuid
 # circuit = insertion_sort_transformer(circuit)
 # circuit = optimize_for_target_gateset(circuit)"""
 
+# opt_passes = """circuit = drop_empty_moments(circuit)
+# circuit = defer_measurements(circuit)
+# circuit = expand_composite(circuit)
+# circuit = merge_single_qubit_gates_to_phxz(circuit)
+# circuit = merge_single_qubit_gates_to_phased_x_and_z(circuit)
+# circuit = merge_single_qubit_moments_to_phxz(circuit)
+# circuit = stratified_circuit(circuit)
+# circuit = eject_phased_paulis(circuit)
+# circuit = drop_negligible_operations(circuit)
+# circuit = eject_z(circuit)
+# circuit = synchronize_terminal_measurements(circuit)
+# circuit = merge_k_qubit_unitaries(circuit, k=2)
+# circuit = map_clean_and_borrowable_qubits(circuit)
+# circuit = index_tags(circuit)
+# circuit = remove_tags(circuit)
+# circuit = symbolize_single_qubit_gates_by_indexed_tags(circuit)
+# circuit = optimize_for_target_gateset(circuit)"""
 opt_passes = """circuit = drop_empty_moments(circuit)
 circuit = defer_measurements(circuit)
 circuit = expand_composite(circuit)
@@ -43,9 +60,6 @@ circuit = eject_z(circuit)
 circuit = synchronize_terminal_measurements(circuit)
 circuit = merge_k_qubit_unitaries(circuit, k=2)
 circuit = map_clean_and_borrowable_qubits(circuit)
-circuit = index_tags(circuit)
-circuit = remove_tags(circuit)
-circuit = symbolize_single_qubit_gates_by_indexed_tags(circuit)
 circuit = optimize_for_target_gateset(circuit)"""
 
 
