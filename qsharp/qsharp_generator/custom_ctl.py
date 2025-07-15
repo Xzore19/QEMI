@@ -4,6 +4,9 @@ from typing import List, Optional, Dict, Any
 from qsharp_generator.custom_blocks import generate_random_gate_block
 from qsharp_generator.functions import indent, get_qsharp_modifier, register_random_flag_block
 
+instruction_cost_stack: List[int] = []
+INSTRUCTION_COST_THRESHOLD = 300
+
 CONTROL_BLOCK_REGISTRY = [
     "APPLY_IF_LE",
     "APPLY_IF_L",
@@ -33,6 +36,12 @@ APPLY_IF_L_REGISTRY = [
     "ApplyIfLessOrEqualL",
 ]
 
+def estimate_instruction_cost(instruction_stack: List[int], effective_depth: int) -> int:
+    factor = 1
+    for x in instruction_stack:
+        factor *= x
+    return factor * effective_depth
+
 def make_nested_or_fallback_body(
     target_indices: List[int],
     depth: int,
@@ -47,9 +56,17 @@ def make_nested_or_fallback_body(
     local_indices = list(range(len(target_indices)))
 
     if random.random() < 0.3:
-        maybe_nested = generate_random_control_block(local_indices, depth - 1, call_type)
+        maybe_nested = generate_random_control_block(local_indices, depth - 1, call_type, current_stack=instruction_cost_stack.copy())
         if maybe_nested is not None:
-            return indent(maybe_nested["call"].splitlines(), level=1)
+            # ✅ 添加一个额外的 gate block（默认保持相同 depth）
+            _, extra_instructions, _ = generate_random_gate_block(
+                call_type=call_type,
+                target_indices=local_indices,
+                depth=max(1, depth // 3),  # 或可使用 depth 原值
+            )
+            # 拼接控制结构体 + gate 体（都缩进一级）
+            full_lines = maybe_nested["call"].splitlines() + extra_instructions
+            return indent(full_lines, level=1)
         
     if random.random() < 0.5:
         maybe_deadcode = generate_fixed_deadcode_block(local_indices, depth - 1, call_type)
@@ -194,7 +211,7 @@ def make_for_loop_block(
     use_controlled = False
     if call_type in ("controlled", "adj+ctl") and N >= 2 and random.random() < 0.5:
         use_controlled = True
-        num_ctrl = random.randint(1, N // 2)
+        num_ctrl = random.randint(1, min(2, N // 2))
         ctrl = sorted(random.sample(local_indices, num_ctrl))
         target = sorted([i for i in local_indices if i not in ctrl])
         if not target:
@@ -358,7 +375,7 @@ def make_controlled_on_classical_block(
     modifier = " is Adj + Ctl"
 
     # 控制与目标 qubit 分配
-    num_ctrl = random.randint(1, N - 1)
+    num_ctrl = random.randint(1, min(2, N // 2))
     ctrl = sorted(random.sample(local_indices, num_ctrl))
     target = sorted([i for i in local_indices if i not in ctrl])
     if not target:
@@ -372,7 +389,7 @@ def make_controlled_on_classical_block(
     body = make_nested_or_fallback_body(target, depth, call_type)
 
     inline_op = (
-        f"operation {inline_op_name}(q : Qubit[]) : Unit{modifier} {{\n"
+        f"operation {inline_op_name}(q : Qubit[]) : Unit is Adj + Ctl {{\n"
         f"{body}\n"
         f"}}"
     )
@@ -423,7 +440,7 @@ def make_repeat_until_block(
     # 尝试构造 controlled 调用
     if call_type in ("controlled", "adj+ctl") and N >= 2 and random.random() < 0.5:
         use_controlled = True
-        num_ctrl = random.randint(1, N // 2)
+        num_ctrl = random.randint(1, min(2, N // 2))
         ctrl = sorted(random.sample(local_indices, num_ctrl))
         target = sorted([i for i in local_indices if i not in ctrl])
         if not target:
@@ -506,7 +523,7 @@ def make_while_loop_block(
 
     if call_type in ("controlled", "adj+ctl") and N >= 2 and random.random() < 0.5:
         use_controlled = True
-        num_ctrl = random.randint(1, N // 2)
+        num_ctrl = random.randint(1, min(2, N // 2))
         ctrl = sorted(random.sample(local_indices, num_ctrl))
         target = sorted([i for i in local_indices if i not in ctrl])
         if not target:
@@ -558,43 +575,64 @@ def generate_random_control_block(
     available_indices: List[int],
     depth: int,
     call_type: str,
+    current_stack: Optional[List[int]] = None,
 ) -> Optional[Dict[str, Any]]:
     if call_type == "plain":
-        # 仅在 plain 模式下使用 REPEAT_UNTIL
         block = random.choice(CONTROL_BLOCK_REGISTRY + CONTROL_BLOCK_REGISTRY_P)
     else:
-        # 在其他模式下仅使用前四种
         block = random.choice(CONTROL_BLOCK_REGISTRY)
-    # block = "REPEAT_UNTIL"  # For testing purposes, always use IFELSE
+
     available_indices = list(range(len(available_indices)))
-    # block = "WHILE_LOOP"  # For testing purposes, always use WHILE_LOOP
-        
-    if block == "APPLY_IF_LE":
-        if len(available_indices) < 3:
-            return None
-        return make_apply_if_relation_le_block(available_indices, depth, call_type)
-    if block == "CTL_ON_CLASSICAL":
-        if len(available_indices) < 2:
-            return None
-        return make_controlled_on_classical_block(available_indices, depth, call_type)
-    if block == "APPLY_IF_L":
-        if len(available_indices) < 2:
-            return None
-        return make_apply_if_relation_l_block(available_indices, depth, call_type)
+    effective_depth = {
+        "FOR_LOOP": depth - 1,
+        "IFELSE": depth - 1,
+        "APPLY_IF_LE": depth - 1,
+        "APPLY_IF_L": depth - 1,
+        "CTL_ON_CLASSICAL": depth - 1,
+        "REPEAT_UNTIL": depth - 3,
+        "WHILE_LOOP": depth - 3,
+    }.get(block, depth - 1)
+
+    if effective_depth <= 0:
+        return None
+
+    factor = {
+        "FOR_LOOP": 3,
+        "REPEAT_UNTIL": 2,
+        "WHILE_LOOP": 2,
+    }.get(block, 1)
+
+    # ✅ 正确处理 current_stack
+    stack = current_stack if current_stack is not None else instruction_cost_stack
+    future_stack = stack + [factor]
+    future_cost = estimate_instruction_cost(future_stack, effective_depth)
+    print(f"[DBG] block={block}, call_type={call_type}, stack={future_stack}, depth={effective_depth}, cost={future_cost}")
+
+    if future_cost > INSTRUCTION_COST_THRESHOLD:
+        return None
+
+    # ✅ 创建新的局部 stack，用于嵌套调用
+    local_stack = future_stack
+
     if block == "FOR_LOOP":
-        if depth - 1 <= 0:
-            return None
-        return make_for_loop_block(available_indices, depth - 1, call_type)
+        return make_for_loop_block(available_indices, effective_depth, call_type)
+
     if block == "IFELSE":
-        if depth - 1 <= 0:
-            return None
-        return make_if_else_block(available_indices, depth - 1, call_type)
+        return make_if_else_block(available_indices, effective_depth, call_type)
+
+    if block == "APPLY_IF_LE":
+        return make_apply_if_relation_le_block(available_indices, effective_depth, call_type)
+
+    if block == "APPLY_IF_L":
+        return make_apply_if_relation_l_block(available_indices, effective_depth, call_type)
+
+    if block == "CTL_ON_CLASSICAL":
+        return make_controlled_on_classical_block(available_indices, effective_depth, call_type)
+
     if block == "REPEAT_UNTIL":
-        if depth - 3 <= 0:
-            return None
-        return make_repeat_until_block(available_indices, depth - 3, call_type)
+        return make_repeat_until_block(available_indices, effective_depth, call_type)
+
     if block == "WHILE_LOOP":
-        if depth - 3 <= 0:
-            return None
-        return make_while_loop_block(available_indices, depth - 3, call_type)
+        return make_while_loop_block(available_indices, effective_depth, call_type)
+
     return None

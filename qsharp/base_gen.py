@@ -23,17 +23,21 @@ class QSharpGenerator:
         self.measure_instructions = add_measure_all(self.qubit_num)
         call_types = random.choices(
             ["plain", "adjoint", "controlled", "adj+ctl"],
-            weights=[3, 3, 3, 3],  # plain 的权重是 3，其它是 2
+            weights=[3, 3, 3, 3],
             k=self.num_blocks
         )
         block_ops = []
-        test_body = []
         extra_single_blocks = []
+        test_body = []
+
+        init_controls = []
 
         start_idx = 0
         if not self.include_deadcode:
             start_idx = 1
 
+        # First pass: generate blocks and collect control info
+        block_test_calls = []
         for idx in range(start_idx, self.num_blocks):
             call_type = call_types[idx]
 
@@ -46,31 +50,31 @@ class QSharpGenerator:
 
             if call_type in ("controlled", "adj+ctl"):
                 available = list(range(self.qubit_num))
-                num_ctrl = random.randint(1, self.qubit_num // 2)
+                num_ctrl = random.randint(1, min(2, self.qubit_num // 2))
                 ctrl = sorted(random.sample(available, num_ctrl))
                 target = sorted([i for i in available if i not in ctrl])
                 if not target:
                     call_type = "plain"
                     target = list(range(self.qubit_num))
                     ctrl = []
+                # ✅ 收集前两个 block 的所有控制位
+                if idx in (0, 1):
+                    init_controls.extend(ctrl)
             else:
                 target = list(range(self.qubit_num))
                 ctrl = []
 
+            # Create block body
             if idx == 0 and self.include_deadcode:
-                # call_type = "plain"
                 target_indices = target
                 props = generate_fixed_deadcode_block(
                     available_indices=target_indices,
-                    # available_indices=target,
                     depth=self.depth_per_block,
                     call_type=call_type,
                 )
                 block = props["call"]
                 body = indent(block.split("\n"), level=2)
             else:
-                # 50% 概率尝试插入控制结构
-                # if random.random() < 0.5:
                 ctl = generate_random_control_block(
                     call_type=call_type,
                     available_indices=target,
@@ -87,39 +91,42 @@ class QSharpGenerator:
                     )
                     extra_single_blocks.extend(extra_ops)
                     body = indent(block, level=2)
-                # else:
-                #     used_indices, block, extra_ops = generate_random_gate_block(
-                #         call_type=call_type,
-                #         target_indices=target,
-                #         depth=self.depth_per_block,
-                #     )
-                #     extra_single_blocks.extend(extra_ops)
-                #     body = indent(block, level=2)
 
+            # Register block op
             signature = f"    operation ApplyRandomBlock{idx}(q : Qubit[]) : Unit"
             if qualifier:
                 signature += f" {qualifier}"
             signature += " {\n" + body + "\n    }"
             block_ops.append(signature)
 
+            # Prepare test body calls
             if call_type == "plain":
-                test_body.append(f"ApplyRandomBlock{idx}(q);")
+                block_test_calls.append(f"ApplyRandomBlock{idx}(q);")
             elif call_type == "adjoint":
-                test_body.append(f"Adjoint ApplyRandomBlock{idx}(q);")
+                block_test_calls.append(f"Adjoint ApplyRandomBlock{idx}(q);")
             elif call_type == "controlled":
                 ctrl_str = ", ".join([f"q[{i}]" for i in ctrl])
                 tgt_str = ", ".join([f"q[{i}]" for i in target])
-                test_body.append(f"Controlled ApplyRandomBlock{idx}([{ctrl_str}], [{tgt_str}]);")
+                block_test_calls.append(f"Controlled ApplyRandomBlock{idx}([{ctrl_str}], [{tgt_str}]);")
             elif call_type == "adj+ctl":
                 ctrl_str = ", ".join([f"q[{i}]" for i in ctrl])
                 tgt_str = ", ".join([f"q[{i}]" for i in target])
-                test_body.append(f"Controlled Adjoint ApplyRandomBlock{idx}([{ctrl_str}], [{tgt_str}]);")
+                block_test_calls.append(f"Controlled Adjoint ApplyRandomBlock{idx}([{ctrl_str}], [{tgt_str}]);")
 
+        # ✅ 插入控制位初始化（去重、排序）
+        for i in sorted(set(init_controls)):
+            test_body.append(f"X(q[{i}]);")
+
+        # ✅ 加入 block 调用语句
+        test_body.extend(block_test_calls)
+
+        # ✅ 加入测量与 reset
         test_body += self.measure_instructions
         test_body.append("ResetAll(q);")
         test_body.append("return [" + ", ".join([f"r{i}" for i in range(self.qubit_num)]) + "];")
         test_body_indented = indent(test_body, level=3)
 
+        # Header
         default_imports = [
             "Std.Intrinsic",
             "Std.Measurement",
@@ -142,12 +149,13 @@ class QSharpGenerator:
             f"        }}\n"
             f"    }}\n"
         )
+
         return (
             f"namespace {namespace_name} {{\n"
             f"{header}\n\n"
             f"{chr(10).join(registered_single_qubit_blocks)}\n\n"
-            f"{chr(10).join(registered_random_flag_blocks)}\n\n" 
-            f"{chr(10).join(registered_oracle_blocks)}\n\n" 
+            f"{chr(10).join(registered_random_flag_blocks)}\n\n"
+            f"{chr(10).join(registered_oracle_blocks)}\n\n"
             f"{chr(10).join(block_ops)}\n\n"
             f"{test_circuit_op}"
             f"}}"

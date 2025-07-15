@@ -19,7 +19,7 @@ opt_passes = {"Optimize1qGates": Optimize1qGates(), "Optimize1qGatesDecompositio
               "Collect1qRuns": Collect1qRuns(), "Collect2qBlocks": Collect2qBlocks(),
               "CollectMultiQBlocks": CollectMultiQBlocks(), "CollectLinearFunctions": CollectLinearFunctions(),
               "CollectCliffords": CollectCliffords(), "ConsolidateBlocks": ConsolidateBlocks(),
-              "CXCancellation": CXCancellation(), "InverseCancellation": InverseCancellation([XGate()]),
+              "InverseCancellation": InverseCancellation([XGate()]),
               "CommutationAnalysis": CommutationAnalysis(), "CommutativeCancellation": CommutativeCancellation(),
               "CommutativeInverseCancellation": CommutativeInverseCancellation(),
               "Optimize1qGatesSimpleCommutation": Optimize1qGatesSimpleCommutation(),
@@ -29,7 +29,7 @@ opt_passes = {"Optimize1qGates": Optimize1qGates(), "Optimize1qGatesDecompositio
               "ResetAfterMeasureSimplification": ResetAfterMeasureSimplification(),
               # "EchoRZXWeylDecomposition":EchoRZXWeylDecomposition(),
               "OptimizeCliffords": OptimizeCliffords(), "ElidePermutations": ElidePermutations(),
-              "NormalizeRXAngle": NormalizeRXAngle(), "OptimizeAnnotated": OptimizeAnnotated()
+              "OptimizeAnnotated": OptimizeAnnotated()
               }
 
 

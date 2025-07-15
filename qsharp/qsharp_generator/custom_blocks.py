@@ -804,7 +804,7 @@ def generate_random_gate_block(
     depth: int,
 ) -> Tuple[Set[int], List[str], List[str]]:
 
-    print(f"[DBG] call_type={call_type}")
+    # print(f"[DBG] call_type={call_type}")
 
     instructions = []
     used_indices = set()

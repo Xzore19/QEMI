@@ -1,48 +1,34 @@
-from qiskit import QuantumCircuit, QuantumRegister, ClassicalRegister, transpile
-from qiskit_aer import Aer
-from qiskit.providers.fake_provider import GenericBackendV2
-from qiskit.providers.fake_provider import GenericBackendV2
-from qiskit.circuit import Parameter, ParameterVector
-from qiskit.circuit.library import XGate
-from qiskit.transpiler.passes import *
-import z3
-from qiskit.transpiler import PassManager, generate_preset_pass_manager
-from math import pi
+import cirq
+from cirq.transformers import *
 
-qreg = QuantumRegister(7)
-creg = ClassicalRegister(5)
-cond_creg = ClassicalRegister(2)
-qc = QuantumCircuit(qreg, creg, cond_creg)
+q = cirq.LineQubit.range(2)
+circuit = cirq.Circuit()
 
-qc.t(0)
-qc.ry(1.5707963267948966, 4)
-qc.ccx(4, 2, 1)
-qc.rx(0.39269908169872414, 4)
+c = cirq.Circuit()
+c.append([
+    cirq.S(q[0]),
+    cirq.XPowGate(exponent=0.25)(q[0]),
+    cirq.S(q[0])**-1,
+    cirq.CZ(q[0], q[1]),
+    cirq.S(q[0])**-1,
+    cirq.XPowGate(exponent=0.25)(q[0]),
+    cirq.S(q[0]),
+])
 
+p = cirq.LineQubit.range(2)
+circuit1 = cirq.Circuit()
 
-with qc.for_loop(range(5)) as i:
-	qc.y(1)
-	qc.y(2)
-	qc.y(3)
-	qc.ccx(4, 2, 1)
-
-qc.cry(0.39269908169872414, 0, 3)
-qc.x(0)
-qc.crx(1.5707963267948966, 1, 3)
-
-qc.measure(qreg[0], creg[0])
-qc.measure(qreg[1], creg[1])
-qc.measure(qreg[2], creg[2])
-qc.measure(qreg[3], creg[3])
-qc.measure(qreg[4], creg[4])
+c1 = cirq.Circuit()
+c1.append([
+    cirq.S(p[0])**-1,
+    cirq.XPowGate(exponent=0.75)(p[0]),
+    cirq.S(p[0]),
+    cirq.CZ(p[0], p[1]),
+    cirq.S(p[0]),
+    cirq.XPowGate(exponent=0.75)(p[0]),
+    cirq.S(p[0])**-1,
+    cirq.Z(p[1])
+])
 
 
-simulator = Aer.get_backend("aer_simulator")
-
-p = PassManager(Optimize1qGates())
-qc = p.run(qc)
-
-compiled_circuit = transpile(qc, backend = simulator, optimization_level = 3, routing_method = "sabre", layout_method = "noise_adaptive", approximation_degree = 1 )
-job = simulator.run(compiled_circuit, shots=10000)
-result = job.result().get_counts()
-print(result)
+print(cirq.equal_up_to_global_phase(cirq.unitary(c), cirq.unitary(c1)))

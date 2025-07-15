@@ -47,7 +47,7 @@ def make_fixed_apply_if_relation_block(
 
     if call_type in ("controlled", "adj+ctl") and N >= 2 and random.random() < 0.5:
         use_controlled = True
-        num_ctrl = random.randint(1, N // 2)
+        num_ctrl = random.randint(1, min(2, N // 2))
         ctrl = sorted(random.sample(local_indices, num_ctrl))
         target = sorted([i for i in local_indices if i not in ctrl])
         if not target:
@@ -194,7 +194,7 @@ def make_fixed_apply_if_relation_block(
         lines += [
             "use x = Qubit[2];", ]
         if use_controlled:
-            lines += [f"{prefix}{control_op_name}([{ctrl_str}], ({inline_name}, 0L, x, target));"]
+            lines += [f"{prefix}{control_op_name}([{ctrl_str}], ({inline_name}, -1L, x, target));"]
         else:
             lines += [f"{prefix}{control_op_name}({inline_name}, -1L, x, target);",]
 
@@ -302,12 +302,12 @@ def make_fixed_if_else_deadcode_block(
                 f"operation {inline_name}(q : Qubit[]) : Unit {{",
                 "    use flag = Qubit();",
                 "    let r = Measure([PauliZ], [flag]);",
-                "    if r == Zero {",
-                "        // --- DEADCODE START ---"
+                "    if r == Zero {"
             ] + indent(else_body.splitlines(), level=2).splitlines() + [
-                "        // --- DEADCODE END ---",
-                "    } else {"
+                "    } else {",
+                "        // --- DEADCODE START ---"
             ] + indent(dead_body.splitlines(), level=2).splitlines() + [
+                "        // --- DEADCODE END ---",
                 "    }",
                 "}"
             ]
@@ -418,7 +418,7 @@ def make_fixed_for_loop_zero_block(
     use_controlled = False
     if call_type in ("controlled", "adj+ctl") and N >= 2 and random.random() < 0.5:
         use_controlled = True
-        num_ctrl = random.randint(1, N // 2)
+        num_ctrl = random.randint(1, min(2, N // 2))
         ctrl = sorted(random.sample(local_indices, num_ctrl))
         target = sorted([i for i in local_indices if i not in ctrl])
         if not target:
@@ -479,7 +479,7 @@ def make_fixed_repeat_until_block(
     use_controlled = False
     if call_type in ("controlled", "adj+ctl") and N >= 2 and random.random() < 0.5:
         use_controlled = True
-        num_ctrl = random.randint(1, N // 2)
+        num_ctrl = random.randint(1, min(2, N // 2))
         ctrl = sorted(random.sample(local_indices, num_ctrl))
         target = sorted([i for i in local_indices if i not in ctrl])
         if not target:
@@ -553,7 +553,7 @@ def make_fixed_while_false_block(
     use_controlled = False
     if call_type in ("controlled", "adj+ctl") and N >= 2 and random.random() < 0.5:
         use_controlled = True
-        num_ctrl = random.randint(1, N // 2)
+        num_ctrl = random.randint(1, min(2, N // 2))
         ctrl = sorted(random.sample(local_indices, num_ctrl))
         target = sorted([i for i in local_indices if i not in ctrl])
         if not target:
@@ -613,7 +613,7 @@ def make_bitstring_deadcode_block(
         return None
 
     dead_inline_op = (
-        f"operation {dead_inline_name}(q : Qubit[]) : Unit{modifier} {{\n"
+        f"operation {dead_inline_name}(q : Qubit[]) : Unit is Adj + Ctl {{\n"
         f"{indent(dead_body.splitlines(), level=1)}\n"
         f"}}"
     )
@@ -643,7 +643,7 @@ def make_bitstring_deadcode_block(
         ]
 
     wrapper_inline_op_lines = [
-        f"operation {wrapper_inline_name}(q : Qubit[]) : Unit{modifier} {{",
+        f"operation {wrapper_inline_name}(q : Qubit[]) : Unit {{",
         "    use ctrl = Qubit[3];",
         "    within { } apply {",
         "        // --- DEADCODE START ---",
