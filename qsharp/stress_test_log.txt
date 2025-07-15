@@ -998,3 +998,373 @@ Main_fuzzing Distribution (collected in 0.00s):
 
 
 [Time elapsed: 1.47 seconds]
+
+=== Iteration 1 ===
+[base_gen.py SUCCESS]
+[exeqs.py SUCCESS]
+Main Distribution (collected in 0.00s):
+
+Main_fuzzing Distribution (collected in 0.00s):
+
+
+[Time elapsed: 1.46 seconds]
+
+=== Iteration 2 ===
+[base_gen.py SUCCESS]
+[exeqs.py ERROR]
+Traceback (most recent call last):
+  File "C:\Users\Lmrun\EMI\qsharp\exeqs.py", line 7, in <module>
+    qsharp.init(project_root=".")
+    ~~~~~~~~~~~^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Lmrun\anaconda3\envs\emi\Lib\site-packages\qsharp\_qsharp.py", line 219, in init
+    _interpreter = Interpreter(
+        target_profile,
+    ...<6 lines>...
+        _make_callable,
+    )
+module.QSharpError: Qsc.TypeCk.MissingFunctor
+
+  × type error
+  ╰─\u25b6 expected superset of Adj + Ctl, found empty set
+    ╭─[src\Main.qs:59:17]
+ 58 │                 X(ctrl[2]);
+ 59 │                 ApplyControlledOnBitString([true, true, false], __DeadBlock_fe5cfd18, ctrl, q);
+    ·                 ──────────────────────────────────────────────────────────────────────────────
+ 60 │                 // --- DEADCODE END ---
+    ╰────
+[Time elapsed: 1.46 seconds]
+
+=== Iteration 3 ===
+[base_gen.py SUCCESS]
+[exeqs.py SUCCESS]
+Main Distribution (collected in 0.00s):
+
+Main_fuzzing Distribution (collected in 0.00s):
+
+
+[Time elapsed: 1.87 seconds]
+
+=== Iteration 4 ===
+[base_gen.py SUCCESS]
+[exeqs.py SUCCESS]
+Main Distribution (collected in 0.00s):
+
+Main_fuzzing Distribution (collected in 0.00s):
+
+
+[Time elapsed: 1.47 seconds]
+
+=== Iteration 5 ===
+[base_gen.py SUCCESS]
+[exeqs.py SUCCESS]
+Main Distribution (collected in 0.00s):
+
+Main_fuzzing Distribution (collected in 0.00s):
+
+
+[Time elapsed: 1.46 seconds]
+
+=== Iteration 6 ===
+[base_gen.py SUCCESS]
+[exeqs.py SUCCESS]
+Main Distribution (collected in 0.00s):
+
+Main_fuzzing Distribution (collected in 0.00s):
+
+
+[Time elapsed: 1.48 seconds]
+
+=== Iteration 7 ===
+[base_gen.py SUCCESS]
+[exeqs.py SUCCESS]
+Main Distribution (collected in 0.00s):
+
+Main_fuzzing Distribution (collected in 0.00s):
+
+
+[Time elapsed: 1.47 seconds]
+
+=== Iteration 8 ===
+[base_gen.py SUCCESS]
+[exeqs.py SUCCESS]
+Main Distribution (collected in 0.00s):
+
+Main_fuzzing Distribution (collected in 0.00s):
+
+
+[Time elapsed: 1.47 seconds]
+
+=== Iteration 9 ===
+[base_gen.py SUCCESS]
+[exeqs.py ERROR]
+Traceback (most recent call last):
+  File "C:\Users\Lmrun\EMI\qsharp\exeqs.py", line 7, in <module>
+    qsharp.init(project_root=".")
+    ~~~~~~~~~~~^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Lmrun\anaconda3\envs\emi\Lib\site-packages\qsharp\_qsharp.py", line 219, in init
+    _interpreter = Interpreter(
+        target_profile,
+    ...<6 lines>...
+        _make_callable,
+    )
+module.QSharpError: Qsc.TypeCk.MissingFunctor
+
+  × type error
+  ╰─\u25b6 expected superset of Adj + Ctl, found empty set
+    ╭─[src\Main.qs:67:17]
+ 66 │                 X(ctrl[2]);
+ 67 │                 ApplyControlledOnBitString([false, false, false], __DeadBlock_afe10f19, ctrl, q);
+    ·                 ────────────────────────────────────────────────────────────────────────────────
+ 68 │                 // --- DEADCODE END ---
+    ╰────
+[Time elapsed: 1.44 seconds]
+
+=== Iteration 10 ===
+[base_gen.py SUCCESS]
+[exeqs.py SUCCESS]
+Main Distribution (collected in 0.00s):
+
+Main_fuzzing Distribution (collected in 0.00s):
+
+
+[Time elapsed: 1.48 seconds]
+
+=== Iteration 11 ===
+[base_gen.py SUCCESS]
+[exeqs.py SUCCESS]
+Main Distribution (collected in 0.00s):
+
+Main_fuzzing Distribution (collected in 0.00s):
+
+
+[Time elapsed: 1.48 seconds]
+
+=== Iteration 12 ===
+[base_gen.py SUCCESS]
+[exeqs.py SUCCESS]
+Main Distribution (collected in 0.00s):
+
+Main_fuzzing Distribution (collected in 0.00s):
+
+
+[Time elapsed: 1.47 seconds]
+
+=== Iteration 13 ===
+[base_gen.py SUCCESS]
+[exeqs.py SUCCESS]
+Main Distribution (collected in 0.01s):
+
+Main_fuzzing Distribution (collected in 0.01s):
+
+
+[Time elapsed: 1.56 seconds]
+
+=== Iteration 14 ===
+[base_gen.py SUCCESS]
+[exeqs.py SUCCESS]
+Main Distribution (collected in 0.00s):
+
+Main_fuzzing Distribution (collected in 0.00s):
+
+
+[Time elapsed: 1.47 seconds]
+
+=== Iteration 15 ===
+[base_gen.py SUCCESS]
+[exeqs.py SUCCESS]
+Main Distribution (collected in 0.00s):
+
+Main_fuzzing Distribution (collected in 0.00s):
+
+
+[Time elapsed: 1.47 seconds]
+
+=== Iteration 16 ===
+[base_gen.py SUCCESS]
+[exeqs.py SUCCESS]
+Main Distribution (collected in 0.00s):
+
+Main_fuzzing Distribution (collected in 0.00s):
+
+
+[Time elapsed: 1.46 seconds]
+
+=== Iteration 17 ===
+[base_gen.py SUCCESS]
+[exeqs.py SUCCESS]
+Main Distribution (collected in 0.00s):
+
+Main_fuzzing Distribution (collected in 0.00s):
+
+
+[Time elapsed: 1.46 seconds]
+
+=== Iteration 18 ===
+[base_gen.py SUCCESS]
+[exeqs.py SUCCESS]
+Main Distribution (collected in 0.00s):
+
+Main_fuzzing Distribution (collected in 0.00s):
+
+
+[Time elapsed: 1.49 seconds]
+
+=== Iteration 19 ===
+[base_gen.py SUCCESS]
+[exeqs.py SUCCESS]
+Main Distribution (collected in 0.00s):
+
+Main_fuzzing Distribution (collected in 0.00s):
+
+
+[Time elapsed: 1.49 seconds]
+
+=== Iteration 20 ===
+[base_gen.py SUCCESS]
+[exeqs.py SUCCESS]
+Main Distribution (collected in 0.00s):
+
+Main_fuzzing Distribution (collected in 0.00s):
+
+
+[Time elapsed: 1.47 seconds]
+
+=== Iteration 21 ===
+[base_gen.py SUCCESS]
+[exeqs.py ERROR]
+Traceback (most recent call last):
+  File "C:\Users\Lmrun\EMI\qsharp\exeqs.py", line 7, in <module>
+    qsharp.init(project_root=".")
+    ~~~~~~~~~~~^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Lmrun\anaconda3\envs\emi\Lib\site-packages\qsharp\_qsharp.py", line 219, in init
+    _interpreter = Interpreter(
+        target_profile,
+    ...<6 lines>...
+        _make_callable,
+    )
+module.QSharpError: Qsc.TypeCk.MissingFunctor
+
+  × type error
+  ╰─\u25b6 expected superset of Adj + Ctl, found empty set
+    ╭─[src\Main.qs:67:17]
+ 66 │                 X(ctrl[2]);
+ 67 │                 ApplyControlledOnBitString([false, true, false], __DeadBlock_5bab21d8, ctrl, q);
+    ·                 ───────────────────────────────────────────────────────────────────────────────
+ 68 │                 // --- DEADCODE END ---
+    ╰────
+[Time elapsed: 1.47 seconds]
+
+=== Iteration 22 ===
+[base_gen.py SUCCESS]
+[exeqs.py SUCCESS]
+Main Distribution (collected in 0.00s):
+
+Main_fuzzing Distribution (collected in 0.00s):
+
+
+[Time elapsed: 1.54 seconds]
+
+=== Iteration 23 ===
+[base_gen.py ERROR]
+Traceback (most recent call last):
+  File "C:\Users\Lmrun\EMI\qsharp\base_gen.py", line 194, in <module>
+    g.save_dual_versions()
+    ~~~~~~~~~~~~~~~~~~~~^^
+  File "C:\Users\Lmrun\EMI\qsharp\base_gen.py", line 167, in save_dual_versions
+    f.write(code)
+    ~~~~~~~^^^^^^
+UnicodeEncodeError: 'gbk' codec can't encode character '\u27e9' in position 1585: illegal multibyte sequence
+
+=== Iteration 24 ===
+[base_gen.py SUCCESS]
+[exeqs.py SUCCESS]
+Main Distribution (collected in 0.00s):
+
+Main_fuzzing Distribution (collected in 0.00s):
+
+
+[Time elapsed: 1.48 seconds]
+
+=== Iteration 25 ===
+[base_gen.py SUCCESS]
+[exeqs.py SUCCESS]
+Main Distribution (collected in 0.00s):
+
+Main_fuzzing Distribution (collected in 0.00s):
+
+
+[Time elapsed: 1.50 seconds]
+
+=== Iteration 26 ===
+[base_gen.py SUCCESS]
+[exeqs.py SUCCESS]
+Main Distribution (collected in 0.00s):
+
+Main_fuzzing Distribution (collected in 0.00s):
+
+
+[Time elapsed: 1.48 seconds]
+
+=== Iteration 27 ===
+[base_gen.py SUCCESS]
+[exeqs.py SUCCESS]
+Main Distribution (collected in 0.00s):
+
+Main_fuzzing Distribution (collected in 0.00s):
+
+
+[Time elapsed: 1.51 seconds]
+
+=== Iteration 28 ===
+[base_gen.py SUCCESS]
+[exeqs.py SUCCESS]
+Main Distribution (collected in 0.00s):
+
+Main_fuzzing Distribution (collected in 0.00s):
+
+
+[Time elapsed: 1.48 seconds]
+
+=== Iteration 29 ===
+[base_gen.py ERROR]
+Traceback (most recent call last):
+  File "C:\Users\Lmrun\EMI\qsharp\base_gen.py", line 194, in <module>
+    g.save_dual_versions()
+    ~~~~~~~~~~~~~~~~~~~~^^
+  File "C:\Users\Lmrun\EMI\qsharp\base_gen.py", line 167, in save_dual_versions
+    f.write(code)
+    ~~~~~~~^^^^^^
+UnicodeEncodeError: 'gbk' codec can't encode character '\u27e9' in position 11078: illegal multibyte sequence
+
+=== Iteration 30 ===
+[base_gen.py SUCCESS]
+[exeqs.py SUCCESS]
+Main Distribution (collected in 0.00s):
+
+Main_fuzzing Distribution (collected in 0.00s):
+
+
+[Time elapsed: 1.44 seconds]
+
+=== Iteration 31 ===
+[base_gen.py SUCCESS]
+[exeqs.py SUCCESS]
+Main Distribution (collected in 0.00s):
+
+Main_fuzzing Distribution (collected in 0.00s):
+
+
+[Time elapsed: 1.46 seconds]
+
+=== Iteration 32 ===
+[base_gen.py SUCCESS]
+[exeqs.py SUCCESS]
+Main Distribution (collected in 0.00s):
+
+Main_fuzzing Distribution (collected in 0.00s):
+
+
+[Time elapsed: 1.46 seconds]
+
+=== Iteration 33 ===
+[base_gen.py SUCCESS]

@@ -78,6 +78,6 @@ compiled_circuit = transpile(qc, backend = simulator, optimization_level = 3, ro
 
 qc = qc.decompose(reps=10)
 
-job = simulator.run(compiled_circuit, shots=10000) 
+job = simulator.run(compiled_circuit, shots=1) 
 result = job.result().get_counts() 
 print(result)
