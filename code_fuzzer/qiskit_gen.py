@@ -37,8 +37,8 @@ opt_passes = {"Optimize1qGates": Optimize1qGates(), "Optimize1qGatesDecompositio
 
 
 class QiskitGenerator:
-    def __init__(self, qubit_num, measure_num=1, gate_num_upper=5, measure_times=10000, transplie=None, backend="aer",
-                 use_pass=None, cond_qubit=2, structure="odi", fuzz_type="while_break"):
+    def __init__(self, qubit_num, measure_num=1, gate_num_upper=5, measure_times=3200, transplie=None, backend="aer",
+                 use_pass=None, cond_qubit=2, structure="odi", fuzz_type="while_break", temp_measure=400):
         self.qnum = qubit_num
         self.cnum = cond_qubit
         self.code = ""
@@ -56,7 +56,7 @@ class QiskitGenerator:
         self.code_structure = "odi"
         self.backend = backend
         self.max_measure_times = measure_times
-        self.measure_times = 500
+        self.measure_times = temp_measure
         self.measure_qubit_num = measure_num
         self.gate_num_upper = gate_num_upper
         self.measure_index = random.sample(range(self.qnum), self.measure_qubit_num)
@@ -452,7 +452,7 @@ qc = qc.decompose(reps=10)\n
             code_line += framework
 
             #################################################################################
-            code_line += f"job = simulator.run(compiled_circuit, shots={self.measure_times}) \n"
+            code_line += f"job = simulator.run(compiled_circuit, shots={self.max_measure_times}) \n"
             code_line += f"result = job.result().get_counts() \n"
             code_line += f"print(result)"
             code_line += "\n"
@@ -570,46 +570,46 @@ qc = qc.decompose(reps=10)\n
         # 通过对hellinger距离进行判断，对于超过0.1的样本进行异常的储存
         elif not probability_checker(eval(truth_result.stdout), eval(fuzzing_result.stdout), shot=self.measure_times,
                                      qnum=self.qnum):
-            max_measure = 0
-            truth_rst = self.output_postprocess(truth_result.stdout)
-            fuzzing_rst = self.output_postprocess(fuzzing_result.stdout)
-            total_measure = self.measure_times
-            while max_measure < self.max_measure_times:
-                max_measure += self.measure_times
-                if not probability_checker(truth_rst, fuzzing_rst, shot=total_measure, qnum=self.qnum):
-                    break
-
-                temp_truth_result = subprocess.run([sys.executable, self.filename], capture_output=True, text=True, timeout=600)
-                temp_fuzzing_result = subprocess.run([sys.executable, self.fuzzing_filename], capture_output=True, text=True, timeout=600)
-
-                for i in truth_rst.keys():
-                    truth_rst[i] += self.output_postprocess(temp_truth_result.stdout).get(i, 0)
-                    fuzzing_rst[i] += self.output_postprocess(temp_fuzzing_result.stdout).get(i, 0)
-            else:
+            # max_measure = 0
+            # truth_rst = self.output_postprocess(truth_result.stdout)
+            # fuzzing_rst = self.output_postprocess(fuzzing_result.stdout)
+            # total_measure = self.measure_times
+            # while max_measure < self.max_measure_times:
+            #     max_measure += self.measure_times
+            #     if not probability_checker(truth_rst, fuzzing_rst, shot=total_measure, qnum=self.qnum):
+            #         break
+            #
+            #     temp_truth_result = subprocess.run([sys.executable, self.filename], capture_output=True, text=True, timeout=600)
+            #     temp_fuzzing_result = subprocess.run([sys.executable, self.fuzzing_filename], capture_output=True, text=True, timeout=600)
+            #
+            #     for i in truth_rst.keys():
+            #         truth_rst[i] += self.output_postprocess(temp_truth_result.stdout).get(i, 0)
+            #         fuzzing_rst[i] += self.output_postprocess(temp_fuzzing_result.stdout).get(i, 0)
+            # else:
                 # 说明while语句并没有通过break结束
                 # 也说明程序是一直不满足hellinger < 0.1 的要求， 而是取样次数超出限制
-                print("Found wrong!!!")
-                directory = "fuzzing/buggy_program/probability"
+            print("Found wrong!!!")
+            directory = "fuzzing/buggy_program/probability"
 
-                pattern = re.compile(r"(truth|fuzzing)_(\d+)\.py")
-                max_index = -1
+            pattern = re.compile(r"(truth|fuzzing)_(\d+)\.py")
+            max_index = -1
 
-                for f in os.listdir(directory):
-                    match = pattern.fullmatch(f)
-                    if match:
-                        index = int(match.group(2))
-                        if index > max_index:
-                            max_index = index
+            for f in os.listdir(directory):
+                match = pattern.fullmatch(f)
+                if match:
+                    index = int(match.group(2))
+                    if index > max_index:
+                        max_index = index
 
-                next_index = max_index + 1
-                truth_file = os.path.join(directory, f"truth_{next_index}.py")
-                fuzzing_file = os.path.join(directory, f"fuzzing_{next_index}.py")
+            next_index = max_index + 1
+            truth_file = os.path.join(directory, f"truth_{next_index}.py")
+            fuzzing_file = os.path.join(directory, f"fuzzing_{next_index}.py")
 
-                with open(truth_file, "w") as file:
-                    file.write(self.code)
+            with open(truth_file, "w") as file:
+                file.write(self.code)
 
-                with open(fuzzing_file, "w") as file_f:
-                    file_f.write(self.fuzzing_code)
+            with open(fuzzing_file, "w") as file_f:
+                file_f.write(self.fuzzing_code)
 
 
     def extract_qc_from_code(self, qiskit_code):
