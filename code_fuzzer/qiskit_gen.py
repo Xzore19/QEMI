@@ -409,7 +409,7 @@ qc = qc.assign_parameters({p: 0.5 for p in qc.parameters})
         # 随机量子门操作的构建
         gate_code = ""
         for i in range(self.gate_num_upper):
-            flag = random.uniform(0, 1)
+            flag = random.uniform(0, 0.3)
             if flag > 0.5:
                 gate_code += "\t" * indent + gate_generator(qubits_num=self.qnum, cir_name=self.qc) + "\n"
             elif flag < 0.3:
@@ -452,7 +452,7 @@ qc = qc.decompose(reps=10)\n
             code_line += framework
 
             #################################################################################
-            code_line += f"job = simulator.run(compiled_circuit, shots={self.max_measure_times}) \n"
+            code_line += f"job = simulator.run(compiled_circuit, shots={self.measure_times}) \n"
             code_line += f"result = job.result().get_counts() \n"
             code_line += f"print(result)"
             code_line += "\n"
@@ -465,6 +465,15 @@ qc = qc.decompose(reps=10)\n
         for i in check_list:
             dict_target[i] = target.get(i, 0)
         return dict_target
+
+    def save_file(self, num):
+        filename = f"code_coverage/origin_{num}.py"
+        with open(filename, "w") as file:
+            file.write(self.code)
+
+        fuzzing_file = f"code_coverage/fuzzing_{num}.py"
+        with open(fuzzing_file, "w") as file:
+            file.write(self.fuzzing_code)
 
     def run(self):
         # 运行原始ground truth程序，和经过dead code fuzzing的程序
@@ -570,29 +579,29 @@ qc = qc.decompose(reps=10)\n
         # 通过对hellinger距离进行判断，对于超过0.1的样本进行异常的储存
         elif not probability_checker(eval(truth_result.stdout), eval(fuzzing_result.stdout), shot=self.measure_times,
                                      qnum=self.qnum):
-            # max_measure = 0
-            # truth_rst = self.output_postprocess(truth_result.stdout)
-            # fuzzing_rst = self.output_postprocess(fuzzing_result.stdout)
-            # total_measure = self.measure_times
-            # while max_measure < self.max_measure_times:
-            #     max_measure += self.measure_times
-            #     if not probability_checker(truth_rst, fuzzing_rst, shot=total_measure, qnum=self.qnum):
-            #         break
-            #
-            #     temp_truth_result = subprocess.run([sys.executable, self.filename], capture_output=True, text=True, timeout=600)
-            #     temp_fuzzing_result = subprocess.run([sys.executable, self.fuzzing_filename], capture_output=True, text=True, timeout=600)
-            #
-            #     for i in truth_rst.keys():
-            #         truth_rst[i] += self.output_postprocess(temp_truth_result.stdout).get(i, 0)
-            #         fuzzing_rst[i] += self.output_postprocess(temp_fuzzing_result.stdout).get(i, 0)
-            # else:
+            max_measure = 0
+            truth_rst = self.output_postprocess(truth_result.stdout)
+            fuzzing_rst = self.output_postprocess(fuzzing_result.stdout)
+            total_measure = self.measure_times
+            while max_measure < self.max_measure_times:
+                max_measure += self.measure_times
+                if not probability_checker(truth_rst, fuzzing_rst, shot=total_measure, qnum=self.qnum):
+                    break
+
+                temp_truth_result = subprocess.run([sys.executable, self.filename], capture_output=True, text=True, timeout=600)
+                temp_fuzzing_result = subprocess.run([sys.executable, self.fuzzing_filename], capture_output=True, text=True, timeout=600)
+
+                for i in truth_rst.keys():
+                    truth_rst[i] += self.output_postprocess(temp_truth_result.stdout).get(i, 0)
+                    fuzzing_rst[i] += self.output_postprocess(temp_fuzzing_result.stdout).get(i, 0)
+            else:
                 # 说明while语句并没有通过break结束
                 # 也说明程序是一直不满足hellinger < 0.1 的要求， 而是取样次数超出限制
-            print("Found wrong!!!")
-            directory = "fuzzing/buggy_program/probability"
+                print("Found wrong!!!")
+                directory = "fuzzing/buggy_program/probability"
 
-            pattern = re.compile(r"(truth|fuzzing)_(\d+)\.py")
-            max_index = -1
+                pattern = re.compile(r"(truth|fuzzing)_(\d+)\.py")
+                max_index = -1
 
             for f in os.listdir(directory):
                 match = pattern.fullmatch(f)

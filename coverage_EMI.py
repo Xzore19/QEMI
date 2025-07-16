@@ -2,6 +2,8 @@ import random
 import sys
 import os
 
+from tqdm import tqdm
+
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
 from code_fuzzer.qiskit_gen import QiskitGenerator
 import time
@@ -70,31 +72,18 @@ control = [
 
 if __name__ == "__main__":
 
-    for i in [[5, 3200, 400]]:
-        # 8 hours
-        max_time = 28800
-        temp_time = 0
-        start_time = time.time()
-        counter = 0
-        while temp_time < max_time:
-            tran_list = generate_transpile()
-            tran = random.choice(tran_list)
-            con = random.choice(control)
-            a, b, c = random.sample(pass_option, 3)
-            pas = [a, b, c]
-            a = QiskitGenerator(qubit_num=i[0], measure_num=1, gate_num_upper=7, measure_times=i[1], transplie=tran,
-                                backend="aer", use_pass=pas, fuzz_type=con, temp_measure=i[2])
-            a.run()
-            del a
-            gc.collect()
+    for i in tqdm(range(10), desc="Processing"):
+        tran_list = generate_transpile()
+        tran = random.choice(tran_list)
+        con = random.choice(control)
+        a, b, c = random.sample(pass_option, 3)
+        pas = [a, b, c]
+        a = QiskitGenerator(qubit_num=5, measure_num=1, gate_num_upper=4, measure_times=3200, transplie=tran,
+                            backend="aer", use_pass=pas, fuzz_type=con, temp_measure=400)
+        a.save_file(num=i)
+        del a
+        gc.collect()
 
-            counter += 1
-            temp_time = time.time() - start_time
-            print(temp_time)
 
-        filename = f"early_terminal/program_{i[0]}.txt"
-        context = f"time:{temp_time}, program counter:{counter}"
-        with open(filename, "w") as file:
-            file.write(context)
 
 
