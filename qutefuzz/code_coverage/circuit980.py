@@ -1,0 +1,67 @@
+from qiskit import QuantumCircuit, QuantumRegister, ClassicalRegister
+from qiskit.circuit import Parameter, ParameterVector
+from helpers.qiskit_helpers import compare_statevectors, run_on_simulator, run_routing_simulation, run_pass_on_simulator
+from pathlib import Path
+from math import pi
+
+main_circ = QuantumCircuit(1)
+# Adding qregs 
+qreg_0 = QuantumRegister(1)
+main_circ.add_register(qreg_0)
+qreg_1 = QuantumRegister(2)
+main_circ.add_register(qreg_1)
+qreg_3 = QuantumRegister(1)
+main_circ.add_register(qreg_3)
+# Adding creg resources 
+creg_0 = ClassicalRegister(2)
+main_circ.add_register(creg_0)
+# Adding symbols 
+param_0 = Parameter("param_0")
+param_1 = Parameter("param_1")
+
+main_circ.y(0)
+main_circ.y(0)
+main_circ.rz(param_1, qreg_0[0])
+main_circ.rz(-0.821000, qreg_3[0])
+main_circ.x(qreg_0[0])
+main_circ.x(0)
+main_circ.x(0)
+main_circ.rz(-0.700000, 0)
+main_circ.u(param_0,0,param_0, qreg_3[0])
+main_circ.rz(-0.907000, qreg_3[0])
+main_circ.rz(-0.295000, 0)
+main_circ.u(0,param_1,param_0, qreg_1[1])
+main_circ.rz(param_1, qreg_3[0])
+main_circ.x(qreg_1[1])
+main_circ.rz(-0.252000, 0)
+main_circ.u(0,param_1,0.062000, qreg_1[1])
+main_circ.x(qreg_0[0])
+main_circ.y(qreg_1[1])
+main_circ.u(param_0,param_1,param_1, qreg_1[1])
+main_circ.rz(-0.124000, qreg_3[0])
+main_circ.x(0)
+main_circ.y(qreg_1[0])
+main_circ.u(param_0,param_1,0.260000, qreg_0[0])
+main_circ.u(param_0,0,0.281000, qreg_0[0])
+main_circ.rz(param_0, qreg_1[1])
+main_circ.rz(0.762000, qreg_1[1])
+main_circ.u(param_0,param_1,0.782000, qreg_3[0])
+main_circ.y(qreg_3[0])
+main_circ.x(qreg_0[0])
+main_circ.rz(0.149000, qreg_1[0])
+main_circ.y(qreg_0[0])
+main_circ.rz(0.240000, qreg_0[0])
+main_circ.rz(0.326000, qreg_3[0])
+main_circ.rz(param_0, qreg_1[0])
+main_circ.y(qreg_1[0])
+main_circ.rz(param_1, qreg_3[0])
+main_circ.u(param_1,param_1,param_1, 0)
+main_circ.x(0)
+main_circ.x(qreg_1[1])
+main_circ.x(qreg_3[0])
+bindings = {param_0: 0.795000, param_1: -0.015000, }
+main_circ = main_circ.assign_parameters(bindings)
+
+print(Path(__file__).name, " results:")
+main_circ.measure_active()
+run_routing_simulation(main_circ, "980")

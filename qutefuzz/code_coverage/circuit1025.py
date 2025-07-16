@@ -1,0 +1,68 @@
+from qiskit import QuantumCircuit, QuantumRegister, ClassicalRegister
+from qiskit.circuit import Parameter, ParameterVector
+from helpers.qiskit_helpers import compare_statevectors, run_on_simulator, run_routing_simulation, run_pass_on_simulator
+from pathlib import Path
+from math import pi
+
+main_circ = QuantumCircuit(1)
+# Adding qregs 
+qreg_0 = QuantumRegister(1)
+main_circ.add_register(qreg_0)
+qreg_1 = QuantumRegister(3)
+main_circ.add_register(qreg_1)
+# Adding creg resources 
+creg_0 = ClassicalRegister(1)
+main_circ.add_register(creg_0)
+creg_1 = ClassicalRegister(1)
+main_circ.add_register(creg_1)
+# Adding symbols 
+param_0 = Parameter("param_0")
+param_1 = Parameter("param_1")
+param_2 = Parameter("param_2")
+
+main_circ.s(qreg_1[2])
+main_circ.s(qreg_1[1])
+main_circ.cx(qreg_1[2],0)
+main_circ.u(param_2,0,param_1, qreg_1[0])
+main_circ.s(qreg_0[0])
+main_circ.cx(0,qreg_1[0])
+main_circ.x(0)
+main_circ.cx(qreg_1[2],qreg_1[0])
+main_circ.s(qreg_1[2])
+main_circ.s(qreg_1[0])
+main_circ.x(qreg_1[1])
+main_circ.s(qreg_1[2])
+main_circ.u(0,0,-0.633000, 0)
+main_circ.s(qreg_1[0])
+main_circ.u(0,param_0,0.574000, qreg_1[2])
+main_circ.s(qreg_0[0])
+main_circ.s(qreg_1[2])
+main_circ.x(qreg_1[2])
+main_circ.x(qreg_1[1])
+main_circ.u(0,param_1,0.272000, qreg_1[2])
+main_circ.s(qreg_1[2])
+main_circ.x(qreg_1[2])
+main_circ.u(param_2,0,param_1, qreg_0[0])
+main_circ.s(qreg_1[2])
+main_circ.s(qreg_0[0])
+main_circ.cx(0,qreg_1[1])
+main_circ.u(param_1,param_2,param_0, qreg_0[0])
+main_circ.cx(0,qreg_1[0])
+main_circ.cx(qreg_1[1],0)
+main_circ.cx(qreg_0[0],qreg_1[2])
+main_circ.cx(qreg_0[0],qreg_1[2])
+main_circ.cx(qreg_1[0],qreg_0[0])
+main_circ.cx(qreg_1[0],qreg_1[2])
+main_circ.cx(qreg_1[0],0)
+main_circ.cx(qreg_1[0],qreg_0[0])
+main_circ.cx(qreg_1[2],0)
+main_circ.s(qreg_1[1])
+main_circ.s(qreg_1[1])
+main_circ.u(0,param_0,-0.491000, qreg_1[1])
+main_circ.s(qreg_0[0])
+main_circ.cx(0,qreg_1[0])
+bindings = {param_0: -0.226000, param_1: 0.334000, param_2: 0.952000, }
+main_circ = main_circ.assign_parameters(bindings)
+
+print(Path(__file__).name, " results:")
+compare_statevectors(main_circ, "RemoveResetInZeroState")

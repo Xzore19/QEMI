@@ -1,0 +1,68 @@
+from qiskit import QuantumCircuit, QuantumRegister, ClassicalRegister
+from qiskit.circuit import Parameter, ParameterVector
+from helpers.qiskit_helpers import compare_statevectors, run_on_simulator, run_routing_simulation, run_pass_on_simulator
+from pathlib import Path
+from math import pi
+
+main_circ = QuantumCircuit(4)
+# Adding qregs 
+qreg_0 = QuantumRegister(1)
+main_circ.add_register(qreg_0)
+# Adding creg resources 
+creg_0 = ClassicalRegister(1)
+main_circ.add_register(creg_0)
+creg_1 = ClassicalRegister(1)
+main_circ.add_register(creg_1)
+# Adding symbols 
+param_0 = Parameter("param_0")
+
+main_circ.h(qreg_0[0])
+main_circ.rz(0.318000, qreg_0[0])
+main_circ.u(param_0,param_0,param_0, 0)
+main_circ.z(0)
+main_circ.rz(param_0, 2)
+main_circ.h(0)
+main_circ.u(0.112000,0.883000,param_0, 2)
+main_circ.u(param_0,-0.032000,param_0, 3)
+main_circ.u(0.841000,-0.171000,-0.967000, 2)
+main_circ.u(-0.300000,param_0,param_0, qreg_0[0])
+main_circ.rz(0.869000, 0)
+main_circ.rz(param_0, 3)
+main_circ.h(qreg_0[0])
+main_circ.rz(-0.204000, 1)
+main_circ.rz(param_0, 0)
+main_circ.u(0.232000,-0.168000,param_0, 1)
+main_circ.u(-0.679000,0.025000,param_0, 3)
+main_circ.rz(param_0, 0)
+main_circ.z(0)
+main_circ.rz(0.351000, 0)
+main_circ.z(1)
+main_circ.u(param_0,-0.434000,-0.518000, 3)
+main_circ.h(qreg_0[0])
+main_circ.z(1)
+main_circ.u(param_0,-0.634000,0.072000, 0)
+main_circ.u(param_0,param_0,-0.540000, 3)
+main_circ.u(param_0,-0.645000,-0.221000, 2)
+main_circ.rz(param_0, 1)
+main_circ.z(1)
+main_circ.rz(-0.746000, 1)
+main_circ.rz(0.701000, 2)
+main_circ.rz(param_0, 2)
+main_circ.u(0.254000,param_0,param_0, 1)
+main_circ.h(0)
+main_circ.u(0.492000,-0.259000,param_0, 2)
+main_circ.u(0.280000,param_0,-0.355000, 3)
+main_circ.h(qreg_0[0])
+main_circ.rz(-0.251000, 3)
+main_circ.h(3)
+main_circ.h(3)
+main_circ.h(qreg_0[0])
+main_circ.h(2)
+main_circ.u(0.606000,param_0,param_0, 3)
+main_circ.z(3)
+main_circ.h(2)
+bindings = {param_0: 0.322000, }
+main_circ = main_circ.assign_parameters(bindings)
+
+print(Path(__file__).name, " results:")
+compare_statevectors(main_circ, "CXCancellation")

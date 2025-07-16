@@ -1,0 +1,68 @@
+from qiskit import QuantumCircuit, QuantumRegister, ClassicalRegister
+from qiskit.circuit import Parameter, ParameterVector
+from helpers.qiskit_helpers import compare_statevectors, run_on_simulator, run_routing_simulation, run_pass_on_simulator
+from pathlib import Path
+from math import pi
+
+main_circ = QuantumCircuit(4)
+# Adding qregs 
+qreg_0 = QuantumRegister(1)
+main_circ.add_register(qreg_0)
+qreg_1 = QuantumRegister(1)
+main_circ.add_register(qreg_1)
+# Adding creg resources 
+creg_0 = ClassicalRegister(1)
+main_circ.add_register(creg_0)
+creg_1 = ClassicalRegister(1)
+main_circ.add_register(creg_1)
+# Adding symbols 
+param_0 = Parameter("param_0")
+param_1 = Parameter("param_1")
+
+main_circ.u(pi/2,param_0,param_0, 1)
+main_circ.x(qreg_0[0])
+main_circ.cz(qreg_0[0],0)
+main_circ.cz(qreg_0[0],2)
+main_circ.u(pi/2,param_1,-0.150000, 2)
+main_circ.x(3)
+main_circ.u(pi/2,-0.262000,-0.728000, 0)
+main_circ.u(pi/2,-0.818000,param_1, qreg_1[0])
+main_circ.cz(0,3)
+main_circ.x(1)
+main_circ.cz(3,0)
+main_circ.x(1)
+main_circ.u(pi/2,0.437000,param_1, 3)
+main_circ.rz(param_0, 3)
+main_circ.cz(qreg_1[0],1)
+main_circ.rz(0.413000, qreg_1[0])
+main_circ.x(0)
+main_circ.x(1)
+main_circ.rz(param_0, 1)
+main_circ.rz(param_1, 3)
+main_circ.cz(3,qreg_1[0])
+main_circ.rz(param_0, qreg_1[0])
+main_circ.x(qreg_1[0])
+main_circ.x(2)
+main_circ.rz(-0.807000, qreg_1[0])
+main_circ.x(qreg_1[0])
+main_circ.cz(qreg_0[0],2)
+main_circ.u(param_0,param_0,-0.686000, qreg_0[0])
+main_circ.cz(1,0)
+main_circ.x(0)
+main_circ.cz(0,1)
+main_circ.cz(2,0)
+main_circ.cz(qreg_0[0],2)
+main_circ.cz(qreg_0[0],0)
+main_circ.u(param_1,-0.022000,0.299000, 0)
+main_circ.u(param_0,param_0,param_1, 0)
+main_circ.rz(0.623000, 2)
+main_circ.x(3)
+main_circ.x(3)
+main_circ.x(0)
+main_circ.u(param_1,param_1,param_1, qreg_1[0])
+main_circ.x(qreg_0[0])
+bindings = {param_0: 0.234000, param_1: 0.363000, }
+main_circ = main_circ.assign_parameters(bindings)
+
+print(Path(__file__).name, " results:")
+compare_statevectors(main_circ, "CXCancellation")

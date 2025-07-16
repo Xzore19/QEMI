@@ -1,0 +1,158 @@
+from qiskit import QuantumCircuit, QuantumRegister, ClassicalRegister
+from qiskit.circuit import Parameter, ParameterVector
+from helpers.qiskit_helpers import compare_statevectors, run_on_simulator, run_routing_simulation, run_pass_on_simulator
+from pathlib import Path
+from math import pi
+
+main_circ = QuantumCircuit(2)
+# Adding qregs 
+qreg_0 = QuantumRegister(3)
+main_circ.add_register(qreg_0)
+qreg_3 = QuantumRegister(1)
+main_circ.add_register(qreg_3)
+# Adding creg resources 
+creg_0 = ClassicalRegister(2)
+main_circ.add_register(creg_0)
+# Adding symbols 
+param_0 = Parameter("param_0")
+param_1 = Parameter("param_1")
+param_2 = Parameter("param_2")
+param_3 = Parameter("param_3")
+
+main_circ.measure(0, creg_0[1])
+with main_circ.if_test((creg_0[1],0)) as else_4:
+	main_circ.u(pi/2,-0.856000,param_1, qreg_0[0])
+with else_4:
+	main_circ.measure(qreg_0[2], creg_0[1])
+	with main_circ.if_test((creg_0[1],0)) as else_3:
+		main_circ.z(qreg_0[1])
+		main_circ.measure(qreg_0[0], creg_0[1])
+		with main_circ.if_test((creg_0[1],0)):
+			main_circ.u(param_2,0,param_2, 1)
+			main_circ.measure(qreg_0[2], creg_0[1])
+			with main_circ.if_test((creg_0[1],0)) as else_1:
+				main_circ.z(1)
+				main_circ.u(param_0,-0.819000,param_3, 0)
+				main_circ.u(pi/2,0.539000,param_0, qreg_0[0])
+			with else_1:
+				main_circ.u(param_3,-0.241000,0.868000, qreg_0[2])
+	with else_3:
+		main_circ.measure(qreg_0[2], creg_0[0])
+		with main_circ.if_test((creg_0[0],0)):
+			main_circ.u(param_0,param_1,0.087000, qreg_0[1])
+			main_circ.measure(qreg_3[0], creg_0[1])
+			with main_circ.switch(creg_0[1]) as case_1:
+				with case_1(0):
+					main_circ.u(param_2,0.424000,-0.082000, qreg_0[0])
+					main_circ.u(param_3,param_3,-0.012000, qreg_0[0])
+					main_circ.u(0,param_1,-0.585000, qreg_3[0])
+					main_circ.z(1)
+				with case_1(1):
+					main_circ.ry(param_3, qreg_0[0])
+					main_circ.ry(param_0, 1)
+					main_circ.u(param_2,param_0,param_0, 0)
+					main_circ.u(param_1,param_2,-0.050000, qreg_3[0])
+main_circ.z(qreg_0[1])
+main_circ.measure(qreg_3[0], creg_0[1])
+with main_circ.switch(creg_0[1]) as case_4:
+	with case_4(0):
+		main_circ.measure(qreg_0[0], creg_0[0])
+		with main_circ.if_test((creg_0[0],0)):
+			main_circ.ry(0.459000, qreg_0[0])
+			main_circ.measure(qreg_0[2], creg_0[0])
+			with main_circ.switch(creg_0[0]) as case_2:
+				with case_2(0):
+					main_circ.measure(qreg_0[0], creg_0[0])
+					with main_circ.switch(creg_0[0]) as case_1:
+						with case_1(0):
+							main_circ.u(0,0,0.347000, qreg_0[2])
+							main_circ.u(param_0,-0.177000,-0.933000, 0)
+							main_circ.u(pi/2,param_1,param_2, qreg_0[0])
+							main_circ.z(qreg_0[0])
+						with case_1(1):
+							main_circ.ry(param_3, qreg_0[2])
+							main_circ.z(qreg_0[0])
+							main_circ.ry(param_2, 0)
+							main_circ.ry(0.019000, qreg_0[0])
+				with case_2(1):
+					main_circ.ry(-0.260000, qreg_3[0])
+					main_circ.measure(qreg_3[0], creg_0[1])
+					with main_circ.switch(creg_0[1]) as case_1:
+						with case_1(0):
+							main_circ.ry(param_3, qreg_0[2])
+							main_circ.ry(param_1, 1)
+							main_circ.u(param_2,0,param_1, 1)
+							main_circ.z(qreg_0[1])
+						with case_1(1):
+							main_circ.u(param_1,0,param_3, 1)
+							main_circ.ry(-0.686000, 1)
+							main_circ.u(pi/2,param_1,-0.428000, qreg_0[0])
+							main_circ.ry(-0.966000, 1)
+	with case_4(1):
+		main_circ.measure(1, creg_0[0])
+		with main_circ.if_test((creg_0[0],0)) as else_3:
+			main_circ.measure(qreg_0[2], creg_0[0])
+			with main_circ.switch(creg_0[0]) as case_2:
+				with case_2(0):
+					main_circ.measure(qreg_0[0], creg_0[0])
+					with main_circ.if_test((creg_0[0],0)):
+						main_circ.z(qreg_0[2])
+						main_circ.z(qreg_0[2])
+					main_circ.measure(qreg_0[0], creg_0[1])
+					with main_circ.switch(creg_0[1]) as case_1:
+						with case_1(0):
+							main_circ.u(pi/2,param_2,-0.902000, qreg_0[1])
+							main_circ.u(pi/2,0.882000,param_3, qreg_0[1])
+							main_circ.u(param_0,0,param_0, 0)
+							main_circ.z(1)
+						with case_1(1):
+							main_circ.u(0,0,param_0, qreg_0[0])
+							main_circ.z(qreg_3[0])
+							main_circ.u(0,0,param_1, 0)
+							main_circ.u(param_0,0.014000,param_3, 0)
+				with case_2(1):
+					main_circ.measure(qreg_0[0], creg_0[0])
+					with main_circ.if_test((creg_0[0],0)) as else_1:
+						main_circ.u(pi/2,0.939000,param_1, 1)
+						main_circ.z(1)
+						main_circ.z(0)
+						main_circ.u(pi/2,param_0,-0.320000, qreg_0[0])
+					with else_1:
+						main_circ.u(param_0,param_0,0.574000, qreg_0[2])
+						main_circ.u(pi/2,param_3,param_0, qreg_0[1])
+						main_circ.barrier(1)
+		with else_3:
+			main_circ.measure(1, creg_0[0])
+			with main_circ.if_test((creg_0[0],0)):
+				main_circ.measure(qreg_0[2], creg_0[1])
+				with main_circ.if_test((creg_0[1],0)) as else_1:
+					main_circ.id(qreg_0[2])
+				with else_1:
+					main_circ.id(qreg_0[0])
+				main_circ.measure(qreg_0[1], creg_0[1])
+				with main_circ.if_test((creg_0[1],0)) as else_1:
+					main_circ.barrier(qreg_3[0])
+				with else_1:
+					main_circ.id(qreg_0[2])
+				main_circ.measure(qreg_0[1], creg_0[1])
+				with main_circ.if_test((creg_0[1],0)) as else_1:
+					main_circ.barrier(qreg_0[2])
+				with else_1:
+					main_circ.id(1)
+				main_circ.measure(qreg_0[1], creg_0[1])
+				with main_circ.if_test((creg_0[1],0)):
+					main_circ.barrier(qreg_0[0])
+				main_circ.barrier(qreg_0[2])
+			main_circ.measure(qreg_0[1], creg_0[1])
+			with main_circ.if_test((creg_0[1],0)):
+				main_circ.id(qreg_0[0])
+			main_circ.measure(0, creg_0[0])
+			with main_circ.if_test((creg_0[0],0)):
+				main_circ.barrier(1)
+			main_circ.id(0)
+bindings = {param_0: 0.477000, param_1: -0.774000, param_2: -0.225000, param_3: -0.533000, }
+main_circ = main_circ.assign_parameters(bindings)
+
+print(Path(__file__).name, " results:")
+main_circ.measure_active()
+run_on_simulator(main_circ, "1692")
