@@ -1,0 +1,67 @@
+from qiskit import QuantumCircuit, QuantumRegister, ClassicalRegister
+from qiskit.circuit import Parameter, ParameterVector
+from helpers.qiskit_helpers import compare_statevectors, run_on_simulator, run_routing_simulation, run_pass_on_simulator
+from pathlib import Path
+from math import pi
+
+main_circ = QuantumCircuit(2)
+# Adding qregs 
+qreg_0 = QuantumRegister(4)
+main_circ.add_register(qreg_0)
+# Adding creg resources 
+creg_0 = ClassicalRegister(2)
+main_circ.add_register(creg_0)
+# Adding symbols 
+param_0 = Parameter("param_0")
+param_1 = Parameter("param_1")
+param_2 = Parameter("param_2")
+param_3 = Parameter("param_3")
+param_4 = Parameter("param_4")
+
+main_circ.u(param_2,0.332000,0.099000, qreg_0[2])
+main_circ.u(param_3,param_3,param_2, qreg_0[1])
+main_circ.u(pi/2,0.793000,0.392000, qreg_0[2])
+main_circ.rz(param_2, qreg_0[1])
+main_circ.u(pi/2,param_4,param_3, 1)
+main_circ.z(0)
+main_circ.rz(param_0, qreg_0[0])
+main_circ.rz(-0.197000, qreg_0[2])
+main_circ.u(pi/2,param_4,param_4, qreg_0[2])
+main_circ.u(param_0,-0.401000,param_3, 0)
+main_circ.z(0)
+main_circ.u(pi/2,0.684000,-0.362000, qreg_0[3])
+main_circ.u(param_0,0,param_3, qreg_0[1])
+main_circ.u(param_2,0.874000,param_2, qreg_0[3])
+main_circ.u(param_1,0,param_3, 1)
+main_circ.u(pi/2,param_1,-0.295000, qreg_0[1])
+main_circ.rz(0.861000, qreg_0[0])
+main_circ.u(0,0,param_0, qreg_0[1])
+main_circ.rz(param_2, qreg_0[1])
+main_circ.u(param_1,0,param_3, 1)
+main_circ.u(param_0,0.602000,param_3, qreg_0[2])
+main_circ.rz(0.998000, qreg_0[2])
+main_circ.u(param_0,-0.284000,0.626000, 1)
+main_circ.rz(param_1, qreg_0[0])
+main_circ.u(0,0,param_4, qreg_0[1])
+main_circ.u(param_2,param_3,-0.569000, qreg_0[1])
+main_circ.z(qreg_0[1])
+main_circ.u(param_2,param_0,0.594000, 0)
+main_circ.rz(0.698000, qreg_0[1])
+main_circ.rz(param_0, qreg_0[2])
+main_circ.rz(0.219000, qreg_0[2])
+main_circ.u(param_0,param_1,param_2, qreg_0[0])
+main_circ.u(0,param_4,param_0, qreg_0[0])
+main_circ.z(qreg_0[3])
+main_circ.u(0,0,param_3, 1)
+main_circ.rz(-0.840000, qreg_0[1])
+main_circ.u(0,param_2,0.332000, qreg_0[0])
+main_circ.rz(param_1, qreg_0[0])
+main_circ.rz(-0.882000, qreg_0[1])
+main_circ.rz(-0.811000, 1)
+main_circ.u(pi/2,0.896000,param_4, qreg_0[0])
+main_circ.u(param_4,-0.295000,0.145000, 1)
+bindings = {param_0: -0.426000, param_1: 0.178000, param_2: -0.720000, param_3: 0.522000, param_4: 0.507000, }
+main_circ = main_circ.assign_parameters(bindings)
+
+print(Path(__file__).name, " results:")
+compare_statevectors(main_circ, "CommutativeInverseCancellation")

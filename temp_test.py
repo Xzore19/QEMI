@@ -1,81 +1,81 @@
-from qiskit import QuantumCircuit, QuantumRegister, ClassicalRegister, transpile, AncillaRegister
-from qiskit_aer import Aer
-from qiskit.providers.fake_provider import GenericBackendV2
-from qiskit.providers.fake_provider import GenericBackendV2
+from qiskit import QuantumCircuit, QuantumRegister, ClassicalRegister
 from qiskit.circuit import Parameter, ParameterVector
-from qiskit.circuit.library import XGate
-from qiskit.transpiler.passes import *
-from qiskit.circuit.library import *
-from qiskit.transpiler import PassManager, generate_preset_pass_manager
+from helpers.qiskit_helpers import compare_statevectors, run_on_simulator, run_routing_simulation, run_pass_on_simulator
+from pathlib import Path
 from math import pi
-import numpy as np
 
-np.random.seed(42)
+main_circ = QuantumCircuit(1)
+# Adding qregs
+qreg_0 = QuantumRegister(4)
+main_circ.add_register(qreg_0)
+# Adding creg resources
+creg_0 = ClassicalRegister(1)
+main_circ.add_register(creg_0)
+creg_1 = ClassicalRegister(1)
+main_circ.add_register(creg_1)
+# Adding symbols
+param_0 = Parameter("param_0")
+param_1 = Parameter("param_1")
+param_2 = Parameter("param_2")
+param_3 = Parameter("param_3")
 
-qreg = QuantumRegister(4)
-creg = ClassicalRegister(4)
-qc = QuantumCircuit(qreg, creg)
+main_circ.cx(qreg_0[0],0)
+main_circ.cx(qreg_0[3],qreg_0[0])
+main_circ.u(param_1,-0.711000,param_3, 0)
+main_circ.u(param_0,param_2,-0.144000, qreg_0[0])
+main_circ.cx(qreg_0[2],qreg_0[3])
+main_circ.cx(qreg_0[3],0)
+main_circ.u(pi/2,param_3,0.854000, qreg_0[1])
+main_circ.h(qreg_0[3])
+main_circ.cx(qreg_0[0],0)
+main_circ.cx(qreg_0[3],qreg_0[0])
+main_circ.cy(qreg_0[0],qreg_0[2])
+main_circ.u(param_0,-0.121000,param_1, qreg_0[3])
+main_circ.cx(qreg_0[0],qreg_0[1])
+main_circ.u(param_0,-0.472000,-0.683000, qreg_0[1])
+main_circ.h(qreg_0[0])
+main_circ.cy(qreg_0[0],qreg_0[1])
+main_circ.cy(qreg_0[1],qreg_0[3])
+main_circ.cx(qreg_0[3],qreg_0[0])
+main_circ.u(param_1,0.352000,param_2, qreg_0[3])
+main_circ.cy(qreg_0[1],qreg_0[0])
+main_circ.cx(qreg_0[0],qreg_0[2])
+main_circ.h(qreg_0[1])
+main_circ.cx(qreg_0[2],qreg_0[3])
+main_circ.h(qreg_0[2])
+main_circ.u(param_2,param_1,0.007000, 0)
+main_circ.u(pi/2,param_3,param_2, 0)
+main_circ.h(qreg_0[0])
+main_circ.u(param_1,param_1,param_1, 0)
+main_circ.cy(qreg_0[0],qreg_0[2])
+main_circ.h(qreg_0[2])
+main_circ.h(qreg_0[1])
+main_circ.u(param_0,-0.546000,-0.808000, qreg_0[1])
+main_circ.h(qreg_0[2])
+main_circ.u(param_0,0.548000,0.435000, qreg_0[2])
+main_circ.u(param_0,param_3,0.969000, qreg_0[0])
+main_circ.h(qreg_0[1])
+main_circ.u(param_0,-0.726000,param_0, 0)
+main_circ.h(qreg_0[0])
+main_circ.cx(qreg_0[0],0)
+main_circ.cx(qreg_0[2],0)
+main_circ.cx(qreg_0[3],qreg_0[0])
+main_circ.h(qreg_0[2])
+main_circ.h(0)
+main_circ.u(pi/2,-0.379000,0.863000, qreg_0[0])
+main_circ.cy(qreg_0[3],qreg_0[2])
+main_circ.h(qreg_0[2])
+main_circ.cx(0,qreg_0[0])
+main_circ.h(qreg_0[0])
+main_circ.h(qreg_0[1])
+main_circ.cx(qreg_0[3],qreg_0[2])
+main_circ.u(param_1,-0.457000,-0.576000, qreg_0[3])
+main_circ.u(param_2,0.124000,0.136000, qreg_0[0])
+main_circ.cx(qreg_0[1],0)
+main_circ.h(qreg_0[2])
+bindings = {param_0: 0.474000, param_1: 0.729000, param_2: -0.694000, param_3: 0.513000, }
+main_circ = main_circ.assign_parameters(bindings)
 
-qc.z(3)
-qc.swap(1, 0)
-qc.ch(2, 1)
-qc.z(2)
-qc.t(1)
-
-qr_5f5257 = QuantumRegister(2)
-cr_5f5257 = ClassicalRegister(2)
-qc.add_register(qr_5f5257)
-qc.add_register(cr_5f5257)
-qc.x(qr_5f5257[0])
-qc.x(qr_5f5257[1])
-qc.measure(qr_5f5257[0], cr_5f5257[0])
-qc.measure(qr_5f5257[1], cr_5f5257[1])
-with qc.while_loop((cr_5f5257, 0b11)):
-    qc.measure(qr_5f5257[0], cr_5f5257[0])
-    qc.measure(qr_5f5257[1], cr_5f5257[1])
-
-    qr_81e73d = QuantumRegister(2)
-    cr_81e73d = ClassicalRegister(2)
-    qc.add_register(qr_81e73d)
-    qc.add_register(cr_81e73d)
-    qc.x(qr_81e73d[0])
-    qc.x(qr_81e73d[1])
-    qc.measure(qr_81e73d[0], cr_81e73d[0])
-    qc.measure(qr_81e73d[1], cr_81e73d[1])
-    with qc.if_test((cr_81e73d, 0b11)) as else_81e73d:
-        pass
-    with else_81e73d:
-        qc.crz(1.5707963267948966, 3, 0)
-        qc.h(0)
-        qc.t(0)
-        qc.z(0)
-        qc.ch(2, 0)
-    qc.reset(qr_81e73d)
-
-    qc.break_loop()
-qc.reset(qr_5f5257)
-qc.cx(1, 0)
-qc.swap(3, 2)
-qc.y(3)
-qc.tdg(0)
-qc.iswap(3, 0)
-qc.measure(qreg[0], creg[0])
-qc.measure(qreg[1], creg[1])
-qc.measure(qreg[2], creg[2])
-qc.measure(qreg[3], creg[3])
-
-qc = qc.assign_parameters({p: 0.5 for p in qc.parameters})
-
-simulator = Aer.get_backend("aer_simulator")
-
-p = PassManager([Optimize1qGatesDecomposition(), Optimize1qGates()])
-qc = p.run(qc)
-
-compiled_circuit = transpile(qc, backend=simulator, optimization_level=3, routing_method="default",
-                             layout_method="noise_adaptive", approximation_degree=1)
-
-qc = qc.decompose(reps=10)
-
-job = simulator.run(compiled_circuit, shots=500)
-result = job.result().get_counts()
-print(result)
+print(Path(__file__).name, " results:")
+main_circ.measure_active()
+run_routing_simulation(main_circ, "1007")

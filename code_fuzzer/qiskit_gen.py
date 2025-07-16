@@ -37,8 +37,8 @@ opt_passes = {"Optimize1qGates": Optimize1qGates(), "Optimize1qGatesDecompositio
 
 
 class QiskitGenerator:
-    def __init__(self, qubit_num, measure_num=1, gate_num_upper=5, measure_times=10000, transplie=None, backend="aer",
-                 use_pass=None, cond_qubit=2, structure="odi", fuzz_type="while_break"):
+    def __init__(self, qubit_num, measure_num=1, gate_num_upper=5, measure_times=3200, transplie=None, backend="aer",
+                 use_pass=None, cond_qubit=2, structure="odi", fuzz_type="while_break", temp_measure=400):
         self.qnum = qubit_num
         self.cnum = cond_qubit
         self.code = ""
@@ -56,7 +56,7 @@ class QiskitGenerator:
         self.code_structure = "odi"
         self.backend = backend
         self.max_measure_times = measure_times
-        self.measure_times = 500
+        self.measure_times = temp_measure
         self.measure_qubit_num = measure_num
         self.gate_num_upper = gate_num_upper
         self.measure_index = random.sample(range(self.qnum), self.measure_qubit_num)
@@ -409,7 +409,7 @@ qc = qc.assign_parameters({p: 0.5 for p in qc.parameters})
         # 随机量子门操作的构建
         gate_code = ""
         for i in range(self.gate_num_upper):
-            flag = random.uniform(0, 1)
+            flag = random.uniform(0, 0.3)
             if flag > 0.5:
                 gate_code += "\t" * indent + gate_generator(qubits_num=self.qnum, cir_name=self.qc) + "\n"
             elif flag < 0.3:
@@ -465,6 +465,15 @@ qc = qc.decompose(reps=10)\n
         for i in check_list:
             dict_target[i] = target.get(i, 0)
         return dict_target
+
+    def save_file(self, num):
+        filename = f"code_coverage/origin_{num}.py"
+        with open(filename, "w") as file:
+            file.write(self.code)
+
+        fuzzing_file = f"code_coverage/fuzzing_{num}.py"
+        with open(fuzzing_file, "w") as file:
+            file.write(self.fuzzing_code)
 
     def run(self):
         # 运行原始ground truth程序，和经过dead code fuzzing的程序
@@ -528,8 +537,19 @@ qc = qc.decompose(reps=10)\n
 
             return None
 
-        if (truth_result.stderr == "" and fuzzing_result.stderr != "") or (
-                truth_result.stderr != "" and fuzzing_result.stderr == ""):
+        truth_stderr = "\n".join(
+            line for line in truth_result.stderr.splitlines()
+            if ("traceback" in line.lower() or "error" in line.lower())
+        )
+
+
+        fuzzing_stderr = "\n".join(
+            line for line in fuzzing_result.stderr.splitlines()
+            if ("traceback" in line.lower() or "error" in line.lower())
+        )
+
+        if (truth_stderr == "" and fuzzing_stderr != "") or (
+                truth_stderr != "" and fuzzing_stderr == ""):
             print("Found crash!!!")
             directory = "fuzzing/buggy_program/crash"
 
@@ -553,7 +573,7 @@ qc = qc.decompose(reps=10)\n
 
             with open(fuzzing_file, "w") as file_f:
                 file_f.write(self.fuzzing_code)
-        elif (truth_result.stderr != "" and fuzzing_result.stderr != ""):
+        elif (truth_stderr != "" and fuzzing_stderr != ""):
             pass
 
         # 通过对hellinger距离进行判断，对于超过0.1的样本进行异常的储存
@@ -583,22 +603,22 @@ qc = qc.decompose(reps=10)\n
                 pattern = re.compile(r"(truth|fuzzing)_(\d+)\.py")
                 max_index = -1
 
-                for f in os.listdir(directory):
-                    match = pattern.fullmatch(f)
-                    if match:
-                        index = int(match.group(2))
-                        if index > max_index:
-                            max_index = index
+            for f in os.listdir(directory):
+                match = pattern.fullmatch(f)
+                if match:
+                    index = int(match.group(2))
+                    if index > max_index:
+                        max_index = index
 
-                next_index = max_index + 1
-                truth_file = os.path.join(directory, f"truth_{next_index}.py")
-                fuzzing_file = os.path.join(directory, f"fuzzing_{next_index}.py")
+            next_index = max_index + 1
+            truth_file = os.path.join(directory, f"truth_{next_index}.py")
+            fuzzing_file = os.path.join(directory, f"fuzzing_{next_index}.py")
 
-                with open(truth_file, "w") as file:
-                    file.write(self.code)
+            with open(truth_file, "w") as file:
+                file.write(self.code)
 
-                with open(fuzzing_file, "w") as file_f:
-                    file_f.write(self.fuzzing_code)
+            with open(fuzzing_file, "w") as file_f:
+                file_f.write(self.fuzzing_code)
 
 
     def extract_qc_from_code(self, qiskit_code):

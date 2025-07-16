@@ -1,0 +1,64 @@
+from qiskit import QuantumCircuit, QuantumRegister, ClassicalRegister
+from qiskit.circuit import Parameter, ParameterVector
+from helpers.qiskit_helpers import compare_statevectors, run_on_simulator, run_routing_simulation, run_pass_on_simulator
+from pathlib import Path
+from math import pi
+
+main_circ = QuantumCircuit(4)
+# Adding qregs 
+qreg_0 = QuantumRegister(1)
+main_circ.add_register(qreg_0)
+# Adding creg resources 
+creg_0 = ClassicalRegister(2)
+main_circ.add_register(creg_0)
+# Adding symbols 
+param_0 = Parameter("param_0")
+param_1 = Parameter("param_1")
+
+main_circ.y(0)
+main_circ.y(0)
+main_circ.rx(-0.251000, 2)
+main_circ.rx(0.370000, 3)
+main_circ.s(3)
+main_circ.s(3)
+main_circ.y(3)
+main_circ.s(0)
+main_circ.u(pi/2,param_1,-0.834000, qreg_0[0])
+main_circ.rx(-0.381000, 3)
+main_circ.s(1)
+main_circ.rx(0.282000, 3)
+main_circ.s(3)
+main_circ.u(param_0,param_0,param_1, qreg_0[0])
+main_circ.u(param_0,0.012000,param_0, 0)
+main_circ.u(param_1,-0.053000,-0.615000, qreg_0[0])
+main_circ.rx(param_1, 0)
+main_circ.s(3)
+main_circ.s(0)
+main_circ.rx(-0.901000, 2)
+main_circ.rx(-0.598000, 2)
+main_circ.rx(-0.426000, 1)
+main_circ.rx(0.593000, 1)
+main_circ.u(pi/2,0.510000,param_0, qreg_0[0])
+main_circ.y(3)
+main_circ.y(2)
+main_circ.u(param_1,-0.912000,-0.805000, qreg_0[0])
+main_circ.y(2)
+main_circ.u(param_0,param_1,param_0, 0)
+main_circ.s(0)
+main_circ.y(1)
+main_circ.u(param_1,0.508000,param_1, 1)
+main_circ.s(3)
+main_circ.u(param_0,param_0,param_0, 3)
+main_circ.u(param_1,param_0,-0.917000, qreg_0[0])
+main_circ.y(qreg_0[0])
+main_circ.u(param_0,-0.135000,param_1, 3)
+main_circ.s(0)
+main_circ.rx(param_0, 0)
+main_circ.s(3)
+main_circ.s(qreg_0[0])
+bindings = {param_0: -0.941000, param_1: 0.622000, }
+main_circ = main_circ.assign_parameters(bindings)
+
+print(Path(__file__).name, " results:")
+main_circ.measure_active()
+run_routing_simulation(main_circ, "770")

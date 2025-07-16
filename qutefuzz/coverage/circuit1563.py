@@ -1,0 +1,97 @@
+from qiskit import QuantumCircuit, QuantumRegister, ClassicalRegister
+from qiskit.circuit import Parameter, ParameterVector
+from helpers.qiskit_helpers import compare_statevectors, run_on_simulator, run_routing_simulation, run_pass_on_simulator
+from pathlib import Path
+from math import pi
+
+subcirc0 = QuantumCircuit(0)
+# Adding qregs 
+qreg_0 = QuantumRegister(2)
+subcirc0.add_register(qreg_0)
+qreg_2 = QuantumRegister(2)
+subcirc0.add_register(qreg_2)
+# Adding creg resources 
+subcirc0.h(qreg_2[0])
+subcirc0.h(qreg_2[1])
+subcirc0.cz(qreg_2[0],qreg_0[1])
+subcirc0.h(qreg_2[1])
+subcirc0.h(qreg_0[1])
+subcirc0 = subcirc0.to_gate().control(2)
+
+subcirc1 = QuantumCircuit(0)
+# Adding qregs 
+qreg_0 = QuantumRegister(3)
+subcirc1.add_register(qreg_0)
+qreg_3 = QuantumRegister(1)
+subcirc1.add_register(qreg_3)
+# Adding creg resources 
+subcirc1.cz(qreg_3[0],qreg_0[1])
+subcirc1.u(pi/2,-0.908000,-0.073000, qreg_3[0])
+subcirc1.rx(0.615000, qreg_0[1])
+subcirc1.u(pi/2,0.775000,-0.370000, qreg_3[0])
+subcirc1.rx(-0.425000, qreg_0[0])
+subcirc1 = subcirc1.to_gate().control(1)
+
+main_circ = QuantumCircuit(0)
+# Adding qregs 
+qreg_0 = QuantumRegister(4)
+main_circ.add_register(qreg_0)
+# Adding creg resources 
+creg_0 = ClassicalRegister(2)
+main_circ.add_register(creg_0)
+# Adding symbols 
+param_0 = Parameter("param_0")
+
+main_circ.rx(param_0, qreg_0[3])
+main_circ.cz(qreg_0[3],qreg_0[2])
+main_circ.rx(-0.383000, qreg_0[0])
+main_circ.h(qreg_0[1])
+main_circ.cz(qreg_0[0],qreg_0[2])
+main_circ.cz(qreg_0[3],qreg_0[2])
+main_circ.u(pi/2,param_0,param_0, qreg_0[3])
+main_circ.h(qreg_0[1])
+main_circ.rx(param_0, qreg_0[0])
+main_circ.u(param_0,0.330000,0.394000, qreg_0[3])
+main_circ.rx(param_0, qreg_0[2])
+main_circ.cz(qreg_0[3],qreg_0[1])
+main_circ.u(param_0,param_0,-0.123000, qreg_0[1])
+main_circ.u(param_0,-0.526000,-0.010000, qreg_0[1])
+main_circ.cz(qreg_0[3],qreg_0[1])
+main_circ.h(qreg_0[3])
+main_circ.u(pi/2,-0.524000,0.343000, qreg_0[1])
+main_circ.h(qreg_0[2])
+main_circ.u(param_0,param_0,param_0, qreg_0[1])
+main_circ.cz(qreg_0[1],qreg_0[3])
+main_circ.rx(-0.403000, qreg_0[3])
+main_circ.rx(param_0, qreg_0[3])
+main_circ.u(pi/2,-0.218000,param_0, qreg_0[2])
+main_circ.u(param_0,0.011000,param_0, qreg_0[0])
+main_circ.cz(qreg_0[0],qreg_0[3])
+main_circ.cz(qreg_0[0],qreg_0[2])
+main_circ.u(param_0,-0.825000,param_0, qreg_0[0])
+main_circ.cz(qreg_0[1],qreg_0[0])
+main_circ.cz(qreg_0[3],qreg_0[2])
+main_circ.u(pi/2,param_0,param_0, qreg_0[0])
+main_circ.cz(qreg_0[0],qreg_0[1])
+main_circ.u(param_0,param_0,param_0, qreg_0[2])
+main_circ.h(qreg_0[0])
+main_circ.cz(qreg_0[0],qreg_0[3])
+main_circ.cz(qreg_0[2],qreg_0[0])
+main_circ.cz(qreg_0[3],qreg_0[2])
+main_circ.rx(param_0, qreg_0[0])
+main_circ.h(qreg_0[0])
+main_circ.u(pi/2,param_0,param_0, qreg_0[1])
+main_circ.u(param_0,0.499000,param_0, qreg_0[2])
+main_circ.cz(qreg_0[3],qreg_0[0])
+main_circ.cz(qreg_0[2],qreg_0[1])
+main_circ.cz(qreg_0[0],qreg_0[2])
+main_circ.cz(qreg_0[3],qreg_0[1])
+main_circ.u(pi/2,param_0,param_0, qreg_0[1])
+main_circ.u(pi/2,param_0,-0.864000, qreg_0[2])
+main_circ.u(pi/2,-0.011000,param_0, qreg_0[1])
+main_circ.rx(0.519000, qreg_0[0])
+bindings = {param_0: 0.608000, }
+main_circ = main_circ.assign_parameters(bindings)
+
+print(Path(__file__).name, " results:")
+compare_statevectors(main_circ, "RemoveFinalReset")

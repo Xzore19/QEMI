@@ -1,0 +1,106 @@
+from qiskit import QuantumCircuit, QuantumRegister, ClassicalRegister
+from qiskit.circuit import Parameter, ParameterVector
+from helpers.qiskit_helpers import compare_statevectors, run_on_simulator, run_routing_simulation, run_pass_on_simulator
+from pathlib import Path
+from math import pi
+
+subcirc0 = QuantumCircuit(0)
+# Adding qregs 
+qreg_0 = QuantumRegister(2)
+subcirc0.add_register(qreg_0)
+qreg_2 = QuantumRegister(2)
+subcirc0.add_register(qreg_2)
+# Adding creg resources 
+subcirc0.cz(qreg_0[0],qreg_2[0])
+subcirc0.rz(-0.338000, qreg_0[1])
+subcirc0.rz(0.198000, qreg_0[1])
+subcirc0.z(qreg_2[1])
+subcirc0.u(0.022000,0.703000,0.988000, qreg_2[0])
+subcirc0 = subcirc0.to_gate().control(1)
+
+subcirc1 = QuantumCircuit(0)
+# Adding qregs 
+qreg_0 = QuantumRegister(3)
+subcirc1.add_register(qreg_0)
+qreg_3 = QuantumRegister(1)
+subcirc1.add_register(qreg_3)
+# Adding creg resources 
+subcirc1.z(qreg_0[0])
+subcirc1.rz(0.475000, qreg_0[0])
+subcirc1.cz(qreg_0[0],qreg_0[1])
+subcirc1.cz(qreg_0[1],qreg_0[0])
+subcirc1.u(-0.779000,0.733000,-0.625000, qreg_0[2])
+
+subcirc2 = QuantumCircuit(0)
+# Adding qregs 
+qreg_0 = QuantumRegister(1)
+subcirc2.add_register(qreg_0)
+qreg_1 = QuantumRegister(3)
+subcirc2.add_register(qreg_1)
+# Adding creg resources 
+subcirc2.rz(0.743000, qreg_1[1])
+subcirc2.u(0.362000,-0.417000,-0.520000, qreg_0[0])
+subcirc2.z(qreg_1[0])
+subcirc2.z(qreg_1[1])
+subcirc2.z(qreg_1[1])
+subcirc2 = subcirc2.to_gate().control(3)
+
+subcirc3 = QuantumCircuit(0)
+# Adding qregs 
+qreg_0 = QuantumRegister(3)
+subcirc3.add_register(qreg_0)
+qreg_3 = QuantumRegister(1)
+subcirc3.add_register(qreg_3)
+# Adding creg resources 
+subcirc3.z(qreg_0[0])
+subcirc3.z(qreg_0[2])
+subcirc3.rz(0.875000, qreg_3[0])
+subcirc3.cz(qreg_0[1],qreg_3[0])
+subcirc3.u(0.267000,0.479000,0.838000, qreg_3[0])
+subcirc3 = subcirc3.to_gate().control(1)
+
+subcirc4 = QuantumCircuit(0)
+# Adding qregs 
+qreg_0 = QuantumRegister(2)
+subcirc4.add_register(qreg_0)
+qreg_2 = QuantumRegister(1)
+subcirc4.add_register(qreg_2)
+qreg_3 = QuantumRegister(1)
+subcirc4.add_register(qreg_3)
+# Adding creg resources 
+subcirc4.rz(-0.437000, qreg_3[0])
+subcirc4.u(-0.477000,0.451000,0.961000, qreg_0[1])
+subcirc4.cz(qreg_0[1],qreg_0[0])
+subcirc4.u(-0.095000,-0.103000,0.263000, qreg_3[0])
+subcirc4.u(0.031000,0.193000,-0.473000, qreg_0[0])
+
+main_circ = QuantumCircuit(1)
+# Adding qregs 
+qreg_0 = QuantumRegister(4)
+main_circ.add_register(qreg_0)
+# Adding creg resources 
+creg_0 = ClassicalRegister(2)
+main_circ.add_register(creg_0)
+# Adding symbols 
+param_0 = Parameter("param_0")
+param_1 = Parameter("param_1")
+
+main_circ.cz(qreg_0[0],qreg_0[3])
+main_circ.append(subcirc0,[qreg_0[1],qreg_0[0],qreg_0[3],qreg_0[2],0])
+main_circ.append(subcirc1,[0,qreg_0[2],qreg_0[3],qreg_0[1]])
+main_circ.append(subcirc0,[0,qreg_0[1],qreg_0[2],qreg_0[0],qreg_0[3]])
+main_circ.append(subcirc3,[qreg_0[0],qreg_0[3],qreg_0[2],qreg_0[1],0])
+main_circ.append(subcirc4,[qreg_0[3],0,qreg_0[1],qreg_0[0]])
+main_circ.append(subcirc4,[qreg_0[0],qreg_0[1],qreg_0[3],qreg_0[2]])
+main_circ.append(subcirc0,[qreg_0[1],qreg_0[3],qreg_0[0],qreg_0[2],0])
+main_circ.cz(qreg_0[3],qreg_0[0])
+main_circ.cz(qreg_0[2],qreg_0[3])
+main_circ.cz(qreg_0[1],qreg_0[0])
+main_circ.cz(qreg_0[3],0)
+main_circ.append(subcirc4,[qreg_0[1],0,qreg_0[3],qreg_0[0]])
+bindings = {}
+main_circ = main_circ.assign_parameters(bindings)
+
+print(Path(__file__).name, " results:")
+main_circ.measure_active()
+run_routing_simulation(main_circ, "1755")

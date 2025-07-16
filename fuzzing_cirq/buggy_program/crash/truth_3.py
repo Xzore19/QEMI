@@ -1,0 +1,48 @@
+import cirq
+from cirq.transformers import *
+
+q = cirq.LineQubit.range(6) 
+circuit = cirq.Circuit()
+
+
+cirq.contrib.acquaintance.AcquaintanceOperation([q[1],q[3]], [1, 3]) 
+cirq.contrib.acquaintance.AcquaintanceOpportunityGate(num_qubits=4).on(q[3],q[1],q[0],q[4]) 
+cirq.contrib.acquaintance.CircularShiftGate(shift=1, num_qubits=2).on(q[0],q[3]) 
+cirq.contrib.acquaintance.LinearPermutationGate(num_qubits=4, permutation={0: 3, 2: 2, 1: 1, 3: 0}).on(q[2],q[3],q[4],q[1]) 
+circuit.append(cirq.PhasedXPowGate(exponent=0.006135923151542565,phase_exponent=0.19634954084936207).on(q[0]).controlled_by(q[4]))
+circuit.append(cirq.YYPowGate(exponent=0.0030679615757712823).on(q[4], q[2]))
+circuit.append(cirq.XPowGate(exponent=0.39269908169872414).on(q[1]))
+circuit.append(cirq.ZZPowGate(exponent=0.02454369260617026).on(q[0], q[1]).controlled_by(q[2]))
+circuit.append(cirq.CZ(q[3], q[4]))
+circuit.append(cirq.CZ(q[4], q[3]).controlled_by(q[2]))
+circuit.append(cirq.Y(q[4]))
+circuit.append(cirq.MSGate(rads=0.7853981633974483).on(q[0], q[3]))
+circuit.append(cirq.S(q[1]))
+circuit.append(cirq.X(q[4]))
+
+sub_circuit = cirq.Circuit() 
+circuit.append(cirq.measure(q[5], key="c")) 
+
+cirq.contrib.acquaintance.AcquaintanceOpportunityGate(num_qubits=4).on(q[0],q[3],q[1],q[2]) 
+cirq.contrib.acquaintance.LinearPermutationGate(num_qubits=3, permutation={1: 1, 0: 2, 2: 0}).on(q[1],q[3],q[2]) 
+circuit.append(cirq.H(q[0]).controlled_by(q[4]))
+circuit.append(cirq.PhasedXPowGate(exponent=0.02454369260617026,phase_exponent=0.19634954084936207).on(q[2]).controlled_by(q[3]))
+circuit.append(cirq.PhasedISwapPowGate(phase_exponent=0.0030679615757712823,exponent=0.0030679615757712823).on(q[4], q[1]))
+circuit.append(cirq.S(q[1]).controlled_by(q[4]))
+circuit.append(cirq.MSGate(rads=0.01227184630308513).on(q[0], q[1]).controlled_by(q[2]))
+circuit.append(cirq.CZ(q[0], q[3]).controlled_by(q[1]))
+circuit.append(cirq.rx(0.006135923151542565).on(q[2]).controlled_by(q[3]))
+circuit.append(cirq.CCX(q[2], q[0], q[1]).controlled_by(q[3]))
+circuit.append(cirq.MSGate(rads=0.01227184630308513).on(q[0], q[4]).controlled_by(q[2]))
+circuit.append(cirq.Y(q[3]).controlled_by(q[2]))
+
+cirq.contrib.acquaintance.AcquaintanceOperation([q[0],q[1],q[3],q[4],q[2]], [0, 1, 3, 4, 2]) 
+cirq.contrib.acquaintance.CircularShiftGate(shift=1, num_qubits=5).on(q[0],q[1],q[4],q[3],q[2]) 
+cirq.contrib.acquaintance.LinearPermutationGate(num_qubits=3, permutation={0: 0, 1: 2, 2: 1}).on(q[3],q[4],q[2]) 
+circuit.append(cirq.measure(q, key="m")) 
+circuit = eject_phased_paulis(circuit)
+circuit = merge_k_qubit_unitaries(circuit, k=2)
+circuit = expand_composite(circuit)
+simulator = cirq.Simulator() 
+result = simulator.run(circuit, repetitions=500) 
+print(result.histogram(key='m'))
