@@ -1,0 +1,14 @@
+# .coveragerc
+[run]
+source = qiskit
+branch = True
+parallel = True
+omit =
+    */test/*
+    */tests/*
+    */__init__.py
+
+[report]
+exclude_lines =
+    pragma: no cover
+    if __name__ == .__main__.:
