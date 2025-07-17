@@ -2,6 +2,7 @@ from coverage import Coverage
 
 cov = Coverage()
 cov.load()
+cov.combine()
 
 total_stmts = 0
 total_miss = 0
