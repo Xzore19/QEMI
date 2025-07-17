@@ -9,10 +9,12 @@ from math import pi
 def main():
 """
 
+
     with open(filename, "r") as file:
         for line in file:
             if "import" not in line:
                 code += "    " + line
+
 
     code +="""\n
 if __name__ == "__main__":
@@ -31,6 +33,16 @@ if __name__ == "__main__":
     cov.save()
     cov.combine()
     cov.report()
+    total_stmts = 0
+    total_miss = 0
+    
+    for file in cov.get_data().measured_files():
+        _, stmts, _, miss, _ = cov.analysis2(file)
+        total_stmts += len(stmts)
+        total_miss += len(miss)
+    
+    coverage_percent = 100.0 * (total_stmts - total_miss) / total_stmts
+    print(f"TTTT: {coverage_percent:.2f}%")
 """
 
     with open(savefile, "w") as file:
@@ -38,7 +50,7 @@ if __name__ == "__main__":
 
 
 if __name__ == "__main__":
-    filename = "code_coverage/circuit2.py"
-    savefile = "coverage/circuit2.py"
+    filename = "code_coverage/circuit3.py"
+    savefile = "temp_coverage/circuit3.py"
     remove_import(filename, savefile)
 

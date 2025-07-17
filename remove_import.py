@@ -1,16 +1,10 @@
-def remove_import(filename):
+def remove_import(filename, savefile):
     code = """
-from qiskit import QuantumCircuit, QuantumRegister, ClassicalRegister, transpile, AncillaRegister
-from qiskit_aer import Aer
-from qiskit.providers.fake_provider import GenericBackendV2
-from qiskit.providers.fake_provider import GenericBackendV2
+from qiskit import QuantumCircuit, QuantumRegister, ClassicalRegister
 from qiskit.circuit import Parameter, ParameterVector
-from qiskit.circuit.library import XGate
-from qiskit.transpiler.passes import *
-from qiskit.circuit.library import *
-from qiskit.transpiler import PassManager, generate_preset_pass_manager
+from helpers.qiskit_helpers import compare_statevectors, run_on_simulator, run_routing_simulation, run_pass_on_simulator
+from pathlib import Path
 from math import pi
-import numpy as np
 \n
 def main():
 """
@@ -20,7 +14,7 @@ def main():
             if "import" not in line:
                 code += "    " + line
 
-    code +="""\n
+    code += """\n
 if __name__ == "__main__":
     from coverage import Coverage
 
@@ -37,13 +31,24 @@ if __name__ == "__main__":
     cov.save()
     cov.combine()
     cov.report()
+    total_stmts = 0
+    total_miss = 0
+
+    for file in cov.get_data().measured_files():
+        _, stmts, _, miss, _ = cov.analysis2(file)
+        total_stmts += len(stmts)
+        total_miss += len(miss)
+
+    coverage_percent = 100.0 * (total_stmts - total_miss) / total_stmts
+    print(f"TTTT: {coverage_percent:.2f}%")
 """
 
-    with open(filename, "w") as file:
+    with open(savefile, "w") as file:
         file.write(code)
 
 
 if __name__ == "__main__":
-    filename = "code_coverage/fuzzing_0.py"
-    remove_import(filename)
+    filename = "code_coverage/circuit3.py"
+    savefile = "temp_coverage/circuit3.py"
+    remove_import(filename, savefile)
 
