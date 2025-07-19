@@ -116,7 +116,6 @@ def register_random_flag_block_type_1() -> Tuple[str, bool]:
         var_names.append(var)
         values.append(val)
 
-    # 随机选择组合方式：AND-OR 表达式 或 Xor 链式组合
     if random.random() < 0.5:
         expr = f"({var_names[0]} and {var_names[1]}) or ({var_names[2]} and not {var_names[3]})"
         value = (values[0] and values[1]) or (values[2] and not values[3])
@@ -181,12 +180,10 @@ def register_random_flag_block_type_3(available_indices: List[int]) -> Tuple[str
         raise ValueError("没有可用 qubit，无法生成 CheckZero/CheckAllZero flag block")
 
     if random.random() < 0.5:
-        # 生成 CheckZero(q[i])
         qid = random.choice(available_indices)
         expr = f"CheckZero(q[{qid}])"
         value = True
     else:
-        # 生成 CheckAllZero([q[i1], q[i2], ...])
         n = random.randint(1, len(available_indices))
         selected = sorted(random.sample(available_indices, k=n))
         qlist = "[" + ", ".join(f"q[{i}]" for i in selected) + "]"
@@ -210,7 +207,7 @@ def register_random_flag_block_for_dc() -> Tuple[str, bool]:
 
 def register_random_flag_block(call_type: Optional[str], available_indices: Optional[List[int]] = None) -> Tuple[str, bool]:
     if available_indices is None:
-        available_indices = list(range(10))  # 默认最多 10 个 qubit 可选
+        available_indices = list(range(10))  
 
     r = random.random()
     if call_type=="plain":

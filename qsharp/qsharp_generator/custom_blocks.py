@@ -26,7 +26,7 @@ SUPPORTED_GATES = {
     "Ryy":   {"arity": 2, "adjoint": True,  "controlled": True},
     "Rzz":   {"arity": 2, "adjoint": True,  "controlled": True},
     "CCNOT": {"arity": 3, "adjoint": True,  "controlled": True},
-    "AND":   {"arity": 3, "adjoint": True,  "controlled": False},  # 新增支持
+    "AND":   {"arity": 3, "adjoint": True,  "controlled": False}, 
     "Exp": {"arity": "var", "adjoint": True, "controlled": True},
     "R1Frac": {"arity": 1, "adjoint": True, "controlled": True},
     "RFrac": {"arity": 1, "adjoint": True, "controlled": True},
@@ -41,13 +41,7 @@ SUPPORTED_GATES = {
 def make_random_stateprep_block(call_type: str = "plain", num_qubits: int = 5) -> dict:
     import random
 
-    if call_type != "plain":
-        raise ValueError("ApproximatelyPreparePureStateCP 仅允许在 plain 模式中使用（因含 ResetAll）")
-
     MAX_QUBIT_FOR_STATEPREP = 5
-
-    if num_qubits < 1:
-        raise ValueError("num_qubits must be ≥ 1")
 
     actual_qubit_count = random.randint(1, min(num_qubits, MAX_QUBIT_FOR_STATEPREP))
     selected_indices = sorted(random.sample(range(num_qubits), k=actual_qubit_count))
@@ -75,14 +69,8 @@ def make_prepare_pure_state_d_props(call_type: str = "plain", num_qubits: int = 
     import random
     import math
 
-    if call_type != "plain":
-        raise ValueError("PreparePureStateD 仅允许在 plain 模式中生成（因含 ResetAll）")
-
     MAX_QUBIT_FOR_STATEPREPD = 5
-    if num_qubits < 1:
-        raise ValueError("num_qubits must be ≥ 1")
 
-    # 随机选用的 qubit 数量：1 ~ min(num_qubits, MAX_QUBIT_FOR_STATEPREPD)
     actual_qubit_count = random.randint(1, min(num_qubits, MAX_QUBIT_FOR_STATEPREPD))
     selected_indices = sorted(random.sample(range(num_qubits), k=actual_qubit_count))
 
@@ -110,12 +98,6 @@ def make_prepare_pure_state_d_props(call_type: str = "plain", num_qubits: int = 
 
 def make_prepare_uniform_superposition_props(call_type: str = "plain", num_qubits: int = 5) -> Dict[str, Any]:
     import random
-
-    if call_type != "plain":
-        raise ValueError("PrepareUniformSuperposition 仅允许在 plain 模式中使用（因含 ResetAll）")
-
-    if num_qubits < 1:
-        raise ValueError("num_qubits 必须 ≥ 1")
 
     MAX_QUBIT_FOR_UNIFORM = 5
     actual_qubit_count = random.randint(1, min(num_qubits, MAX_QUBIT_FOR_UNIFORM))
@@ -157,10 +139,7 @@ def make_apply_op_power_a_props(call_type: str = "adjoint", max_qubits: int = 5)
     from qsharp_generator.functions import get_qsharp_modifier, registered_oracle_blocks
     from qsharp_generator.custom_ctl import make_nested_or_fallback_body
 
-    max_qubits = min(max_qubits, 5)  # 保证不会超过5个
-
-    if max_qubits < 1:
-        raise ValueError("ApplyOperationPowerA 至少需要 1 个 qubit")
+    max_qubits = min(max_qubits, 5)  
 
     num_qubits = random.randint(1, max_qubits)
     local_indices = list(range(num_qubits))
@@ -192,13 +171,9 @@ def make_apply_op_power_a_props(call_type: str = "adjoint", max_qubits: int = 5)
 def make_apply_pauli_from_bitstring_props(call_type: str, max_qubits: int) -> Dict[str, Any]:
     import random
 
-    # if max_qubits < 1:
-    #     max_qubits = 1
-
-    num_qubits = random.randint(1, max_qubits)  # 至少1个 qubit
+    num_qubits = random.randint(1, max_qubits)  
     bits = [False] * num_qubits
 
-    # 至少设置一个为 True，剩下的可为 False（避免全 False 全 True）
     true_count = random.randint(1, num_qubits)
     true_indices = random.sample(range(num_qubits), k=true_count)
     for i in true_indices:
@@ -229,9 +204,8 @@ def make_apply_pauli_from_int_props(call_type: str, max_qubits: int = 5) -> Dict
     assert max_qubits >= 1
     num_qubits = random.randint(1, max_qubits)
 
-    # 随机生成一个 integer，位宽不超过 num_qubits
     max_int = 2**num_qubits - 1
-    number_state = random.randint(1, max_int)  # 至少一个 bit 是 1
+    number_state = random.randint(1, max_int)  
     qubits_str = "[" + ", ".join(f"q[{i}]" for i in range(num_qubits)) + "]"
 
     paulis = random.sample(["PauliX", "PauliY", "PauliZ"], k=2)
@@ -253,20 +227,11 @@ def make_apply_pauli_from_int_props(call_type: str, max_qubits: int = 5) -> Dict
 def make_add_block_by_type(op_name: str, call_type: str = "plain", num_qubits: int = 9) -> Dict[str, Any]:
     import random
 
-    if call_type != "plain":
-        raise ValueError(f"{op_name} 仅允许在 plain 模式中生成（因使用 ResetAll）")
-
-    if num_qubits < 3:
-        raise ValueError(f"{op_name} 至少需要 3 个 qubit")
-
     indices = list(range(num_qubits))
     random.shuffle(indices)
 
     max_n = num_qubits // 3
     n = random.randint(1, max_n)
-
-    if len(indices) < 3 * n:
-        raise ValueError("qubit 数不足，无法分配非重叠的三组寄存器")
 
     xs_indices = sorted(indices[:n])
     ys_indices = sorted(indices[n:2*n])
@@ -289,20 +254,14 @@ def make_add_block_by_type(op_name: str, call_type: str = "plain", num_qubits: i
 def make_ripple_carry_cg_incbyle_props(call_type: str = "plain", num_qubits: int = 9) -> Dict[str, Any]:
     import random
 
-    if num_qubits < 2:
-        raise ValueError("RippleCarryCGIncByLE 至少需要 2 个 qubit")
-
     indices = list(range(num_qubits))
     random.shuffle(indices)
 
-    # 为保证 xs ≤ ys，预留最少长度
     max_ys_len = num_qubits // 2
     ys_len = random.randint(1, max_ys_len)
     xs_len = random.randint(1, ys_len)
 
     total_needed = xs_len + ys_len
-    if len(indices) < total_needed:
-        raise ValueError("可用 qubit 数不足以生成 RippleCarryCGIncByLE")
 
     xs_indices = sorted(indices[:xs_len])
     ys_indices = sorted(indices[xs_len:xs_len + ys_len])
@@ -317,51 +276,14 @@ def make_ripple_carry_cg_incbyle_props(call_type: str = "plain", num_qubits: int
         "controlled": True,
     }
 
-# def make_add_le_props(call_type: str = "adjoint", max_qubits: int = 6) -> Dict[str, Any]:
-#     import random
-
-#     indices = list(range(max_qubits))
-#     random.shuffle(indices)
-
-#     max_n = max_qubits // 3
-#     n = random.randint(1, max_n)
-
-#     if len(indices) < 3 * n:
-#         raise ValueError("qubit 数不足，无法生成非重叠的三组寄存器。")
-
-#     xs_indices = sorted(indices[:n])
-#     ys_indices = sorted(indices[n:2*n])
-#     zs_indices = sorted(indices[2*n:3*n])
-
-#     xs = [f"q[{i}]" for i in xs_indices]
-#     ys = [f"q[{i}]" for i in ys_indices]
-#     zs = [f"q[{i}]" for i in zs_indices]
-
-#     reset_stmt = f"ResetAll([{', '.join(zs)}]);"
-#     add_stmt = f"AddLE([{', '.join(xs)}], [{', '.join(ys)}], [{', '.join(zs)}]);"
-
-#     return {
-#         "import": "Std.Arithmetic",
-#         "call": f"{reset_stmt}\n{add_stmt}",
-#         "adjoint": False,
-#         "controlled": False,
-#     }
-
 def make_fourier_tdinc_by_le_props(call_type: str = "plain", max_qubits: int = 6) -> Dict[str, Any]:
     import random
 
-    if max_qubits < 2:
-        raise ValueError("FourierTDIncByLE 至少需要 2 个 qubit")
-
-    # 尝试从 target_indices 中随机划分两个非重叠子集
     indices = list(range(max_qubits))
     random.shuffle(indices)
 
     max_n = max_qubits // 2
     n = random.randint(1, max_n)
-
-    if len(indices) < 2 * n:
-        raise ValueError("qubit 数不足，无法分配给 xs 和 ys")
 
     xs_indices = sorted(indices[:n])
     ys_indices = sorted(indices[n:2*n])
@@ -381,10 +303,6 @@ def make_fourier_tdinc_by_le_props(call_type: str = "plain", max_qubits: int = 6
 def make_maj_props(call_type: str = "plain", max_qubits: int = 3) -> Dict[str, Any]:
     import random
 
-    if max_qubits < 3:
-        raise ValueError("MAJ gate requires at least 3 qubits.")
-
-    # 从 qubit 池中随机选 3 个不重复的 qubit
     indices = random.sample(range(max_qubits), 3)
     x, y, z = indices
 
@@ -397,85 +315,8 @@ def make_maj_props(call_type: str = "plain", max_qubits: int = 3) -> Dict[str, A
         "controlled": True,
     }
 
-# def make_lookahead_dkrs_addle_props(call_type: str = "plain", max_qubits: int = 9) -> Dict[str, Any]:
-#     import random
-
-#     if call_type != "plain":
-#         raise ValueError("LookAheadDKRSAddLE 仅允许在 plain 模式中生成（因含 Reset）。")
-
-#     if max_qubits < 3:
-#         raise ValueError("LookAheadDKRSAddLE 至少需要 3 个 qubit。")
-
-#     indices = list(range(max_qubits))
-#     random.shuffle(indices)
-
-#     max_n = max_qubits // 3
-#     n = random.randint(1, max_n)
-
-#     if len(indices) < 3 * n:
-#         raise ValueError("qubit 数不足，无法生成非重叠的三组寄存器。")
-
-#     xs_indices = sorted(indices[:n])
-#     ys_indices = sorted(indices[n:2*n])
-#     zs_indices = sorted(indices[2*n:3*n])
-
-#     xs = [f"q[{i}]" for i in xs_indices]
-#     ys = [f"q[{i}]" for i in ys_indices]
-#     zs = [f"q[{i}]" for i in zs_indices]
-
-#     # ResetAll zs[1:]（除了 carry-in 位 zs[0]）
-#     reset_stmt = f"ResetAll([{', '.join(zs[1:])}]);" if len(zs) > 1 else ""
-#     call_stmt = f"LookAheadDKRSAddLE([{', '.join(xs)}], [{', '.join(ys)}], [{', '.join(zs)}]);"
-
-#     return {
-#         "import": "Std.Arithmetic",
-#         "call": (reset_stmt + "\n" if reset_stmt else "") + call_stmt,
-#         "adjoint": False,
-#         "controlled": False,
-#     }
-
-# def make_ripple_carry_cg_addle_props(call_type: str = "plain", num_qubits: int = 9) -> Dict[str, Any]:
-#     import random
-
-#     if call_type != "plain":
-#         raise ValueError("RippleCarryCGAddLE 仅允许在 plain 模式中生成（因使用 ResetAll）")
-
-#     if num_qubits < 3:
-#         raise ValueError("RippleCarryCGAddLE 至少需要 3 个 qubit")
-
-#     indices = list(range(num_qubits))
-#     random.shuffle(indices)
-
-#     max_n = num_qubits // 3
-#     n = random.randint(1, max_n)
-
-#     if len(indices) < 3 * n:
-#         raise ValueError("无法为 xs, ys, zs 分配非重叠的 qubit 子集")
-
-#     xs_indices = sorted(indices[:n])
-#     ys_indices = sorted(indices[n:2*n])
-#     zs_indices = sorted(indices[2*n:3*n])
-
-#     xs = [f"q[{i}]" for i in xs_indices]
-#     ys = [f"q[{i}]" for i in ys_indices]
-#     zs = [f"q[{i}]" for i in zs_indices]
-
-#     # Reset zs[1:] 保留 zs[0] 可为 carry-in
-#     reset_stmt = f"ResetAll([{', '.join(zs[1:])}]);" if len(zs) > 1 else ""
-#     call_stmt = f"RippleCarryCGAddLE([{', '.join(xs)}], [{', '.join(ys)}], [{', '.join(zs)}]);"
-
-#     return {
-#         "import": "Std.Arithmetic",
-#         "call": (reset_stmt + "\n" if reset_stmt else "") + call_stmt,
-#         "adjoint": False,
-#         "controlled": False,
-#     }
-
 def make_reflect_about_integer_props(call_type: str = "plain", max_qubits: int = 5) -> Dict[str, Any]:
     import random
-
-    if max_qubits < 1:
-        raise ValueError("ReflectAboutInteger 至少需要 1 个 qubit")
 
     n = random.randint(1, max_qubits)
     reg_indices = sorted(random.sample(range(max_qubits), n))
@@ -496,9 +337,6 @@ def make_reflect_about_integer_props(call_type: str = "plain", max_qubits: int =
 def make_swap_reverse_register_props(call_type: str = "plain", num_qubits: int = 5) -> Dict[str, Any]:
     import random
 
-    if num_qubits < 2:
-        raise ValueError("SwapReverseRegister 需要至少 2 个 qubit")
-
     actual_qubit_count = random.randint(2, num_qubits)
     selected_indices = sorted(random.sample(range(num_qubits), k=actual_qubit_count))
 
@@ -514,19 +352,13 @@ def make_swap_reverse_register_props(call_type: str = "plain", num_qubits: int =
 def make_relabel_props(call_type: str = "plain", num_qubits: int = 5) -> Dict[str, Any]:
     import random
 
-    if call_type in ("controlled", "ctl", "adj+ctl"):
-        raise ValueError("Relabel 不支持 Controlled 调用。")
-
-    if num_qubits < 2:
-        raise ValueError("Relabel 至少需要 2 个 qubit")
-
     count = random.randint(2, num_qubits)
     current_indices = sorted(random.sample(range(num_qubits), count))
     updated_indices = current_indices.copy()
     while True:
         random.shuffle(updated_indices)
         if updated_indices != current_indices:
-            break  # 确保不是恒等映射
+            break  
 
     current_str = "[" + ", ".join(f"q[{i}]" for i in current_indices) + "]"
     updated_str = "[" + ", ".join(f"q[{i}]" for i in updated_indices) + "]"
@@ -541,18 +373,12 @@ def make_relabel_props(call_type: str = "plain", num_qubits: int = 5) -> Dict[st
 def make_ripple_carry_ttk_incbyle_props(call_type: str = "plain", num_qubits: int = 9) -> Dict[str, Any]:
     import random
 
-    if num_qubits < 2:
-        raise ValueError("RippleCarryTTKIncByLE 至少需要 2 个 qubit")
-
     indices = list(range(num_qubits))
     random.shuffle(indices)
 
     max_ys_len = num_qubits // 2
     ys_len = random.randint(1, max_ys_len)
     xs_len = random.randint(1, min(ys_len, max_ys_len))
-
-    if xs_len + ys_len > num_qubits:
-        raise ValueError("可用 qubit 数不足以生成 RippleCarryTTKIncByLE")
 
     xs_indices = sorted(indices[:xs_len])
     ys_indices = sorted(indices[xs_len:xs_len + ys_len])
@@ -570,20 +396,16 @@ def make_ripple_carry_ttk_incbyle_props(call_type: str = "plain", num_qubits: in
 def make_incby_block(op_type: str, call_type: str, num_qubits: int = 5) -> Dict[str, Any]:
     import random
 
-    if num_qubits < 1:
-        raise ValueError(f"{op_type} 需要至少 1 个 qubit")
-
     SAFE_INCBY_ADDERS = {
         "plain": "RippleCarryCGIncByLE",
         "adjoint": "RippleCarryCGIncByLE",
-        "controlled": "RippleCarryTTKIncByLE",  # CG 不支持 controlled
-        "adj+ctl": "RippleCarryTTKIncByLE",     # CG 不支持 controlled+adjoint
+        "controlled": "RippleCarryTTKIncByLE",  
+        "adj+ctl": "RippleCarryTTKIncByLE",     
     }
 
     import_stmt = "Std.Arithmetic"
     extra_import = ""
 
-    # 通用 ys 构造
     def random_qubit_list(n):
         return sorted(random.sample(range(num_qubits), n))
 
@@ -617,8 +439,6 @@ def make_incby_block(op_type: str, call_type: str, num_qubits: int = 5) -> Dict[
         xs_len = random.randint(1, ys_len)
 
         total = xs_len + ys_len
-        if total > num_qubits:
-            raise ValueError("qubit 不足以分配 xs 和 ys")
 
         indices = random.sample(range(num_qubits), total)
         xs_indices = sorted(indices[:xs_len])
@@ -632,9 +452,6 @@ def make_incby_block(op_type: str, call_type: str, num_qubits: int = 5) -> Dict[
         max_len = num_qubits // 2
         n = random.randint(1, max_len)
 
-        if 2 * n > num_qubits:
-            raise ValueError("qubit 不足以分配等长 xs 与 ys")
-
         indices = random.sample(range(num_qubits), 2 * n)
         xs_indices = sorted(indices[:n])
         ys_indices = sorted(indices[n:])
@@ -643,9 +460,6 @@ def make_incby_block(op_type: str, call_type: str, num_qubits: int = 5) -> Dict[
         ys_str = "[" + ", ".join(f"q[{i}]" for i in ys_indices) + "]"
 
         call = f"IncByLEUsingAddLE(LookAheadDKRSAddLE, RippleCarryCGAddLE, {xs_str}, {ys_str});"
-
-    else:
-        raise ValueError(f"未知 IncBy 操作类型: {op_type}")
 
     all_imports = [import_stmt]
     if extra_import:
@@ -782,13 +596,11 @@ BUILTIN_QUANTUM_OPERATIONS = {
 }
 
 MIN_QUBITS_REQUIRED = {
-    # 三寄存器
     "AddLE": 3,
     "MAJ": 3,
     "LookAheadDKRSAddLE": 3,
     "RippleCarryCGAddLE": 3,
 
-    # 双寄存器
     "FourierTDIncByLE": 2,
     "SwapReverseRegister": 2,
     "Relabel": 2,
@@ -804,8 +616,6 @@ def generate_random_gate_block(
     depth: int,
 ) -> Tuple[Set[int], List[str], List[str]]:
 
-    # print(f"[DBG] call_type={call_type}")
-
     instructions = []
     used_indices = set()
     extra_ops = []
@@ -815,10 +625,9 @@ def generate_random_gate_block(
 
     available_indices = list(range(len(target_indices)))
 
-    # 提前决定是否加前缀修饰符
     use_prefix = random.random() < 0.5
     control_indices = []
-    data_indices = available_indices  # 默认全部 qubit 都参与
+    data_indices = available_indices  
 
     if use_prefix and call_type in ("controlled", "ctl", "adj+ctl") and len(available_indices) >= 2:
         num_controls = random.randint(1, len(available_indices) // 2)
@@ -827,7 +636,6 @@ def generate_random_gate_block(
         new_target_indices = [i for i in available_indices if i not in control_indices]
 
         if not data_indices:
-            # fallback，无法拆分控制位/受控位
             use_prefix = False
             control_indices = []
             data_indices = available_indices

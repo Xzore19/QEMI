@@ -15,7 +15,6 @@ def collect_distribution(op_name: str, shots: int) -> (Counter, float):
     counter = Counter()
     start_time = time.time()
 
-    # 一次性运行所有 shots，返回的是 List[Result[]]
     results = qsharp.run(f"{op_name}()", shots=shots)
 
     for result in results:

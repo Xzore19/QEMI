@@ -57,7 +57,6 @@ class QSharpGenerator:
                     call_type = "plain"
                     target = list(range(self.qubit_num))
                     ctrl = []
-                # ✅ 收集前两个 block 的所有控制位
                 if idx in (0, 1):
                     init_controls.extend(ctrl)
             else:
@@ -113,14 +112,11 @@ class QSharpGenerator:
                 tgt_str = ", ".join([f"q[{i}]" for i in target])
                 block_test_calls.append(f"Controlled Adjoint ApplyRandomBlock{idx}([{ctrl_str}], [{tgt_str}]);")
 
-        # ✅ 插入控制位初始化（去重、排序）
         for i in sorted(set(init_controls)):
             test_body.append(f"X(q[{i}]);")
 
-        # ✅ 加入 block 调用语句
         test_body.extend(block_test_calls)
 
-        # ✅ 加入测量与 reset
         test_body += self.measure_instructions
         test_body.append("ResetAll(q);")
         test_body.append("return [" + ", ".join([f"r{i}" for i in range(self.qubit_num)]) + "];")

@@ -61,16 +61,11 @@ def make_fixed_apply_if_relation_block(
         lines += [f"let target = [{tgt_str}]; "]
 
         prefix = "Controlled Adjoint " if call_type == "adj+ctl" else "Controlled "
-        # loop_body = f"{prefix}{control_op_name}([{ctrl_str}], [{tgt_str}]);"
     else:
         body = make_nested_or_fallback_body(local_indices, depth, call_type)
         lines += [f"let target = q; "]
         prefix = "Adjoint " if call_type == "adjoint" else ""
-        # loop_body = f"{'Adjoint ' if call_type == 'adjoint' else ''}{control_op_name}(q);"
 
-    # call_type = "adj+ctl"
-    # local_indices = list(range(len(target_indices)))
-    # body = make_nested_or_fallback_body(local_indices, depth, call_type)    
     inline_name = f"__InlineApplyIfRelation_{uuid.uuid4().hex[:8]}"
     modifier = get_qsharp_modifier(call_type)
     inline_op = (
@@ -82,7 +77,6 @@ def make_fixed_apply_if_relation_block(
     lines += [inline_op]
     control_op_name = random.choice(APPLY_IF_OPS)
 
-    # 具体构造控制输入以确保 "deadcode 条件永远不满足"
     if control_op_name == "ApplyIfEqualLE":
         # 11 != 10
         lines += [
@@ -96,7 +90,6 @@ def make_fixed_apply_if_relation_block(
         ]
 
     elif control_op_name == "ApplyIfGreaterLE":
-        # 3 > 2 → true → 为了构造 deadcode 要反过来
         lines += [
             "use x = Qubit[2];",              # x = 1 (01)
             "X(x[0]);",                       
@@ -218,7 +211,6 @@ def make_fixed_if_else_deadcode_block(
 ) -> Dict[str, Any]:
     local_indices = list(range(len(target_indices)))
 
-    # 主逻辑（else 分支）
     else_body = make_nested_or_fallback_body(local_indices, depth, call_type)
 
     inline_name = f"__InlineIfElseDeadcode_{uuid.uuid4().hex[:8]}"
@@ -233,12 +225,11 @@ def make_fixed_if_else_deadcode_block(
         if not else_body:
             return None
 
-        flag_func_name, value, _ = register_random_flag_block_for_dc()  # 返回 Bool 的经典表达式函数
+        flag_func_name, value, _ = register_random_flag_block_for_dc()  
 
         modifier = get_qsharp_modifier(call_type)
 
         if value:
-            # ✅ flag_func 返回 True：deadcode 放在 else
             inline_op_lines = [
                 f"operation {inline_name}(q : Qubit[]) : Unit{modifier} {{",
                 f"    if {flag_func_name}() {{"
@@ -251,7 +242,6 @@ def make_fixed_if_else_deadcode_block(
                 "}"
             ]
         else:
-            # ✅ flag_func 返回 False：deadcode 放在 if
             inline_op_lines = [
                 f"operation {inline_name}(q : Qubit[]) : Unit{modifier} {{",
                 f"    if {flag_func_name}() {{",
@@ -277,7 +267,6 @@ def make_fixed_if_else_deadcode_block(
         }
 
     if call_type == "plain":
-        # ✅ plain：用 Measure + if 判断
         dead_body = make_nested_or_fallback_body(local_indices, depth, call_type)
         if random.random() < 0.5:
             inline_op_lines = [
@@ -295,7 +284,7 @@ def make_fixed_if_else_deadcode_block(
             ]
             full_code = (
                 "\n".join(inline_op_lines) +
-                f"\n\n{inline_name}(q);"  # ✅ 添加调用
+                f"\n\n{inline_name}(q);"  
             )
         else:
             inline_op_lines = [
@@ -313,11 +302,10 @@ def make_fixed_if_else_deadcode_block(
             ]
             full_code = (
                 "\n".join(inline_op_lines) +
-                f"\n\n{inline_name}(q);"  # ✅ 添加调用
+                f"\n\n{inline_name}(q);"  
             )            
 
     elif call_type in ("controlled", "adj+ctl"):
-        # ✅ 非 plain：用 Controlled __DeadBlock(...) 包裹，避免测量
         dead_inline_name = f"__DeadBlock_{uuid.uuid4().hex[:8]}"
         dead_body = make_nested_or_fallback_body(local_indices, depth, call_type)
         dead_inline_op = (
@@ -345,7 +333,6 @@ def make_fixed_if_else_deadcode_block(
         )
     
     else:
-        # ✅ 新增：使用经典布尔表达式控制 deadcode 的分支
         dead_body = make_nested_or_fallback_body(local_indices, depth, call_type)
         if not dead_body:
             return None
@@ -354,12 +341,11 @@ def make_fixed_if_else_deadcode_block(
         if not else_body:
             return None
 
-        flag_func_name, value, _ = register_random_flag_block_for_dc()  # 返回 Bool 的经典表达式函数
+        flag_func_name, value, _ = register_random_flag_block_for_dc()  
 
         modifier = get_qsharp_modifier(call_type)
 
         if value:
-            # ✅ flag_func 返回 True：deadcode 放在 else
             inline_op_lines = [
                 f"operation {inline_name}(q : Qubit[]) : Unit{modifier} {{",
                 f"    if {flag_func_name}() {{"
@@ -372,7 +358,6 @@ def make_fixed_if_else_deadcode_block(
                 "}"
             ]
         else:
-            # ✅ flag_func 返回 False：deadcode 放在 if
             inline_op_lines = [
                 f"operation {inline_name}(q : Qubit[]) : Unit{modifier} {{",
                 f"    if {flag_func_name}() {{",
@@ -441,11 +426,10 @@ def make_fixed_for_loop_zero_block(
         f"}}"
     )
 
-    # ✅ 构造 0 次迭代的 for 循环（不会执行 loop_body）
     call = (
         f"{inline_op}\n"
         f"// --- DEADCODE START ---\n"
-        f"for i in 1..0 {{\n"  # Q# 1.16 合法，但不会进入循环体
+        f"for i in 1..0 {{\n"  
         f"    {loop_body}\n"
         f"}}\n"
         f"// --- DEADCODE END ---"
@@ -502,7 +486,6 @@ def make_fixed_repeat_until_block(
         f"}}"
     )
 
-    # ✅ 注册 flag 函数，直到其返回值为 True ⇒ fixup 永远不会执行
     while True:
         flag_func_name, flag_value, _ = register_random_flag_block_for_dc()
         if flag_value:
@@ -515,7 +498,6 @@ def make_fixed_repeat_until_block(
         "\n    // --- DEADCODE END ---"
     )
 
-    # ✅ 拼接完整 repeat-until-fixup 结构（fixup 是 deadcode）
     call = (
         f"{inline_op}\n"
         f"repeat {{\n"
@@ -574,13 +556,11 @@ def make_fixed_while_false_block(
         f"}}"
     )
 
-    # ✅ 注册一个总返回 False 的布尔函数作为 while 条件
     while True:
         flag_func_name, flag_value, _ = register_random_flag_block_for_dc()
         if not flag_value:
-            break  # 只接受返回 False 的函数
+            break  
 
-    # ✅ 构造 while 条件永远不满足的死循环结构
     call = (
         f"{inline_op}\n"
         f"// --- DEADCODE START ---\n"
@@ -624,7 +604,6 @@ def make_bitstring_deadcode_block(
     actual_value = "".join("1" if b else "0" for b in ctrl_bits)
 
     if use_bitstring:
-        # 设置一个永远不匹配的目标位串
         mismatch_bits = ["true" if not b else "false" for b in ctrl_bits]
         bit_str = "[" + ", ".join(mismatch_bits) + "]"
 
@@ -633,7 +612,6 @@ def make_bitstring_deadcode_block(
             f"        ApplyControlledOnBitString({bit_str}, {dead_inline_name}, ctrl, q);"
         ]
     else:
-        # 控制值为实际状态 + 偏移，确保不匹配
         actual_int = sum(2**i for i, b in enumerate(ctrl_bits) if b)
         mismatched_int = (actual_int + random.randint(1, 7)) % 8
         call_stmt = [
@@ -673,7 +651,6 @@ def generate_fixed_deadcode_block(
     depth: int,
     call_type: str,
 ) -> Optional[Dict[str, Any]]:
-    # 可选的 deadcode 控制结构类型
     if call_type == "plain":
         block = random.choice(DEADCODE_BLOCK_REGISTRY+ DEADCODE_BLOCK_REGISTRY_P)
     else:

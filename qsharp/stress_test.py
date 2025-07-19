@@ -27,13 +27,11 @@ QSHARP_FILES = ["src/Main.qs", "src/Fuzzing_Main.qs"]
 from math import sqrt, ceil
 
 def compute_S(delta: float, N: float) -> int:
-    """根据 δ 和输出空间大小 N，计算标准测量次数 S(δ, N)"""
     val1 = N ** (2/3) / (delta ** (8/3))
     val2 = N ** (3/4) / (delta ** 2)
     return ceil(min(val1, val2))
 
 def hellinger_distance(p: Counter, q: Counter) -> float:
-    """计算两个概率分布之间的 Hellinger 距离"""
     all_keys = set(p) | set(q)
     p_total = sum(p.values())
     q_total = sum(q.values())
@@ -67,7 +65,7 @@ def save_buggy_program(reason: str, qs_contents: dict, extra_info: str = None):
     buggy_id = get_next_buggy_id()
     dir_path = os.path.join(BUGGY_DIR, f"{buggy_id:04d}")
     os.makedirs(dir_path, exist_ok=True)
-    print(f"[保存出错程序] -> {dir_path}")
+    print(f"[buggy program] -> {dir_path}")
 
     for fullpath in QSHARP_FILES:
         fname = os.path.basename(fullpath)
@@ -97,7 +95,7 @@ def is_redundant_output(line: str) -> bool:
 
 def save_test_record(qs_contents: dict, early_info: tuple, standard_s: int, max_s: int,
                      final_h: float, h_history: list):
-    test_id = get_next_test_id()  # 可复用已有序号逻辑
+    test_id = get_next_test_id()  
     dir_path = os.path.join("test_record", f"{test_id:04d}")
     os.makedirs(dir_path, exist_ok=True)
 
@@ -206,7 +204,7 @@ def try_exeqs_until_converge(qs_contents: dict, n_qubits: int, delta: float, tes
                     confirm_once = True
                     continue
                 else:
-                    if early_stop_info is None:  # ✅ 只记录一次
+                    if early_stop_info is None:  
                         early_stop_info = (total_shots, h)
                         log(f"[Test mode: confirmed h={h:.4f}, continuing to max shots]")
                     confirm_once = False

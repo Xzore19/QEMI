@@ -52,19 +52,16 @@ def make_nested_or_fallback_body(
     from qsharp_generator.functions import indent
     from qsharp_generator.deadcode import generate_fixed_deadcode_block
 
-    # ✅ 用局部 index list 替代全局 target_indices 传下去
     local_indices = list(range(len(target_indices)))
 
     if random.random() < 0.3:
         maybe_nested = generate_random_control_block(local_indices, depth - 1, call_type, current_stack=instruction_cost_stack.copy())
         if maybe_nested is not None:
-            # ✅ 添加一个额外的 gate block（默认保持相同 depth）
             _, extra_instructions, _ = generate_random_gate_block(
                 call_type=call_type,
                 target_indices=local_indices,
-                depth=max(1, depth // 3),  # 或可使用 depth 原值
+                depth=max(1, depth // 3),  
             )
-            # 拼接控制结构体 + gate 体（都缩进一级）
             full_lines = maybe_nested["call"].splitlines() + extra_instructions
             return indent(full_lines, level=1)
         
@@ -205,7 +202,6 @@ def make_for_loop_block(
     local_indices = list(range(N))
     inline_op_name = f"__ForLoopBody_{uuid.uuid4().hex[:8]}"
 
-    # 默认修饰符
     modifier = get_qsharp_modifier(call_type)
 
     use_controlled = False
@@ -217,7 +213,6 @@ def make_for_loop_block(
         if not target:
             return None
 
-        # ✅ 只将“目标 qubit”传进去生成嵌套体
         body = make_nested_or_fallback_body(target, depth, call_type)
 
         ctrl_str = ", ".join(f"q[{available_indices[i]}]" for i in ctrl)
@@ -226,7 +221,6 @@ def make_for_loop_block(
         prefix = "Controlled Adjoint " if call_type == "adj+ctl" else "Controlled "
         loop_body = f"{prefix}{inline_op_name}([{ctrl_str}], [{tgt_str}]);"
     else:
-        # 降级为普通/Adjoint 调用
         body = make_nested_or_fallback_body(local_indices, depth, call_type)
         loop_body = f"{'Adjoint ' if call_type == 'adjoint' else ''}{inline_op_name}(q);"
 
@@ -264,10 +258,8 @@ def make_if_else_block(
 
     modifier = get_qsharp_modifier(call_type)
 
-    # ✅ plain 类型：插入就地量子门 + 测量 + if 条件
     if call_type == "plain" and N >= 3:
         if random.random() < 0.5:
-            # === 方式 1: 当前已有的 测量型 if ===
             selected = sorted(random.sample(local_indices, 3))
             used_qubits = [f"q[{available_indices[i]}]" for i in selected]
 
@@ -315,10 +307,8 @@ def make_if_else_block(
             }
 
         else:
-            # === 方式 2: 使用 register_random_flag_block 的纯布尔表达式 ===
-            pass  # 落入下面的逻辑（非-plain处理）
+            pass  
 
-    # ✅ 非 plain 情况：继续使用经典布尔 flag
     if_body = make_nested_or_fallback_body(local_indices, depth, call_type)
     else_body = make_nested_or_fallback_body(local_indices, depth, call_type)
     if not if_body or not else_body:
@@ -342,7 +332,6 @@ def make_if_else_block(
 
     flag_func, _, requires_qubits = register_random_flag_block(call_type, local_indices)
 
-    # 根据是否需要 qubit 参数决定调用形式
     if requires_qubits:
         flag_call = f"{flag_func}(q)"
     else:
@@ -355,7 +344,7 @@ def make_if_else_block(
     )
 
     return {
-        "import": "Std.Intrinsic",  # 添加 import，确保 Measure/Reset 可用
+        "import": "Std.Intrinsic",  
         "call": block,
         "adjoint": call_type in ("adjoint", "adj+ctl"),
         "controlled": call_type in ("controlled", "adj+ctl"),
@@ -374,7 +363,6 @@ def make_controlled_on_classical_block(
     inline_op_name = f"__ControlledBody_{uuid.uuid4().hex[:8]}"
     modifier = " is Adj + Ctl"
 
-    # 控制与目标 qubit 分配
     num_ctrl = random.randint(1, min(2, N // 2))
     ctrl = sorted(random.sample(local_indices, num_ctrl))
     target = sorted([i for i in local_indices if i not in ctrl])
@@ -384,7 +372,6 @@ def make_controlled_on_classical_block(
     ctrl_str = ", ".join(f"q[{available_indices[i]}]" for i in ctrl)
     tgt_str = ", ".join(f"q[{available_indices[i]}]" for i in target)
 
-    # 嵌套 operation 体生成
     call_type = "adj+ctl"
     body = make_nested_or_fallback_body(target, depth, call_type)
 
@@ -394,9 +381,7 @@ def make_controlled_on_classical_block(
         f"}}"
     )
 
-    # 随机选择控制方式
     if random.random() < 0.5:
-        # 使用 bitstring 控制
         bits = [random.choice(["true", "false"]) for _ in ctrl]
         bit_array = "[" + ", ".join(bits) + "]"
         call = (
@@ -405,7 +390,6 @@ def make_controlled_on_classical_block(
             f"[{ctrl_str}], [{tgt_str}]);"
         )
     else:
-        # 使用 int 控制
         max_val = 2 ** len(ctrl) - 1
         int_state = random.randint(0, max_val)
         call = (
@@ -437,7 +421,6 @@ def make_repeat_until_block(
     modifier = get_qsharp_modifier(call_type)
     use_controlled = False
 
-    # 尝试构造 controlled 调用
     if call_type in ("controlled", "adj+ctl") and N >= 2 and random.random() < 0.5:
         use_controlled = True
         num_ctrl = random.randint(1, min(2, N // 2))
@@ -447,7 +430,7 @@ def make_repeat_until_block(
             return None
 
         repeat_body = make_nested_or_fallback_body(target, depth, call_type)
-        fixup_body = make_nested_or_fallback_body(target, depth, call_type)  # fixup 使用浅层深度
+        fixup_body = make_nested_or_fallback_body(target, depth, call_type)  
 
         ctrl_str = ", ".join(f"q[{available_indices[i]}]" for i in ctrl)
         tgt_str = ", ".join(f"q[{available_indices[i]}]" for i in target)
@@ -456,7 +439,6 @@ def make_repeat_until_block(
         repeat_call = f"{prefix}{inline_op_name}([{ctrl_str}], [{tgt_str}]);"
         fixup_call = f"{prefix}{fixup_op_name}([{ctrl_str}], [{tgt_str}]);"
     else:
-        # 非受控调用
         repeat_body = make_nested_or_fallback_body(local_indices, depth, call_type)
         fixup_body = make_nested_or_fallback_body(local_indices, depth, call_type)
 
@@ -464,7 +446,6 @@ def make_repeat_until_block(
         repeat_call = f"{prefix}{inline_op_name}(q);"
         fixup_call = f"{prefix}{fixup_op_name}(q);"
 
-    # 构造内联 operation 定义
     inline_repeat_op = (
         f"operation {inline_op_name}(q : Qubit[]) : Unit{modifier} {{\n"
         f"{repeat_body}\n"
@@ -476,12 +457,11 @@ def make_repeat_until_block(
         f"}}"
     )
 
-    # ✅ 用一个新的 qubit 控制退出条件
     logic = [
         "use flag = Qubit();",
         "mutable result = One;",
         "repeat {",
-        "    X(flag);",                # 改变测量结果
+        "    X(flag);",                
         f"    {repeat_call}",
         "    set result = M(flag);",
         "} until (result == Zero) fixup {",
@@ -539,14 +519,12 @@ def make_while_loop_block(
         prefix = "Adjoint " if call_type == "adjoint" else ""
         loop_call = f"{prefix}{inline_op_name}(q);"
 
-    # inline body op
     inline_op = (
         f"operation {inline_op_name}(q : Qubit[]) : Unit{modifier} {{\n"
         f"{loop_body}\n"
         f"}}"
     )
 
-    # condition 逻辑：用一个 fresh flag qubit
     logic = [
         "use flag = Qubit();",
         "mutable result = Zero;",
@@ -602,7 +580,6 @@ def generate_random_control_block(
         "WHILE_LOOP": 2,
     }.get(block, 1)
 
-    # ✅ 正确处理 current_stack
     stack = current_stack if current_stack is not None else instruction_cost_stack
     future_stack = stack + [factor]
     future_cost = estimate_instruction_cost(future_stack, effective_depth)
@@ -611,7 +588,6 @@ def generate_random_control_block(
     if future_cost > INSTRUCTION_COST_THRESHOLD:
         return None
 
-    # ✅ 创建新的局部 stack，用于嵌套调用
     local_stack = future_stack
 
     if block == "FOR_LOOP":
