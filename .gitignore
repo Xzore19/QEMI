@@ -13,3 +13,4 @@ qsharp_for_debug/
 .coverage.*
 code_coverage/
 early_terminal/
+.idea/
