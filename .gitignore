@@ -10,5 +10,5 @@ qutefuzz/.coverage
 qutefuzz/quantum_circuits.zip
 qsharp_for_debug/
 .coverage
-.coverage.
+.coverage.*
 code_coverage/
