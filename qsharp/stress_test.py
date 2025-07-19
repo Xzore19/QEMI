@@ -9,20 +9,28 @@ from collections import Counter
 from tqdm import tqdm
 
 parser = argparse.ArgumentParser(description="Quantum circuit fuzz test runner")
-parser.add_argument("--samples", type=int, default=1000, help="Number of iterations (default: 1000)")
-parser.add_argument("--shots", type=int, default=8192, help="Number of measurement shots per circuit")
+parser.add_argument("--iter", type=int, default=1000, help="Number of iterations (default: 1000)")
+parser.add_argument("--delta", type=float, default=8192, help="Threshold of Hellinger distance")
+parser.add_argument("--qubits", type=int, default=8, help="Number of qubits per circuit")
+parser.add_argument("--test-mode", action="store_true", help="Enable test mode (force full measurement)")
 args = parser.parse_args()
 
-ITERATIONS = args.samples
-EXEQS_SHOTS = args.shots
-MAX_SHOTS = 12800
-HELLINGER_THRESHOLD = 0.1
+ITERATIONS = args.iter
+HELLINGER_THRESHOLD = args.delta
+NUM_QUBITS = args.qubits
+TEST_MODE = args.test_mode
 
 LOG_FILE = "stress_test_log.txt"
 BUGGY_DIR = "buggy_program"
 QSHARP_FILES = ["src/Main.qs", "src/Fuzzing_Main.qs"]
 
-from math import sqrt
+from math import sqrt, ceil
+
+def compute_S(delta: float, N: float) -> int:
+    """根据 δ 和输出空间大小 N，计算标准测量次数 S(δ, N)"""
+    val1 = N ** (2/3) / (delta ** (8/3))
+    val2 = N ** (3/4) / (delta ** 2)
+    return ceil(min(val1, val2))
 
 def hellinger_distance(p: Counter, q: Counter) -> float:
     """计算两个概率分布之间的 Hellinger 距离"""
@@ -43,6 +51,15 @@ def get_next_buggy_id():
     existing = [
         int(name) for name in os.listdir(BUGGY_DIR)
         if os.path.isdir(os.path.join(BUGGY_DIR, name)) and name.isdigit()
+    ]
+    return max(existing, default=0) + 1
+
+def get_next_test_id():
+    base_dir = "test_record"
+    os.makedirs(base_dir, exist_ok=True)
+    existing = [
+        int(name) for name in os.listdir(base_dir)
+        if os.path.isdir(os.path.join(base_dir, name)) and name.isdigit()
     ]
     return max(existing, default=0) + 1
 
@@ -78,12 +95,45 @@ def is_redundant_output(line: str) -> bool:
         for prefix in skip_keywords
     )
 
-def try_exeqs_until_converge(qs_contents: dict, initial_shots=8192, max_shots=400, threshold=0.01):
+def save_test_record(qs_contents: dict, early_info: tuple, standard_s: int, max_s: int,
+                     final_h: float, h_history: list):
+    test_id = get_next_test_id()  # 可复用已有序号逻辑
+    dir_path = os.path.join("test_record", f"{test_id:04d}")
+    os.makedirs(dir_path, exist_ok=True)
+
+    for fullpath in QSHARP_FILES:
+        fname = os.path.basename(fullpath)
+        content = qs_contents.get(fullpath, "// [Missing or empty]")
+        with open(os.path.join(dir_path, fname), "w", encoding="utf-8") as f:
+            f.write(content)
+
+    stats = {
+        "early_stop_shots": early_info[0] if early_info else None,
+        "early_stop_h": round(early_info[1], 6) if early_info else None,
+        "standard_S": standard_s,
+        "max_shots": max_s,
+        "final_h": round(final_h, 6),
+        "h_history": h_history
+    }
+    with open(os.path.join(dir_path, "stats.json"), "w", encoding="utf-8") as f:
+        json.dump(stats, f, indent=2)
+
+def try_exeqs_until_converge(qs_contents: dict, n_qubits: int, delta: float, test_mode: bool):
+    N = 2 ** n_qubits
+    N_sqrt = 2 ** (n_qubits / 2)
+    h_history = [] 
+
+    initial_shots = compute_S(delta, N_sqrt)
+    max_shots = 2 * compute_S(delta, N)
+
     total_main = Counter()
     total_fuzz = Counter()
     total_shots = 0
     step = initial_shots
     extra_info_lines = []
+
+    confirm_once = False
+    early_stop_info = None
 
     while total_shots + step <= max_shots:
         result_exec = subprocess.run(
@@ -96,11 +146,10 @@ def try_exeqs_until_converge(qs_contents: dict, initial_shots=8192, max_shots=40
             log("[exeqs.py ERROR]")
             log(result_exec.stderr.strip())
             save_buggy_program(f"[exeqs.py ERROR]\n{result_exec.stderr.strip()}", qs_contents)
-            return None, None, True
+            return None, None, True, None, None, None
 
         log(f"[exeqs.py SUCCESS @ step={step}]")
 
-        # 提取这次的 Main 和 Main_fuzzing 分布
         current_main = Counter()
         current_fuzz = Counter()
         current_section = None
@@ -128,25 +177,46 @@ def try_exeqs_until_converge(qs_contents: dict, initial_shots=8192, max_shots=40
                 elif current_section == "fuzz":
                     current_fuzz[bitstring] += count
 
-        # 累积统计
         total_main += current_main
         total_fuzz += current_fuzz
         total_shots += step
 
-        # 计算 h
         h = hellinger_distance(total_main, total_fuzz)
         log(f"[Cumulative Hellinger] shots={total_shots}, h={h:.4f}")
+        h_history.append({
+            "shots": total_shots,
+            "h": round(h, 6)
+        })
 
-        if h <= threshold:
-            return h, "\n".join(extra_info_lines), False
-        
-        log(f"[Hellinger above threshold] h={h:.4f} > {threshold}, total_shots={total_shots}, next_step={step}")
-        step *= 2  # 增加下一轮 shots
+        if h <= delta:
+            if not test_mode:
+                if confirm_once:
+                    early_stop_info = (total_shots, h)
+                    if early_stop_info is None: 
+                        log(f"[Confirmed convergence after confirmation round: h={h:.4f} ≤ δ={delta}]")
+                    return h, "\n".join(extra_info_lines), False, early_stop_info, total_shots, h, h_history
+                else:
+                    log(f"[Hellinger below threshold: h={h:.4f} ≤ δ={delta}, waiting for confirmation round]")
+                    confirm_once = True
+                    continue
+            else:
+                if not confirm_once:
+                    if early_stop_info is None: 
+                        log(f"[Test mode: h={h:.4f} ≤ δ={delta}, waiting for confirmation round]")
+                    confirm_once = True
+                    continue
+                else:
+                    if early_stop_info is None:  # ✅ 只记录一次
+                        early_stop_info = (total_shots, h)
+                        log(f"[Test mode: confirmed h={h:.4f}, continuing to max shots]")
+                    confirm_once = False
 
-    # 如果超过 max_shots 仍然没通过
     reason = f"[Hellinger distance FAIL after {total_shots} shots: {h:.4f}]"
-    save_buggy_program(reason, qs_contents, "\n".join(extra_info_lines))
-    return h, "\n".join(extra_info_lines), False
+    if not test_mode:
+        save_buggy_program(reason, qs_contents, "\n".join(extra_info_lines))
+    return h, "\n".join(extra_info_lines), False, early_stop_info, total_shots, h, h_history
+
+
 
 for i in tqdm(range(1, ITERATIONS + 1), desc="Stress Test Progress", unit="iter"):
     log(f"\n=== Iteration {i} ===")
@@ -176,13 +246,25 @@ for i in tqdm(range(1, ITERATIONS + 1), desc="Stress Test Progress", unit="iter"
             else:
                 qs_contents[fullpath] = "// [Not found]"
 
-        h, extra_info, errored = try_exeqs_until_converge(
-            qs_contents, initial_shots=EXEQS_SHOTS,
-            max_shots=MAX_SHOTS, threshold=HELLINGER_THRESHOLD
+        standard_S = compute_S(HELLINGER_THRESHOLD, 2 ** NUM_QUBITS)
+        max_S = 2 * compute_S(HELLINGER_THRESHOLD, 2 ** NUM_QUBITS)
+
+        h, extra_info, errored, early_info, final_shots, final_h, h_history = try_exeqs_until_converge(
+            qs_contents, n_qubits=NUM_QUBITS, delta=HELLINGER_THRESHOLD, test_mode=TEST_MODE
         )
 
         if errored:
             continue
+
+        if TEST_MODE:
+            save_test_record(
+                qs_contents,
+                early_info,
+                standard_S,
+                max_S,
+                final_h,
+                h_history
+            )
 
         elapsed = time.time() - start_time
         log(f"[Time elapsed: {elapsed:.2f} seconds]")
