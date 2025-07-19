@@ -32,5 +32,5 @@ python cirq_main.py
 ### Q#
 ```bash
 cd qsharp
-python stress_test.py --qubits 6 --iter 100 --delta 0.1
+python stress_test.py --qubits 6
 ```

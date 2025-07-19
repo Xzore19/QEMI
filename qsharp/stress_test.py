@@ -10,7 +10,7 @@ from tqdm import tqdm
 
 parser = argparse.ArgumentParser(description="Quantum circuit fuzz test runner")
 parser.add_argument("--iter", type=int, default=1000, help="Number of iterations (default: 1000)")
-parser.add_argument("--delta", type=float, default=8192, help="Threshold of Hellinger distance")
+parser.add_argument("--delta", type=float, default=0.1, help="Threshold of Hellinger distance")
 parser.add_argument("--qubits", type=int, default=8, help="Number of qubits per circuit")
 parser.add_argument("--test-mode", action="store_true", help="Enable test mode (force full measurement)")
 args = parser.parse_args()
