@@ -1,6 +1,6 @@
 # QEMI: A Quantum Software Stacks Testing Framework via Equivalence Module Inputs
 
-QEMI is a framework to automatically test the quantum software stacks with Equivalence Modulo Inputs (EMI). 
+QEMI is a framework to automatically test the quantum software stacks (QSSes) with Equivalence Modulo Inputs (EMI). 
 
 ## ✨ Supported Backends
 
