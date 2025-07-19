@@ -1,54 +1,16 @@
-[exeqs.py ERROR]
+[EXCEPTION]
 Traceback (most recent call last):
-  File "/home/luojunjie/EMI/qsharp/exeqs.py", line 12, in <module>
-    qsharp.init(project_root=".")
-    ~~~~~~~~~~~^^^^^^^^^^^^^^^^^^
-  File "/home/luojunjie/miniconda/envs/emi/lib/python3.13/site-packages/qsharp/_qsharp.py", line 219, in init
-    _interpreter = Interpreter(
-        target_profile,
-    ...<6 lines>...
-        _make_callable,
+  File "/home/luojunjie/EMI/qsharp/stress_test_dynamic_step.py", line 211, in <module>
+    h, extra_info, errored = try_exeqs_until_converge(
+                             ~~~~~~~~~~~~~~~~~~~~~~~~^
+        qs_contents,
+        ^^^^^^^^^^^^
+        threshold=HELLINGER_THRESHOLD,
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+        max_hours=8.0
+        ^^^^^^^^^^^^^
     )
-module.QSharpError: Qsc.Parse.Token
-
-  × syntax error
-  ╰─▶ expected `}`, found `<<<`
-   ╭─[src/Main.qs:7:1]
- 6 │ 
- 7 │ <<<<<<< HEAD
-   · ───
- 8 │ 
-   ╰────
-
-Qsc.Parse.Token
-
-  × syntax error
-  ╰─▶ expected EOF, found keyword `operation`
-    ╭─[src/Main.qs:20:5]
- 19 │ 
- 20 │     operation ApplyRandomBlock0(q : Qubit[]) : Unit is Adj + Ctl {
-    ·     ─────────
- 21 │         // --- DEADCODE START ---
-    ╰────
-
-Qsc.Parse.Token
-
-  × syntax error
-  ╰─▶ expected `}`, found `<<<`
-   ╭─[src/Fuzzing_Main.qs:7:1]
- 6 │ 
- 7 │ <<<<<<< HEAD
-   · ───
- 8 │ 
-   ╰────
-
-Qsc.Parse.Token
-
-  × syntax error
-  ╰─▶ expected EOF, found keyword `operation`
-    ╭─[src/Fuzzing_Main.qs:20:5]
- 19 │ 
- 20 │     operation ApplyRandomBlock0(q : Qubit[]) : Unit is Adj + Ctl {
-    ·     ─────────
- 21 │     }
-    ╰────
+    ^
+  File "/home/luojunjie/EMI/qsharp/stress_test_dynamic_step.py", line 102, in try_exeqs_until_converge
+    step = get_dynamic_step()
+TypeError: get_dynamic_step() missing 2 required positional arguments: 'qubit_count' and 'delta'

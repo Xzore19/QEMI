@@ -1,0 +1,8 @@
+qutefuzz/code_coverage/
+qutefuzz/coverage/
+qsharp/test_record_6qubits/
+qsharp/test_record/
+qsharp/stress_test_log.txt
+qsharp/analysis.py
+qsharp/sloved_buggy_programs
+__pycache__/

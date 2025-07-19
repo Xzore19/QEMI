@@ -198,5 +198,5 @@ class QSharpGenerator:
         print(f"Q# fuzzing version (no deadcode) saved to {fuzzing_path}")
 
 if __name__ == "__main__":
-    g = QSharpGenerator(qubit_num=12, num_blocks=3, depth_per_block=8)
+    g = QSharpGenerator(qubit_num=6, num_blocks=3, depth_per_block=8)
     g.save_dual_versions()
