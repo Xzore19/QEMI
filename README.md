@@ -13,12 +13,12 @@ Each backend has a tailored generator and executor that ensures compatibility wi
 ## 🚀 Quick Start
 
 1. Clone the repository
-2. Run the following command: 
+2. Run the following command
 ```bash
 cd QEMI
 pip install -r requirements.txt
 ```
-3. For different QSSes: 
+3. For different QSSes, run the following command
 ### Qiskit
 ```bash
 python main.py --qubits 6
