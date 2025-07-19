@@ -1,6 +1,0 @@
-[EXCEPTION]
-Traceback (most recent call last):
-  File "/home/luojunjie/EMI/qsharp/stress_test.py", line 225, in <module>
-    qubit_num = n_qubits
-                ^^^^^^^^
-NameError: name 'n_qubits' is not defined
