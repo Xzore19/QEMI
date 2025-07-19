@@ -14,3 +14,4 @@ qsharp_for_debug/
 code_coverage/
 early_terminal/
 .idea/
+qsharp/buggy_program/

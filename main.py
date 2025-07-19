@@ -5,6 +5,7 @@ from code_fuzzer.qasm_execution import QasmExecution
 import qiskit.qasm3
 from tqdm import tqdm
 import gc
+import argparse
 
 # optimization_level = [1, 2, 3]
 optimization_level = [3]
@@ -71,6 +72,10 @@ control = [
 ]
 
 if __name__ == "__main__":
+    parser = argparse.ArgumentParser(description="Qiskit fuzzing tester")
+    parser.add_argument("--qubits", type=int, default=4, help="Number of qubits for each generated circuit")
+    args = parser.parse_args()
+
     tran_list = generate_transpile()
 
     for tran in tran_list:
@@ -78,7 +83,7 @@ if __name__ == "__main__":
             for i in tqdm(range(1000), desc="Processing"):
                 a, b, c = random.sample(pass_option, 3)
                 pas = [a, b, c]
-                a = QiskitGenerator(qubit_num=4, measure_num=1, gate_num_upper=5, measure_times=10000, transplie=tran,
+                a = QiskitGenerator(qubit_num=args.qubits, measure_num=1, gate_num_upper=5, measure_times=10000, transplie=tran,
                                     backend="aer", use_pass=pas, fuzz_type=con)
                 a.run()
 
