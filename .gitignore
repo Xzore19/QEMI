@@ -12,3 +12,4 @@ qsharp_for_debug/
 .coverage
 .coverage.*
 code_coverage/
+early_terminal/
