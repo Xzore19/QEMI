@@ -15,7 +15,7 @@ Each backend has a tailored generator and executor that ensures compatibility wi
 1. Clone the repository
 2. Run the following command
 ```bash
-cd QEMI
+cd EMI
 pip install -r requirements.txt
 ```
 3. For different QSSes, run the following command
