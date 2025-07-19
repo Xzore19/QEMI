@@ -222,9 +222,11 @@ for i in tqdm(range(1, ITERATIONS + 1), desc="Stress Test Progress", unit="iter"
 
     try:
         start_time = time.time()
-
+        qubit_num = NUM_QUBITS
         result_gen = subprocess.run(
-            ["python", "base_gen.py"], capture_output=True, text=True
+            ["python", "base_gen.py", "--qubit_num", str(qubit_num)],
+            capture_output=True,
+            text=True
         )
         if result_gen.returncode != 0:
             log("[base_gen.py ERROR]")

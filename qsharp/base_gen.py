@@ -193,6 +193,12 @@ class QSharpGenerator:
         print(f"Q# main saved to {main_path}")
         print(f"Q# fuzzing version (no deadcode) saved to {fuzzing_path}")
 
+import argparse
+
 if __name__ == "__main__":
-    g = QSharpGenerator(qubit_num=6, num_blocks=3, depth_per_block=8)
+    parser = argparse.ArgumentParser(description="Generate Q# program with configurable qubit count")
+    parser.add_argument("--qubit_num", type=int, default=6, help="Number of qubits to use (default: 6)")
+    args = parser.parse_args()
+
+    g = QSharpGenerator(qubit_num=args.qubit_num, num_blocks=3, depth_per_block=8)
     g.save_dual_versions()
