@@ -74,13 +74,14 @@ control = [
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description="Qiskit fuzzing tester")
     parser.add_argument("--qubits", type=int, default=4, help="Number of qubits for each generated circuit")
+    parser.add_argument("--iter", type=int, default=1000, help="Number of iterations (default: 1000)")
     args = parser.parse_args()
 
     tran_list = generate_transpile()
 
     for tran in tran_list:
         for con in control:
-            for i in tqdm(range(1000), desc="Processing"):
+            for i in tqdm(range(args.iter), desc="Processing"):
                 a, b, c = random.sample(pass_option, 3)
                 pas = [a, b, c]
                 a = QiskitGenerator(qubit_num=args.qubits, measure_num=1, gate_num_upper=5, measure_times=10000, transplie=tran,
@@ -90,7 +91,6 @@ if __name__ == "__main__":
                 # a.qasm_convertor()
                 # a.qasm_run()
 
-                # 释放内存，防止因为循环的内存崩溃报错
                 del a
                 gc.collect()
 

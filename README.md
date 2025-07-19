@@ -21,16 +21,16 @@ pip install -r requirements.txt
 3. For different QSSes, run the following command
 ### Qiskit
 ```bash
-python main.py --qubits 6
+python main.py --qubits 6 --iter 100
 ```
 
 ### Cirq
 ```bash
-python cirq_main.py --qubits 6
+python cirq_main.py --qubits 6 --iter 100
 ```
 
 ### Q#
 ```bash
 cd qsharp
-python stress_test.py --qubits 6
+python stress_test.py --qubits 6 --iter 100
 ```
