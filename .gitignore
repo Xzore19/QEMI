@@ -5,4 +5,5 @@ qsharp/test_record/
 qsharp/stress_test_log.txt
 qsharp/analysis.py
 qsharp/sloved_buggy_programs
-__pycache__/
+__pycache__/qutefuzz/.coverage
+qutefuzz/quantum_circuits.zip
