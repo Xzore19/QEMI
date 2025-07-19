@@ -26,7 +26,7 @@ python main.py --qubits 6
 
 ### Cirq
 ```bash
-python cirq_main.py
+python cirq_main.py --qubits 6
 ```
 
 ### Q#
